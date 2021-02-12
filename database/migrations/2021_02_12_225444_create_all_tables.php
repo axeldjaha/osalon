@@ -1,11 +1,10 @@
 <?php
 
-use App\Salon;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAllTable extends Migration
+class CreateAllTables extends Migration
 {
     /**
      * Run the migrations.
@@ -97,7 +96,6 @@ class CreateAllTable extends Migration
             $table->unsignedBigInteger('offre_id')->nullable();
             $table->timestamps();
         });
-
     }
 
     /**
@@ -107,6 +105,6 @@ class CreateAllTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('salons');
+        //Schema::dropIfExists('all_tables');
     }
 }

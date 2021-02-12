@@ -57,7 +57,6 @@ class CreateForeignKeys extends Migration
             $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
             $table->foreign('offre_id')->references('id')->on('offres')->onDelete('set null');
         });
-
     }
 
     /**
