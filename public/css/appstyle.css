@@ -1,0 +1,112 @@
+
+.parametrage__cout
+{
+    font-weight:bold;
+    font-size:1.8rem;
+}
+
+.text-orange{ color: #F47922 !important;}
+.bg-orange{ background-color: #F47922 !important;}
+.border-orange{ border: 1px solid #F47922 !important;}
+
+.text-vert{ color: #0D9344 !important;}
+
+.fit
+{
+    white-space: nowrap;
+    width: 1%;
+}
+
+.search-wrapper .input-holder .search-icon span::before {
+    /* background: #F47922 !important; */
+}
+.search-wrapper .input-holder .search-icon span::after {
+    /* border: 2px solid #F47922; */
+}
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
+.text-transform-initial{
+    text-transform: initial;
+}
+
+menu i.metismenu-icon {
+    text-align: center;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    margin-top: -17px;
+    font-size: 1.5rem;
+    opacity: 1 !important;
+    transition: color 300ms;
+}
+
+.vertical-nav-menu li a.mm-active {
+    color: #0D9344;
+    background: #e0f3ff;
+    font-weight: bold;
+}
+
+.vertical-nav-menu li a:hover {
+    color: #0D9344;
+    text-decoration: none;
+}
+
+.vertical-nav-menu li a {
+    /* color: #6c757d; */
+}
+
+.vertical-nav-menu li {
+    font-size: 1rem;
+}
+
+.header-megamenu.nav>li>.nav-link {
+    color: #6c757d;
+    font-size: 1rem;
+}
+
+.vertical-nav-menu li a.mm-active{
+    color: #F47922;
+    background: #e0f3ff;
+    font-weight: normal;
+    /* opacity: 1; */
+}
+.vertical-nav-menu li a.mm-active i.metismenu-icon {
+    opacity: 1;
+}
+
+.ellipsis-1{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.ellipsis-2{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.app-header__logo .logo-src {
+    background: url(../images/logo.png) no-repeat;
+    background-size: contain;
+    width: 126px;
+    height: 56px;
+}
+
+table.dataTable td.dt-checkboxes-cell{
+    text-align: center;
+}
+
+.dt-checkboxes-select td{
+    cursor: pointer !important;
+}
