@@ -4,17 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\SalonResource;
 use App\Http\Resources\UserResource;
-use App\Jobs\MailJob;
 use App\Jobs\SendSMS;
-use App\Jobs\SMSDispatcher;
 use App\Salon;
-use App\Mail\UserAccess;
 use App\User;
-use http\Env\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Str;
 
 class UserController extends ApiController
 {
@@ -25,7 +22,39 @@ class UserController extends ApiController
      */
     public function index()
     {
-        return response()->json(UserResource::collection($this->salon->users()->orderBy("name")->get()));
+        $salons = [];
+        foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
+        {
+            $salons[] = [
+                "id" => $salon->id,
+                "nom" => $salon->nom,
+                "adresse" => $salon->adresse,
+                "users" => UserResource::collection($salon->users()->orderBy("name")->get()),
+            ];
+        }
+
+        return response()->json($salons);
+    }
+
+    /**
+     * Show users for given salon
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param Salon $salon
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Request $request, Salon $salon)
+    {
+        /**
+         * Si au moment de l'affichage, l'utilisateur a maintenant 1 seul salon,
+         * renvyer 204 pour retouner à Index et auto reactualiser
+         */
+        if($this->user->salons()->count() == 1)
+        {
+            return \response()->json(new SalonResource(new Salon()), 204);
+        }
+
+        return response()->json(UserResource::collection($salon->users()->orderBy("name")->get()));
     }
 
     /**

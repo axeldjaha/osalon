@@ -6,7 +6,10 @@ use App\Depense;
 use App\Http\Requests\DepenseRequest;
 use App\Http\Requests\ServiceRequest;
 use App\Http\Resources\DepenseResource;
+use App\Http\Resources\DepenseSalonResource;
+use App\Http\Resources\SalonResource;
 use App\Http\Resources\ServiceResource;
+use App\Salon;
 use App\Service;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -15,26 +18,6 @@ use Illuminate\Support\Facades\DB;
 
 class DepenseController extends ApiController
 {
-    /**
-     * Somme des dépenses du mois en cours
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function depenseMensuelle()
-    {
-        $depenseMensuelle = $this->salon->depenses()
-            ->whereYear('date', Carbon::now()->year)
-            ->whereMonth('date', Carbon::now()->month)
-            ->sum("montant");
-
-        return response()->json([
-            "id" => 0,
-            "objet" => "Dépenses du mois de " . ucfirst(Carbon::now()->locale('fr')->isoFormat('MMMM')),
-            "montant" => intval($depenseMensuelle),
-            "date" => null,
-            "mois" => Carbon::now()->month,
-        ]);
-    }
 
     /**
      * Liste des dépenses selon mois
@@ -43,43 +26,48 @@ class DepenseController extends ApiController
      */
     public function index(Request $request)
     {
-        $depenses = $this->salon->depenses()
-            ->whereYear('date', Carbon::now()->year)
-            ->whereMonth('date', $request->mois ?? Carbon::now()->month)
-            ->orderBy("date", "desc")
-            ->select([
-                //DB::raw("MONTH(date) as mois"), //renvoie le mois
-                "id",
-                "objet",
-                DB::raw("(SUM(montant)) as montant"),
-                "date",
-                "salon_id",
-            ])
-            ->groupBy(DB::raw("MONTH(date)"),
-                "id",
-                "objet",
-                "montant",
-                "date",
-                "salon_id")
-            ->orderBy("id", "desc")
-            ->get();
-        return response()->json(DepenseResource::collection($depenses));
+        $salons = [];
+        foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
+        {
+            $depenses = $salon->depenses()
+                ->whereYear("date_depense", Carbon::now()->year)
+                ->whereMonth("date_depense", $request->mois ?? Carbon::now()->month)
+                ->get();
+
+            $salons[] = [
+                "id" => $salon->id,
+                "nom" => $salon->nom,
+                "adresse" => $salon->adresse,
+                "depenses" => DepenseResource::collection($depenses),
+            ];
+        }
+
+        return response()->json($salons);
     }
 
     /**
-     * Liste des dépenses groupées par mois
+     * Show depenses for given salon
      *
      * @param Request $request
+     * @param Salon $salon
      * @return \Illuminate\Http\JsonResponse
      */
-    public function groupByMonth()
+    public function show(Request $request, Salon $salon)
     {
-        $depenses = $this->salon->depenses()
-            ->whereYear('date', Carbon::now()->year)
-            ->select([DB::raw("MONTH(date) as mois"), DB::raw("(SUM(montant)) as montant"),])
-            ->orderBy('date', "DESC")
-            ->groupBy(DB::raw("MONTH(date)"))
+        /**
+         * Si au moment de l'affichage, l'utilisateur a maintenant 1 seul salon,
+         * renvyer 204 pour retouner à IndexDepense et auto reactualiser
+         */
+        if($this->user->salons()->count() == 1)
+        {
+            return \response()->json(new SalonResource(new Salon()), 204);
+        }
+
+        $depenses = $salon->depenses()
+            ->whereMonth("date_depense", $request->mois ?? Carbon::now()->month)
+            ->orderByRaw("date_depense DESC, id DESC")
             ->get();
+
         return response()->json(DepenseResource::collection($depenses));
     }
 
@@ -94,7 +82,7 @@ class DepenseController extends ApiController
         $depense = Depense::create([
             "objet" => $request->objet,
             "montant" => $request->montant,
-            "date" => $request->date ?? Carbon::now(),
+            "date_depense" => $request->date ?? Carbon::now(),
             "salon_id" => $request->salon,
         ]);
 
@@ -116,7 +104,7 @@ class DepenseController extends ApiController
         if(!$this->salon->depenses()->where("id", $depense->id)->update([
             "objet" => $request->objet,
             "montant" => $request->montant,
-            "date" => $request->date,
+            "date_depense" => $request->date,
         ]))
         {
             return response()->json([

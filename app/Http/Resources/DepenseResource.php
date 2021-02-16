@@ -19,7 +19,7 @@ class DepenseResource extends JsonResource
             "id" => $this->id,
             "objet" => $this->objet,
             "montant" => intval($this->montant),
-            "date" => $this->date != null ? date("d/m/Y", strtotime($this->date)) : null,
+            "date" => $this->date_depense != null ? date("d/m/Y", strtotime($this->date_depense)) : null,
             "salon_id" => $this->salon_id,
         ];
     }

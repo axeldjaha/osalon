@@ -9,7 +9,7 @@ class Depense extends Model
     protected $fillable = [
         "objet",
         "montant",
-        "date",
+        "date_depense",
         "salon_id",
     ];
 

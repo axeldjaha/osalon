@@ -2,9 +2,11 @@
 
 namespace App\Http\Resources;
 
+use App\Salon;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
-class UserResource extends JsonResource
+class DepenseSalonResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,13 +16,14 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
+        $salon = Salon::find($this->salon_id);
+
         return [
-            "id" => $this->id,
-            "name" => $this->name,
-            "telephone" => $this->telephone,
-            "email" => $this->email,
-            "role" => $this->role,
-            "salon_id" => $this->salon_id,
+            "depense" => $this->depense,
+            "salon" => [
+                "id" => $salon->id,
+                "nom" => $salon->nom,
+            ]
         ];
     }
 }

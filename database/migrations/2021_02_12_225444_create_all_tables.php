@@ -35,7 +35,7 @@ class CreateAllTables extends Migration
             $table->bigIncrements('id');
             $table->string('objet');
             $table->bigInteger('montant');
-            $table->date('date')->nullable();
+            $table->date('date_depense')->nullable();
             $table->unsignedBigInteger('salon_id');
             $table->timestamps();
         });

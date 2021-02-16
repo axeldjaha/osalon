@@ -7,9 +7,11 @@ use App\Fakedata;
 use App\Http\Requests\ClientImport;
 use App\Http\Requests\ClientRequest;
 use App\Http\Resources\ClientResource;
+use App\Http\Resources\SalonResource;
+use App\Salon;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class ClientController extends ApiController
 {
@@ -21,9 +23,39 @@ class ClientController extends ApiController
      */
     public function index()
     {
-        $clients = $this->salon->clients()->orderBy("nom")->get();
+        $salons = [];
+        foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
+        {
+            $salons[] = [
+                "id" => $salon->id,
+                "nom" => $salon->nom,
+                "adresse" => $salon->adresse,
+                "clients" => ClientResource::collection($salon->clients()->orderBy("nom")->get()),
+            ];
+        }
 
-        return response()->json(ClientResource::collection($clients));
+        return response()->json($salons);
+    }
+
+    /**
+     * Show clients for given salon
+     *
+     * @param Request $request
+     * @param Salon $salon
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Request $request, Salon $salon)
+    {
+        /**
+         * Si au moment de l'affichage, l'utilisateur a maintenant 1 seul salon,
+         * renvyer 204 pour retouner à Index et auto reactualiser
+         */
+        if($this->user->salons()->count() == 1)
+        {
+            return \response()->json(new SalonResource(new Salon()), 204);
+        }
+
+        return response()->json(ClientResource::collection($salon->clients()->orderBy("nom")->get()));
     }
 
     /**
