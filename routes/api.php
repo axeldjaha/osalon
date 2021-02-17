@@ -35,14 +35,14 @@ Route::get('user/sync','Api\AuthController@sync');
  */
 Route::middleware(["auth:api", "activated", "salon", "abonnement"])->group(function ()
 {
-    Route::apiResource('service','Api\ServiceController')->only(["store", "update", "delete"]);
+    Route::apiResource('service','Api\ServiceController')->except(["index", "show"]);
 
-    Route::apiResource('client','Api\ClientController')->only(["store", "update", "delete"]);
+    Route::apiResource('client','Api\ClientController')->except(["index", "show"]);
     Route::post('client/import','Api\ClientController@import');
 
-    Route::apiResource('user','Api\UserController')->only(["store", "update", "delete"]);
+    Route::apiResource('user','Api\UserController')->except(["index", "show", "update"]);
 
-    Route::apiResource('depense','Api\DepenseController')->only(["store", "update", "delete"]);
+    Route::apiResource('depense','Api\DepenseController')->except(["index", "show"]);
 
     Route::get('sms/client/get','Api\ClientController@get');
 

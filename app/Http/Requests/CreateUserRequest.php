@@ -30,7 +30,6 @@ class CreateUserRequest extends FormRequest
         return [
             "name" => "required",
             "telephone" => "required",
-            "role" => "required",
             "salon" => "required",
         ];
     }
@@ -57,13 +56,6 @@ class CreateUserRequest extends FormRequest
         {
             $response = [
                 "message" => $exception->validator->errors()->get("telephone")[0],
-            ];
-            throw new HttpResponseException(response()->json($response, 422));
-        }
-        elseif($exception->validator->errors()->has("role"))
-        {
-            $response = [
-                "message" => $exception->validator->errors()->get("role")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }

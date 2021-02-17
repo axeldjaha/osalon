@@ -28,7 +28,6 @@ class UpdateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            "role" => "required",
             "salon" => "required",
         ];
     }
@@ -37,14 +36,7 @@ class UpdateUserRequest extends FormRequest
     {
         $exception = new ValidationException($validator);
 
-       if($exception->validator->errors()->has("role"))
-        {
-            $response = [
-                "message" => $exception->validator->errors()->get("role")[0],
-            ];
-            throw new HttpResponseException(response()->json($response, 422));
-        }
-        elseif($exception->validator->errors()->has("salon"))
+       if($exception->validator->errors()->has("salon"))
         {
             $response = [
                 "message" => $exception->validator->errors()->get("salon")[0],

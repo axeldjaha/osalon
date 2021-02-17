@@ -19,7 +19,7 @@ class ClientResource extends JsonResource
             "nom" => $this->nom,
             "telephone" => $this->telephone,
             "anniversaire" => $this->anniversaire,
-            "prefix" => substr($this->telephone, 0, 2),
+            "prefix" => mb_substr($this->telephone, 0, 2),
             "salon_id" => $this->salon_id,
         ];
     }

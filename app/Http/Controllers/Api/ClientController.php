@@ -12,6 +12,7 @@ use App\Salon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ClientController extends ApiController
 {
@@ -84,9 +85,9 @@ class ClientController extends ApiController
      */
     public function import(ClientImport $request)
     {
-        //$data = json_encode($request->json()->all());
-        //Fakedata::create(["data" => $data]);
-        //return response()->json(["message" => "super!"], 400);
+        /*$data = json_encode($request->json()->all());
+        Fakedata::create(["data" => $data]);
+        return response()->json(["message" => "super!"], 400);*/
 
         $clients = [];
         $date = Carbon::now();

@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Abonnement;
+use App\Fakedata;
 use App\Http\Requests\SalonRequest;
 use App\Http\Resources\LavageDataResource;
 use App\Http\Resources\SalonResource;
+use App\Jobs\SendSMS;
 use App\Salon;
 use App\Service;
+use App\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Queue;
 
 class SalonController extends ApiController
 {
@@ -35,15 +39,13 @@ class SalonController extends ApiController
     public function store(SalonRequest $request)
     {
         $salon = Salon::create([
-            "nom" => $request->nom,
-            "adresse" => $request->adresse,
+            "nom" => $request["nom"],
+            "adresse" => $request["adresse"],
         ]);
 
         $salon->update([
             "pid" => date("y") . date("m") . $salon->id,
         ]);
-
-        $this->user->salons()->sync([$salon->id], false);
 
         Abonnement::create([
             "date" => Carbon::now(),
@@ -51,7 +53,56 @@ class SalonController extends ApiController
             "salon_id" => $salon->id,
         ]);
 
-        return response()->json(new SalonResource($salon));
+        $this->user->salons()->sync([$salon->id], false);
+
+        foreach ($request->users as $newUser)
+        {
+            $user = User::where("telephone", $newUser["telephone"])->first();
+
+            //si user n'existe pas
+            if($user == null)
+            {
+                $password = User::generatePassword();
+
+                $user = User::create([
+                    "name" => $newUser["name"],
+                    "telephone" => $newUser["telephone"],
+                    "email" => null,
+                    "password" => bcrypt($password),
+                ]);
+
+                //Envoi du mot de passe par SMS
+                $message =
+                    "Votre mot de passe est: $password" .
+                    "\nTéléchargez l'application " . config("app.name") . " sur playstore." .
+                    "\n" . config("app.playstore");
+                $sms = new \stdClass();
+                $sms->to = [$user->telephone];
+                $sms->message = $message;
+                Queue::push(new SendSMS($sms));
+
+                $status = 201;
+            }
+            else //si le user existe
+            {
+                //Envoi d'une notification par SMS
+                $message =
+                    "$salon a été rattaché à votre compte " . config('app.name') . "." .
+                    "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
+                $sms = new \stdClass();
+                $sms->to = [$user->telephone];
+                $sms->message = $message;
+                Queue::push(new SendSMS($sms));
+
+                $status = 200;
+            }
+
+            $user->salons()->sync([$salon->id], false);
+        }
+
+        return response()->json([
+            "message" => "Votre salon a été créé. Le mot de passe de la gérante lui a été envoyé par SMS",
+        ], $status);
     }
 
     /**
@@ -96,6 +147,21 @@ class SalonController extends ApiController
         /**
          * Check if the resource exists and prevent access to another user's resource
          */
+        if(!$this->user->salons()->where("id", $salon->id)->exists())
+        {
+            return response()->json([
+                "message" => "Le salon n'existe pas ou a été supprimé"
+            ], 404);
+        }
+
+        foreach ($salon->users as $user)
+        {
+            if($user->salons()->count() == 1)
+            {
+                $user->delete();
+            }
+        }
+
         if(!$this->user->salons()->where("id", $salon->id)->delete())
         {
             return response()->json([

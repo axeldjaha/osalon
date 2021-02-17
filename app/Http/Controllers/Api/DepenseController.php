@@ -32,6 +32,7 @@ class DepenseController extends ApiController
             $depenses = $salon->depenses()
                 ->whereYear("date_depense", Carbon::now()->year)
                 ->whereMonth("date_depense", $request->mois ?? Carbon::now()->month)
+                ->orderByRaw("date_depense DESC, id DESC")
                 ->get();
 
             $salons[] = [
@@ -64,6 +65,7 @@ class DepenseController extends ApiController
         }
 
         $depenses = $salon->depenses()
+            ->whereYear("date_depense", Carbon::now()->year)
             ->whereMonth("date_depense", $request->mois ?? Carbon::now()->month)
             ->orderByRaw("date_depense DESC, id DESC")
             ->get();
