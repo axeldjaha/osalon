@@ -16,7 +16,7 @@ class OffreSeeder extends Seeder
         if (DB::table("offres")->count() == 0)
         {
             Offre::create([
-                "intitule" => "Standard",
+                "intitule" => "Abonnement mensuel",
                 "montant" => 3000,
             ]);
         }

@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Abonnement extends Model
 {
+    /**
+     * Nombre de jour d'essai
+     * @var int
+     */
+    public static $TRIAL = 10;
+
     protected $fillable = [
         "date",
         "echeance",

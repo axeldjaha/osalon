@@ -20,6 +20,7 @@ use App\Http\Resources\ServiceResource;
 use App\Jobs\MailJob;
 use App\Jobs\SendSMS;
 use App\Jobs\SMSDispatcher;
+use App\Offre;
 use App\Salon;
 use App\Laveur;
 use App\Mail\RequestCodeEmail;
@@ -63,7 +64,8 @@ class AuthController extends Controller
 
             Abonnement::create([
                 "date" => Carbon::now(),
-                "echeance" => Carbon::now()->addDays(10),
+                "montant" => Offre::first()->montant ?? null,
+                "echeance" => Carbon::now()->addDays(Abonnement::$TRIAL),
                 "salon_id" => $salon->id,
             ]);
 

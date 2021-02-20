@@ -8,6 +8,7 @@ use App\Http\Requests\SalonRequest;
 use App\Http\Resources\LavageDataResource;
 use App\Http\Resources\SalonResource;
 use App\Jobs\SendSMS;
+use App\Offre;
 use App\Salon;
 use App\Service;
 use App\User;
@@ -53,7 +54,8 @@ class SalonController extends ApiController
 
             Abonnement::create([
                 "date" => Carbon::now(),
-                "echeance" => Carbon::now()->addDays(10),
+                "montant" => Offre::first()->montant ?? null,
+                "echeance" => Carbon::now()->addDays(Abonnement::$TRIAL),
                 "salon_id" => $salon->id,
             ]);
 
