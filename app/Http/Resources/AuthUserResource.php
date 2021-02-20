@@ -15,13 +15,23 @@ class AuthUserResource extends JsonResource
      */
     public function toArray($request)
     {
+        $salons = [];
+        foreach ($this->salons as $salon)
+        {
+            $salons[] = [
+                "id" => $salon->id,
+                "nom" => $salon->nom,
+                "adresse" => $salon->adresse,
+                "services" => ServiceResource::collection($salon->services()->orderBy("nom")->get()),
+            ];
+        }
+
         return [
             "id" => $this->id,
             "name" => $this->name,
             "telephone" => $this->telephone,
             "email" => $this->email,
-            "role" => $this->role,
-            "salons" => SalonResource::collection($this->salons()->orderBy("id", "desc")->get()),
+            "salons" => $salons,
             "token" => $this->token,
         ];
     }

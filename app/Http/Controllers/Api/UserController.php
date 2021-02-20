@@ -12,6 +12,7 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Response;
 
 class UserController extends ApiController
 {
@@ -65,50 +66,55 @@ class UserController extends ApiController
      */
     public function store(CreateUserRequest $request)
     {
-        $user = User::where("telephone", $request->telephone)->first();
+        $status = 200;
+        $statusMessage = "Ok";
 
-        //si user n'existe pas
-        if($user == null)
-        {
-            $password = User::generatePassword();
+        DB::transaction(function () use (&$status, &$statusMessage, $request){
+            $user = User::where("telephone", $request->telephone)->first();
 
-            $user = User::create([
-                "name" => $request->name,
-                "telephone" => $request->telephone,
-                "email" => $request->email,
-                "password" => bcrypt($password),
-            ]);
+            //si user n'existe pas
+            if($user == null)
+            {
+                $password = User::generatePassword();
 
-            //Envoi du mot de passe par SMS
-            $message =
-                "Votre mot de passe est: $password" .
-                "\nTéléchargez l'application " . config("app.name") . " sur playstore." .
-                "\n" . config("app.playstore");
-            $sms = new \stdClass();
-            $sms->to = [$request->telephone];
-            $sms->message = $message;
-            Queue::push(new SendSMS($sms));
+                $user = User::create([
+                    "name" => $request->name,
+                    "telephone" => $request->telephone,
+                    "email" => $request->email,
+                    "password" => bcrypt($password),
+                ]);
 
-            $statusMessage = "L'utilisateur a été créé! Nous venons de lui envoyer son mot de passe par SMS";
-            $status = 201;
-        }
-        else
-        {
-            $salon = $this->salon->nom;
-            //Envoi d'une notification par SMS
-            $message =
-                "$salon a été rattaché à votre compte " . config('app.name') . "." .
-                "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
-            $sms = new \stdClass();
-            $sms->to = [$request->telephone];
-            $sms->message = $message;
-            Queue::push(new SendSMS($sms));
+                //Envoi du mot de passe par SMS
+                $message =
+                    "Votre mot de passe est: $password" .
+                    "\nTéléchargez l'application " . config("app.name") . " sur playstore." .
+                    "\n" . config("app.playstore");
+                $sms = new \stdClass();
+                $sms->to = [$request->telephone];
+                $sms->message = $message;
+                Queue::push(new SendSMS($sms));
 
-            $statusMessage = "L'utilisateur a été ajouté avec succès! Nous venons de lui envoyer une notification par SMS";
-            $status = 200;
-        }
+                $statusMessage = "L'utilisateur a été créé! Nous venons de lui envoyer son mot de passe par SMS";
+                $status = 201;
+            }
+            else
+            {
+                $salon = $this->salon->nom;
+                //Envoi d'une notification par SMS
+                $message =
+                    "$salon a été rattaché à votre compte " . config('app.name') . "." .
+                    "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
+                $sms = new \stdClass();
+                $sms->to = [$request->telephone];
+                $sms->message = $message;
+                Queue::push(new SendSMS($sms));
 
-        $user->salons()->sync([$this->salon->id], false);
+                $statusMessage = "L'utilisateur a été ajouté avec succès! Nous venons de lui envoyer une notification par SMS";
+                $status = 200;
+            }
+
+            $user->salons()->sync([$this->salon->id], false);
+        }, 1);
 
         return response()->json([
             "message" => $statusMessage,
@@ -123,6 +129,13 @@ class UserController extends ApiController
      */
     public function destroy(User $user)
     {
+        if($this->user->id == $user->id)
+        {
+            return response()->json([
+                "message" => "Vous n'êtes pas autorisé à effectuer cette action"
+            ], 401);
+        }
+
         /**
          * Check if the resource exists and prevent access to another user's resource
          */

@@ -13,6 +13,7 @@ use App\Service;
 use App\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 
 class SalonController extends ApiController
@@ -38,67 +39,71 @@ class SalonController extends ApiController
      */
     public function store(SalonRequest $request)
     {
-        $salon = Salon::create([
-            "nom" => $request["nom"],
-            "adresse" => $request["adresse"],
-        ]);
+        $status = 200;
 
-        $salon->update([
-            "pid" => date("y") . date("m") . $salon->id,
-        ]);
+        DB::transaction(function () use (&$status, $request){
+            $salon = Salon::create([
+                "nom" => $request["nom"],
+                "adresse" => $request["adresse"],
+            ]);
 
-        Abonnement::create([
-            "date" => Carbon::now(),
-            "echeance" => Carbon::now()->addDays(10),
-            "salon_id" => $salon->id,
-        ]);
+            $salon->update([
+                "pid" => date("y") . date("m") . $salon->id,
+            ]);
 
-        $this->user->salons()->sync([$salon->id], false);
+            Abonnement::create([
+                "date" => Carbon::now(),
+                "echeance" => Carbon::now()->addDays(10),
+                "salon_id" => $salon->id,
+            ]);
 
-        foreach ($request->users as $newUser)
-        {
-            $user = User::where("telephone", $newUser["telephone"])->first();
+            $this->user->salons()->sync([$salon->id], false);
 
-            //si user n'existe pas
-            if($user == null)
+            foreach ($request->users as $newUser)
             {
-                $password = User::generatePassword();
+                $user = User::where("telephone", $newUser["telephone"])->first();
 
-                $user = User::create([
-                    "name" => $newUser["name"],
-                    "telephone" => $newUser["telephone"],
-                    "email" => null,
-                    "password" => bcrypt($password),
-                ]);
+                //si user n'existe pas
+                if($user == null)
+                {
+                    $password = User::generatePassword();
 
-                //Envoi du mot de passe par SMS
-                $message =
-                    "Votre mot de passe est: $password" .
-                    "\nTéléchargez l'application " . config("app.name") . " sur playstore." .
-                    "\n" . config("app.playstore");
-                $sms = new \stdClass();
-                $sms->to = [$user->telephone];
-                $sms->message = $message;
-                Queue::push(new SendSMS($sms));
+                    $user = User::create([
+                        "name" => $newUser["name"],
+                        "telephone" => $newUser["telephone"],
+                        "email" => null,
+                        "password" => bcrypt($password),
+                    ]);
 
-                $status = 201;
+                    //Envoi du mot de passe par SMS
+                    $message =
+                        "Votre mot de passe est: $password" .
+                        "\nTéléchargez l'application " . config("app.name") . " sur playstore." .
+                        "\n" . config("app.playstore");
+                    $sms = new \stdClass();
+                    $sms->to = [$user->telephone];
+                    $sms->message = $message;
+                    Queue::push(new SendSMS($sms));
+
+                    $status = 201;
+                }
+                else //si le user existe
+                {
+                    //Envoi d'une notification par SMS
+                    $message =
+                        "$salon a été rattaché à votre compte " . config('app.name') . "." .
+                        "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
+                    $sms = new \stdClass();
+                    $sms->to = [$user->telephone];
+                    $sms->message = $message;
+                    Queue::push(new SendSMS($sms));
+
+                    $status = 200;
+                }
+
+                $user->salons()->sync([$salon->id], false);
             }
-            else //si le user existe
-            {
-                //Envoi d'une notification par SMS
-                $message =
-                    "$salon a été rattaché à votre compte " . config('app.name') . "." .
-                    "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
-                $sms = new \stdClass();
-                $sms->to = [$user->telephone];
-                $sms->message = $message;
-                Queue::push(new SendSMS($sms));
-
-                $status = 200;
-            }
-
-            $user->salons()->sync([$salon->id], false);
-        }
+        }, 1);
 
         return response()->json([
             "message" => "Votre salon a été créé. Le mot de passe de la gérante lui a été envoyé par SMS",

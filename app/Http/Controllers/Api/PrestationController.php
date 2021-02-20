@@ -7,8 +7,10 @@ use App\Http\Requests\IndexPrestationRequest;
 use App\Http\Requests\PrestationRequest;
 use App\Http\Resources\DepenseResource;
 use App\Http\Resources\PrestationResource;
+use App\Http\Resources\SalonResource;
 use App\Prestation;
 use App\Recette;
+use App\Salon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -21,47 +23,50 @@ class PrestationController extends ApiController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function indexDate(IndexPrestationRequest $request)
+    public function index(IndexPrestationRequest $request)
     {
-        $prestations = $this->salon->prestations()
+        $salons = [];
+        foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
+        {
+            $depenses = $salon->prestations()
+                ->whereDate('created_at', $request->date ?? Carbon::now())
+                ->orderBy("created_at", "desc")
+                ->get();
+
+            $salons[] = [
+                "id" => $salon->id,
+                "nom" => $salon->nom,
+                "adresse" => $salon->adresse,
+                "encaissements" => PrestationResource::collection($depenses),
+            ];
+        }
+
+        return response()->json($salons);
+    }
+
+    /**
+     * Show encaissements for given salon
+     *
+     * @param Request $request
+     * @param Salon $salon
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Request $request, Salon $salon)
+    {
+        /**
+         * Si au moment de l'affichage, l'utilisateur a maintenant 1 seul salon,
+         * renvyer 204 pour retouner à IndexDepense et auto reactualiser
+         */
+        if($this->user->salons()->count() == 1)
+        {
+            return \response()->json(new SalonResource(new Salon()), 204);
+        }
+
+        $depenses = $salon->prestations()
             ->whereDate('created_at', $request->date ?? Carbon::now())
             ->orderBy("created_at", "desc")
             ->get();
 
-        return response()->json(PrestationResource::collection($prestations));
-    }
-
-    /**
-     * Liste des prestations selon mois
-     *
-     * @param IndexPrestationRequest $request
-     * @return \Illuminate\Http\Response
-     */
-    public function index(IndexPrestationRequest $request)
-    {
-        $prestations = $this->salon->prestations()
-            ->whereYear('date', Carbon::now()->year)
-            ->whereMonth('date', $request->mois ?? Carbon::now()->month)
-            ->orderBy("created_at", "desc")
-            ->get();
-
-        return response()->json(PrestationResource::collection($prestations));
-    }
-
-    /**
-     * Liste des recettes groupées par mois
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function groupByMonth()
-    {
-        $depenses = $this->salon->prestations()
-            ->whereYear('created_at', Carbon::now()->year)
-            ->select([DB::raw("MONTH(created_at) as mois"), DB::raw("(SUM(total)) as total"),])
-            ->orderBy('created_at', "DESC")
-            ->groupBy(DB::raw("MONTH(created_at)"))
-            ->get();
         return response()->json(PrestationResource::collection($depenses));
     }
 

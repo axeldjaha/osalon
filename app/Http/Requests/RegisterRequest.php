@@ -29,6 +29,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             "telephone" => Rule::unique('users','telephone'),
+            //"telephone" => "required",
             "salon" => "required",
             "adresse" => "required",
         ];

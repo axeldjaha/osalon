@@ -28,7 +28,6 @@ class IndexPrestationRequest extends FormRequest
     {
         return [
             "date" => "nullable|date",
-            "mois" => "nullable",
         ];
     }
 

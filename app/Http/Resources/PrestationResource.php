@@ -15,16 +15,6 @@ class PrestationResource extends JsonResource
      */
     public function toArray($request)
     {
-        if($request->mois != null) {
-            $mois = $request->mois;
-        }
-        elseif ($this->mois != null) {
-            $mois = $this->mois;
-        }
-        else {
-            $mois = Carbon::now()->month;
-        }
-
         return [
             "id" => $this->id,
             "total" => intval($this->total),

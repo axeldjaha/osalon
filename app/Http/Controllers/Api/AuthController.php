@@ -15,6 +15,7 @@ use App\Http\Resources\ClientResource;
 use App\Http\Resources\EnginResource;
 use App\Http\Resources\LaveurResource;
 use App\Http\Resources\ProfilResource;
+use App\Http\Resources\SalonResource;
 use App\Http\Resources\ServiceResource;
 use App\Jobs\MailJob;
 use App\Jobs\SendSMS;
@@ -47,76 +48,81 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request)
     {
-        $salon = Salon::create([
-            "nom" => $request->salon,
-            "adresse" => $request->adresse,
-        ]);
+        $status = 200;
+        $statusMessage = "Ok";
 
-        $salon->update([
-            "pid" => date("y") . date("m") . $salon->id,
-        ]);
-
-        Abonnement::create([
-            "date" => Carbon::now(),
-            "echeance" => Carbon::now()->addDays(10),
-            "salon_id" => $salon->id,
-        ]);
-
-        $user = User::where("telephone", $request->telephone)->first();
-
-        //si user n'existe pas
-        if($user == null)
-        {
-            $password = User::generatePassword();
-
-            $user = User::create([
-                "name" => $request->name,
-                "telephone" => $request->telephone,
-                "email" => null,
-                "password" => bcrypt($password),
+        DB::transaction(function () use (&$status, &$statusMessage, $request){
+            $salon = Salon::create([
+                "nom" => $request->salon,
+                "adresse" => $request->adresse,
             ]);
 
-            //Envoi du mot de passe par SMS
-            $message = "Votre mot de passe est: $password";
-            $sms = new \stdClass();
-            $sms->to = [$user->telephone];
+            $salon->update([
+                "pid" => date("y") . date("m") . $salon->id,
+            ]);
+
+            Abonnement::create([
+                "date" => Carbon::now(),
+                "echeance" => Carbon::now()->addDays(10),
+                "salon_id" => $salon->id,
+            ]);
+
+            $user = User::where("telephone", $request->telephone)->first();
+
+            //si user n'existe pas
+            if($user == null)
+            {
+                $password = User::generatePassword();
+
+                $user = User::create([
+                    "name" => $request->name,
+                    "telephone" => $request->telephone,
+                    "email" => null,
+                    "password" => bcrypt($password),
+                ]);
+
+                //Envoi du mot de passe par SMS
+                $message = "Votre mot de passe est: $password";
+                $sms = new \stdClass();
+                $sms->to = [$user->telephone];
+                $sms->message = $message;
+                Queue::push(new SendSMS($sms));
+
+                $status = 201;
+                $statusMessage = "Votre compte a été créé. Vous allez recevoir votre mot de passe par SMS dans quelques instants.";
+            }
+            else //si le user existe
+            {
+                //Envoi d'une notification par SMS
+                $message =
+                    "$salon->nom a été rattaché à votre compte " . config('app.name') . "." .
+                    "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
+                $sms = new \stdClass();
+                $sms->to = [$user->telephone];
+                $sms->message = $message;
+                Queue::push(new SendSMS($sms));
+
+                $status = 200;
+                $statusMessage = "Le compte a été créé avec succès. Vous allez recevoir votre mot de passe par SMS dans quelques instants.";
+            }
+
+            $user->salons()->sync([$salon->id], false);
+
+            $date = Carbon::now();
+            $comptesDuJour = Salon::whereDate("created_at", Carbon::today())->count();
+            $comptesDeLaSemaine = Salon::whereBetween("created_at", [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+            $comptesDuMois = Salon::whereYear("created_at", $date->year)->whereMonth("created_at", $date->month)->count();
+            $message = "Nouveau compte" .
+                "\nSalon: $salon->nom" .
+                "\nAdresse: $salon->adresse" .
+                "\nAujourd'hui: $comptesDuJour" .
+                "\nCette semaine: $comptesDeLaSemaine" .
+                "\nCe mois: $comptesDuMois";
+            $sms = new stdClass();
+            $sms->to = [config("app.telephone")];
             $sms->message = $message;
             Queue::push(new SendSMS($sms));
-
-            $status = 201;
-            $statusMessage = "Votre compte a été créé. Vous allez recevoir votre mot de passe par SMS dans quelques instants.";
-        }
-        else //si le user existe
-        {
-            //Envoi d'une notification par SMS
-            $message =
-                "$salon->nom a été rattaché à votre compte " . config('app.name') . "." .
-                "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
-            $sms = new \stdClass();
-            $sms->to = [$user->telephone];
-            $sms->message = $message;
-            Queue::push(new SendSMS($sms));
-
-            $status = 200;
-            $statusMessage = "Le compte a été créé avec succès. Vous allez recevoir votre mot de passe par SMS dans quelques instants.";
-        }
-
-        $user->salons()->sync([$salon->id], false);
-
-        $date = Carbon::now();
-        $comptesDuJour = Salon::whereDate("created_at", Carbon::today())->count();
-        $comptesDeLaSemaine = Salon::whereBetween("created_at", [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
-        $comptesDuMois = Salon::whereYear("created_at", $date->year)->whereMonth("created_at", $date->month)->count();
-        $message = "Nouveau compte" .
-            "\nSalon: $salon->nom" .
-            "\nAdresse: $salon->adresse" .
-            "\nAujourd'hui: $comptesDuJour" .
-            "\nCette semaine: $comptesDeLaSemaine" .
-            "\nCe mois: $comptesDuMois";
-        $sms = new stdClass();
-        $sms->to = [config("app.telephone")];
-        $sms->message = $message;
-        Queue::push(new SendSMS($sms));
+        }, 1);
 
         return response()->json([
             "message" => $statusMessage,
@@ -271,7 +277,7 @@ class AuthController extends Controller
     public function sync()
     {
         $user = auth("api")->user();
-        $user->token = auth("api")->refresh();
+        $user->token = \request()->input("token");
 
         return response()->json(new AuthUserResource($user));
     }

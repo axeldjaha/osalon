@@ -44,11 +44,7 @@ Route::middleware(["auth:api", "activated", "salon", "abonnement"])->group(funct
 
     Route::apiResource('depense','Api\DepenseController')->except(["index", "show"]);
 
-    Route::get('sms/client/get','Api\ClientController@get');
-
-    Route::apiResource('prestation','Api\PrestationController')->except("show");
-    Route::get('prestation/date','Api\PrestationController@indexDate');
-    Route::get('prestation/group-by-month','Api\PrestationController@groupByMonth');
+    Route::apiResource('prestation','Api\PrestationController')->except(["index", "show"]);
 });
 
 /**
@@ -73,6 +69,9 @@ Route::middleware(["auth:api", "activated"])->group(function ()
 
     Route::get('recette/mois','Api\BilanController@getRecetteMois');
     Route::get('recette/salons','Api\BilanController@getRecetteSalons');
+
+    Route::get('prestation','Api\PrestationController@index');
+    Route::get('prestation/salon/{salon}','Api\PrestationController@show');
 
     Route::get('abonnement/index','Api\AbonnementController@index');
 
