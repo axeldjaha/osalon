@@ -11,6 +11,6 @@ $factory->define(Client::class, function (Faker $faker) {
         "nom" => $faker->name,
         "telephone" => $faker->phoneNumber,
         "anniversaire" => $faker->dateTime,
-        "salon_id" => 2,
+        "salon_id" => 1,
     ];
 });

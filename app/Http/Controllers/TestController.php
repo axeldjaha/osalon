@@ -42,13 +42,13 @@ class TestController extends Controller
     public function test(Request $request)
     {
         //DB::table("users")->update(["password" => bcrypt("2909")]);
+        /*Client::each(function ($client){
+            $client->update([
+                "telephone" => ["01", "05", "07"][rand(0, 2)] . (51197890 + $client->id),
+            ]);
+        });*/
 
-        User::create([
-            'name' => null,
-            'telephone' => "0758572785",
-            'email' => "paxeldp@gmail.com",
-            "password" => bcrypt("2909"),
-        ]);
+
 
         return config("app.name");
     }
