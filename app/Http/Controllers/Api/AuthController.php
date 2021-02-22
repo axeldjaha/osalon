@@ -58,8 +58,10 @@ class AuthController extends Controller
                 "adresse" => $request->adresse,
             ]);
 
+            $year = date("y");
+            $month = date("m");
             $salon->update([
-                "pid" => date("y") . date("m") . $salon->id,
+                "pid" => $year * 1000 + $month * 100 + $salon->id * 10 + $salon->id,
             ]);
 
             Abonnement::create([
@@ -111,15 +113,13 @@ class AuthController extends Controller
             $user->salons()->sync([$salon->id], false);
 
             $date = Carbon::now();
-            $comptesDuJour = Salon::whereDate("created_at", Carbon::today())->count();
             $comptesDeLaSemaine = Salon::whereBetween("created_at", [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
             $comptesDuMois = Salon::whereYear("created_at", $date->year)->whereMonth("created_at", $date->month)->count();
             $message = "Nouveau compte" .
                 "\nSalon: $salon->nom" .
                 "\nAdresse: $salon->adresse" .
-                "\nAujourd'hui: $comptesDuJour" .
-                "\nCette semaine: $comptesDeLaSemaine" .
-                "\nCe mois: $comptesDuMois";
+                "\nSemaine: $comptesDeLaSemaine" .
+                "\nMois: $comptesDuMois";
             $sms = new stdClass();
             $sms->to = [config("app.telephone")];
             $sms->message = $message;

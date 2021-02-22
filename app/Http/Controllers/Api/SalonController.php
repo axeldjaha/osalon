@@ -48,8 +48,10 @@ class SalonController extends ApiController
                 "adresse" => $request["adresse"],
             ]);
 
+            $year = date("y");
+            $month = date("m");
             $salon->update([
-                "pid" => date("y") . date("m") . $salon->id,
+                "pid" => $year * 1000 + $month * 100 + $salon->id * 10 + $salon->id,
             ]);
 
             Abonnement::create([
