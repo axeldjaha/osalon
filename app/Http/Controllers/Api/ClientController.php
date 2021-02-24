@@ -94,17 +94,21 @@ class ClientController extends ApiController
 
         foreach ($request->all() as $client)
         {
-            if(isset($client["nom"]) && isset($client["telephone"]))
+            if(isset($client["telephone"]))
             {
                 $telephone = str_replace("+225", "", $client["telephone"]);
-                $clients[] = [
-                    $client["nom"],
-                    $telephone,
-                    $client["anniversaire"] ?? null,
-                    $this->salon->id,
-                    $date,
-                    $date,
-                ];
+                $telephone = str_replace(" ", "", "$telephone");
+                if(is_numeric($telephone))
+                {
+                    $clients[] = [
+                        $client["nom"] ?? null,
+                        $telephone,
+                        $client["anniversaire"] ?? null,
+                        $this->salon->id,
+                        $date,
+                        $date,
+                    ];
+                }
             }
         }
 
