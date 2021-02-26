@@ -66,15 +66,6 @@ Route::middleware("auth")->group(function ()
     });
 
     /**
-     * FICHIERS DE PROSPECTS
-     */
-    Route::group(['middleware' => ['permission:Prospects']], function () {
-        Route::resource("prospect/fichier", "FichierProspectController");
-        Route::post("prospect/fichier/{fichierProspect}}", "ProspectController@store")->name("fichier.prospect.store");
-        Route::delete("prospects/fichier/{fichierProspect}/prospect/{prospect}", "ProspectController@destroy")->name("fichier.prospect.destroy");
-    });
-
-    /**
      * SMS
      */
     Route::group(['middleware' => ['can:Envoi SMS']], function () {
