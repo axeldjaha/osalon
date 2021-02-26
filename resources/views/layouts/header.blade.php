@@ -1,4 +1,6 @@
-<div class="app-header header-shadow">
+@php($user = auth()->user())
+
+<div class="app-header bg-heavy-rain">
     <div class="app-header__logo">
         <div class="logo-src"></div>
         <div class="header__pane ml-auto">
@@ -32,100 +34,98 @@
 
     <div class="app-header__content">
         <div class="app-header-left">
-            <div class="search-wrapper">
-                <div class="input-holder">
-                    <input type="text" class="search-input" placeholder="Recherche">
-                    <button class="search-icon"><span></span></button>
-                </div>
-                <button class="close"></button>
-            </div>
             <ul class="header-megamenu nav">
-                @can("Users")
-                    <li class="dropdown nav-item">
-                        <a class="nav-link ml-2" href="{{route("admin.index")}}">
-                            <i class="nav-link-icon fa fa-users"></i>
-                            Admins
+                <li class="btn-group nav-item">
+                    @if($user->can("Comptes utilisateurs"))
+                        <a href="{{ route("user.index") }}" class="nav-link mr-2">
+                            <i class="nav-link-icon fa fa-users font-size-xlg"></i>
+                            &nbsp;Comptes utilisateurs
                         </a>
-                    </li>
-                @endcan
+                    @else
+                        <a class="nav-link mr-2 disabled opacity-3">
+                            <i class="nav-link-icon fa fa-users font-size-xlg"></i>
+                            &nbsp;Comptes utilisateurs
+                        </a>
+                    @endif
+                </li>
             </ul>
         </div>
 
         <div class="app-header-right">
-
             <div class="header-btn-lg pr-0">
                 <div class="widget-content p-0">
                     <div class="widget-content-wrapper">
                         <div class="widget-content-left">
-                            <div class="btn-group">
-                                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="p-0 btn">
-                                    @if(auth()->user()->avatar != null)
-                                        <img width="42" height="42" class="rounded-circle" src="{{asset('storage/avatars/'.auth()->user()->avatar)}}" alt="">
+                            <div class="btn-group show">
+                                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" class="p-0 btn">
+                                    @if($user->photo != null && file_exists(storage_path("app/public/users/$user->photo")))
+                                        <img width="42" height="42" class="rounded-circle" src="{{asset("storage/users/$user->photo")}}" alt="Photo de profile">
                                     @else
-                                        <img width="42" class="rounded-circle" src="{{asset("images/profile.png")}}" alt="">
+                                        <i class="fa fa-user text-primary font-size-xlg"></i>
                                     @endif
                                     <i class="fa fa-angle-down ml-2 opacity-8"></i>
                                 </a>
-                                <div tabindex="-1" role="menu" aria-hidden="true" class="rm-pointers dropdown-menu-lg dropdown-menu dropdown-menu-right">
-                                    <div class="dropdown-menu-header mb-0">
-                                        <div class="dropdown-menu-header-inner text-dark">
-                                            <div class="menu-header-image opacity-2"></div>
+                                <div tabindex="-1" role="menu" aria-hidden="true" class="rm-pointers dropdown-menu-lg dropdown-menu dropdown-menu-right" style="position: absolute; transform: translate3d(-292px, -3px, 0px); top: 0px; left: 0px; will-change: transform;" x-placement="top-end">
+                                    <div class="dropdown-menu-header">
+                                        <div class="dropdown-menu-header-inner bg-info" style="">
+                                            <div class="menu-header-image opacity-2" style="background-image: url('{{ asset("assets/images/dropdown-header/bg-profile.jpg") }}');"></div>
                                             <div class="menu-header-content text-left">
                                                 <div class="widget-content p-0">
                                                     <div class="widget-content-wrapper">
                                                         <div class="widget-content-left mr-3">
-                                                            @if(auth()->user()->avatar != null)
-                                                                <img width="42" height="42" class="rounded-circle" src="{{asset('storage/avatars/'.auth()->user()->avatar)}}" alt="">
+                                                            @if($user->photo != null && file_exists(storage_path("app/public/users/$user->photo")))
+                                                                <img width="42" height="42" class="rounded-circle" src="{{asset("storage/users/$user->photo")}}" alt="Photo de profile">
                                                             @else
-                                                                <img width="42" class="rounded-circle" src="{{asset("images/profile.png")}}" alt="">
+                                                                <i class="fa fa-user text-white font-size-xlg"></i>
                                                             @endif
                                                         </div>
                                                         <div class="widget-content-left">
-                                                            <div class="widget-heading">{{auth()->user()->name}}</div>
-                                                            <div class="widget-subheading opacity-8">{{auth()->user()->email}}
-                                                            </div>
-                                                        </div>
-                                                        <div class="widget-content-right mr-2">
-                                                            <button
-                                                                form-action="{{route("logout")}}"
-                                                                form-method="post"
-                                                                onclick="submitLinkForm(this)"
-                                                                class="btn-pill btn btn-danger">Déconnexion</button>
+                                                            <div class="widget-heading">{{ $user->name }}</div>
+                                                            <div class="widget-subheading opacity-8">{{ $user->email }}</div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="divider"></div>
-                                    <div class="scroll-area-xs" style="height: inherit">
-                                        <div class="scrollbar-container ps">
+                                    <div class="scroll-area-xs" style="height: initial;">
+                                        <div class="scrollbar-container ps ps--active-y">
                                             <ul class="nav flex-column">
+                                                <li class="nav-item-header nav-item">Mon profile</li>
                                                 <li class="nav-item">
-                                                    <a href="{{route("profil.infos")}}" class="nav-link">
-                                                        <i class="fa fa-user-edit mr-sm-1"></i>
-                                                        Modifier mes informations
+                                                    <a href="{{ route("account.infos") }}" class="nav-link">
+                                                        <i class="nav-link-icon fa fa-user-edit text-primary"></i>
+                                                        <span>Modifier mes informations</span>
                                                     </a>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a href="{{route("profil.acces")}}" class="nav-link">
-                                                        <i class="fa fa-key mr-sm-2"></i>
-                                                        Modifier mes accès
+                                                    <a href="{{ route("account.access") }}" class="nav-link">
+                                                        <i class="nav-link-icon fa fa-key text-primary"></i>
+                                                        <span>Modifier mes accès</span>
                                                     </a>
                                                 </li>
                                             </ul>
-                                            <div class="ps__rail-x" style="left: 0px; bottom: 0px;"><div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div></div><div class="ps__rail-y" style="top: 0px; right: 0px;"><div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 0px;"></div></div></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="widget-content-left  ml-3 header-user-info">
-                            <div class="widget-heading">
-                                {{auth()->user()->name}}
-                            </div>
+                            <div class="widget-heading" style="font-weight: 500 !important;">{{$user->name}}</div>
+                            <div hidden class="widget-subheading"> {{ $user->email }} </div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="header-btn-lg">
+                <button title="Déconnexion" class="btn btn-sm"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fa fa-sign-out-alt text-danger"></i> Déconnexion
+                </button>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
             </div>
         </div>
     </div>

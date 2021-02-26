@@ -96,6 +96,28 @@ class CreateAllTables extends Migration
             $table->unsignedBigInteger('offre_id')->nullable();
             $table->timestamps();
         });
+
+        Schema::create('contacts', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('nom')->nullable();
+            $table->string('telephone');
+            $table->unsignedBigInteger('sms_groupe_id')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('sms', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('to');
+            $table->text('message');
+            $table->string('user');
+            $table->timestamps();
+        });
+
+        Schema::create('sms_groupes', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('intitule');
+            $table->timestamps();
+        });
     }
 
     /**

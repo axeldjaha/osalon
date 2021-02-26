@@ -39,7 +39,7 @@ return [
 
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'admins',
         ],
 
         'api' => [
@@ -47,11 +47,6 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
-
-        /*'user' => [
-            'driver' => 'jwt',
-            'provider' => 'users',
-        ],*/
 
         'admin' => [
             'driver' => 'jwt',

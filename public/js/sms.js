@@ -31,7 +31,7 @@ $(document).ready(function()
      */
     messageInput.on('input', function()
     {
-        //todo: uncomment line below
+        //todo: uncomment line below if needed message without accent
         //messageInput.val(removeAccents(messageInput.val()));
         updateCounters();
     });

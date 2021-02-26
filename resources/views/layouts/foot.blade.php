@@ -25,9 +25,89 @@
 </script>
 
 <script>
+    $(function () {
+        $("table > tbody > tr").click(function () {
+            $('input:not([disabled]):first', this).focus();
+        });
+    })
+</script>
+
+<script>
+    $(function (e) {
+        window.filterTable = function(input, table)
+        {
+            if(table != undefined)
+            {
+                $("#" + table).DataTable().search($(input).val()).draw();
+            }
+            else
+            {
+                $("#datatable").DataTable().search($(input).val()).draw();
+            }
+        };
+    })
+</script>
+
+<script>
     $(document).ready(function () {
 
-        $('#datatable').DataTable({
+        window.table = $('#datatable').DataTable({
+            responsive: true,
+            "bFilter": false, // show search input
+            "paging": false,
+            "ordering": false,
+            "info": false,
+            "searching": true,
+            "language": {
+                "lengthMenu": "Afficher _MENU_ liste de contacts par page",
+                "zeroRecords": "Aucun enregistrement",
+                "infoEmpty": "No records available",
+                "search":         "",
+                "paginate": {
+                    "first":      "Premier",
+                    "last":       "Dernier",
+                    "next":       "Suivant",
+                    "previous":   "Précédent"
+                },
+            },
+        });
+
+        $("#datatable_filter").css("display", "none !important"); // hidden search input
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        window.datatableUnordered = $('#datatableUnordered').DataTable({
+            responsive: true,
+            "bFilter": false, // show search input
+            "paging": false,
+            "ordering": false,
+            "info": false,
+            "searching": true,
+            "language": {
+                "lengthMenu": "Afficher _MENU_ liste de contacts par page",
+                "zeroRecords": "Aucun enregistrement",
+                "infoEmpty": "No records available",
+                "search":         "",
+                "paginate": {
+                    "first":      "Premier",
+                    "last":       "Dernier",
+                    "next":       "Suivant",
+                    "previous":   "Précédent"
+                },
+            },
+        });
+
+        $("#datatableUnordered_filter").css("display", "none"); // hidden search input
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        window.table = $('#checkboxtable').DataTable({
             responsive: true,
             "bFilter": false, // show search input
             "paging": false,
@@ -46,16 +126,93 @@
                     "previous":   "Précédent"
                 },
             },
-            //"order": [[ 0, "desc" ]],
-            "order": [] //disable default ordering
+
+            'columnDefs': [
+                {
+                    'targets': 0,
+                    'checkboxes': {'selectRow': true},
+                }
+            ],
+            'select': {'style': 'multi'},
+            'order': [[1, 'asc']]
         });
 
-        $("#datatable_filter").css("display", "none"); // hidden search input
+        $("#checkboxtable_filter").css("display", "none"); // hidden search input
+    });
+</script>
 
-        window.filterTable = function(input)
-        {
-            $('#datatable').DataTable().search($(input).val()).draw();
-        };
+<script>
+    $(document).ready(function () {
+
+        window.checkboxtableUnordered = $('#checkboxtableUnordered').DataTable({
+            responsive: true,
+            "bFilter": false, // show search input
+            "paging": false,
+            "ordering": false,
+            "info": false,
+            "searching": true,
+            "language": {
+                "lengthMenu": "Afficher _MENU_ liste de contacts par page",
+                "zeroRecords": "Aucun enregistrement",
+                "infoEmpty": "No records available",
+                "search":         "",
+                "paginate": {
+                    "first":      "Premier",
+                    "last":       "Dernier",
+                    "next":       "Suivant",
+                    "previous":   "Précédent"
+                },
+            },
+
+            'columnDefs': [
+                {
+                    'targets': 0,
+                    'checkboxes': {'selectRow': true},
+                }
+            ],
+            'select': {'style': 'multi'},
+            'order': [[1, 'asc']]
+        });
+
+        $("#checkboxtableUnordered_filter").css("display", "none"); // hidden search input
+
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        window.checkboxtableStyleSingleUnordered = $('#checkboxtableStyleSingleUnordered').DataTable({
+            responsive: true,
+            "bFilter": false, // show search input
+            "paging": false,
+            "ordering": false,
+            "info": false,
+            "searching": true,
+            "language": {
+                "lengthMenu": "Afficher _MENU_ liste de contacts par page",
+                "zeroRecords": "Aucun enregistrement",
+                "infoEmpty": "No records available",
+                "search":         "",
+                "paginate": {
+                    "first":      "Premier",
+                    "last":       "Dernier",
+                    "next":       "Suivant",
+                    "previous":   "Précédent"
+                },
+            },
+
+            'columnDefs': [
+                {
+                    'targets': 0,
+                    'checkboxes': {'selectRow': true},
+                }
+            ],
+            'select': {'style': 'single'},
+            'order': [[1, 'asc']]
+        });
+
+        $("#checkboxtableStyleSingleUnordered_filter").css("display", "none"); // hidden search input
 
     });
 </script>

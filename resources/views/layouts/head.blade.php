@@ -13,7 +13,7 @@
 
 <link href="{{asset('main.css')}}" rel="stylesheet">
 
-<link href="{{asset('css/appstyle.css')}}" rel="stylesheet">
+<link href="{{asset('css/style.css')}}" rel="stylesheet">
 
 <script type="text/javascript" src="https://cdn.datatables.net/s/dt/dt-1.10.10,se-1.1.0/datatables.min.js"></script>
 <link type="text/css" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css" rel="stylesheet" />

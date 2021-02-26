@@ -28,15 +28,10 @@ Route::get("/test", "TestController@test");
 Route::middleware("auth")->group(function ()
 {
     /**
-     * PRESSING
+     * SALON
      */
     Route::group(['middleware' => ['permission:Pressings']], function () {
-        Route::resource("pressing", "PressingController");
-        Route::get("pressing/{pressing}/users", "PressingController@users")->name("pressing.users");
-        Route::get("pressing/{pressing}/user/create", "PressingController@createUser")->name("pressing.createUser");
-        Route::post("pressing/{pressing}/user", "PressingController@storeUser")->name("pressing.storeUser");
-        Route::delete("pressing/{pressing}/user/{user}", "PressingController@destroyeUser")->name("pressing.destroyeUser");
-        Route::resource("pressing/{pressing}/service", "ServiceController");
+        Route::resource("salon", "SalonController")->only(["index", "show", "destroy"]);
     });
 
     /**
@@ -54,8 +49,6 @@ Route::middleware("auth")->group(function ()
      */
     Route::group(['middleware' => ['permission:Abonnements']], function () {
         Route::resource("abonnement", "AbonnementController")->only(["index", "create", "store"]);
-        Route::get("abonnement/pressing/{pressing}/", "AbonnementController@reabonnement")->name("abonnement.reabonnement");
-        Route::post("abonnement/pressing/{pressing}/", "AbonnementController@reabonner")->name("abonnement.reabonner");
     });
 
     /**
@@ -84,14 +77,18 @@ Route::middleware("auth")->group(function ()
     /**
      * SMS
      */
-    Route::group(['middleware' => ['permission:SMS']], function () {
+    Route::group(['middleware' => ['can:Envoi SMS']], function () {
         Route::get("/sms", "SMSController@index")->name("sms.index");
         Route::get("/sms/envoi", "SMSController@create")->name("sms.create");
-        Route::post("/sms/envoi", "SMSController@store")->name("sms.store");
-        Route::delete("sms/{id}", "SMSController@destroy")->name("sms.destroy");
-        Route::delete("sms/delete/checked", "SMSController@destroyChecked")->name("sms.delete.checked");
-        Route::get("sms/recipients/prospects", "SMSController@loadProspects")->name("sms.recipients.prospects");
-        Route::get("sms/recipients/clients", "SMSController@loadClients")->name("sms.recipients.clients");
+        Route::post("/sms/envoi", "SMSController@store")->name("sms.envoi");
+        Route::delete("sms", "SMSController@destroy")->name("sms.destroy");
+        Route::get("sms/fichier", "SmsGroupeController@index")->name("sms.fichier.index");
+        Route::get("sms/fichier/{sms_groupe}", "SmsGroupeController@show")->name("sms.fichier.show");
+        Route::post("sms/fichier/importer", "SmsGroupeController@importer")->name("sms.fichier.importer");
+        Route::get("sms/fichier/{sms_groupe}/exporter", "SmsGroupeController@exporter")->name("sms.fichier.exporter");
+        Route::delete("sms/fichier/{sms_groupe}", "SmsGroupeController@destroy")->name("sms.fichier.destroy");
+        Route::post("sms/contact/store", "SmsGroupeController@storeContact")->name("sms.contact.store");
+        Route::delete("sms/contact/{contact}", "SmsGroupeController@destroyContact")->name("sms.contact.destroy");
     });
 
 
@@ -106,11 +103,14 @@ Route::middleware("auth")->group(function ()
     Route::group(['middleware' => ['permission:Admins']], function () {
         Route::resource("/admin", "Admin\AdminController")->except("show");
     });
-    // profile
-    Route::get("/compte/mes-acces", "Admin\ProfilController@acces")->name("profil.acces");
-    Route::put("/compte/mes-acces", "Admin\ProfilController@updateAcces")->name("profil.acces");
-    Route::get("/compte/mes-infos", "Admin\ProfilController@infos")->name("profil.infos");
-    Route::put("/compte/mes-infos", "Admin\ProfilController@updateInfos")->name("profil.infos");
+
+    /**
+     * USER ACCOUNT
+     */
+    Route::get("compte/acces", "Admin\AccountController@acces")->name("account.access");
+    Route::put("compte/acces", "Admin\AccountController@updateAcces")->name("account.acces.update");
+    Route::get("compte/infos", "Admin\AccountController@infos")->name("account.infos");
+    Route::put("compte/infos", "Admin\AccountController@updateInfos")->name("account.infos.update");
 
 
 });

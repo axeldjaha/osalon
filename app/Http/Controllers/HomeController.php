@@ -39,19 +39,16 @@ class HomeController extends Controller
         $data["moisCourant"] = Carbon::now()->locale('fr')->isoFormat('MMMM YYYY');
         $data["users"] = User::count();
         $data["salons"] = Salon::count();
-        $transactions = Transaction::whereYear("date_transaction", date("Y"))
-            ->whereMonth("date_transaction", date("m"))
+        $transactions = Transaction::whereYear("date", date("Y"))
+            ->whereMonth("date", date("m"))
             ->get();
         $data["transactions"] = $transactions->count();
         $data["montantTransactions"] = $transactions->sum("montant");
         $data["abonnementsExp"] = Abonnement::whereDate("echeance", "<", Carbon::now())->count();
-        $data["recette"] = Recette::whereYear("created_at", date("Y"))
-            ->whereMonth("created_at", date("m"))
-            ->sum("montant");
 
-        $data["sms"] = Sms::whereYear("created_at", date("Y"))
+        /*$data["sms"] = Sms::whereYear("created_at", date("Y"))
             ->whereMonth("created_at", date("m"))
-            ->count();
+            ->count();*/
 
         return view('home', $data);
     }

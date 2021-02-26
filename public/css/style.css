@@ -1,0 +1,215 @@
+.text-orange{ color: #ff6c2c !important;}
+.text-vert{ color: #669966 !important;}
+.text-black{ color: #000000 !important;}
+
+
+.bg-orange{ background-color: #ff6c2c !important; }
+.bg-vert{ background-color: #669966 !important; }
+
+.border-orange{ border: 1px solid #ff6c2c !important;}
+
+.fit
+{
+    white-space: nowrap; width: 1%;
+}
+
+.search-wrapper .input-holder .search-icon span::before {
+    /* background: #ff6c2c !important; */
+}
+.search-wrapper .input-holder .search-icon span::after {
+    /* border: 2px solid #ff6c2c; */
+}
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
+.text-transform-initial{
+    text-transform: initial;
+}
+
+menu i.metismenu-icon {
+    text-align: center;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    position: absolute;
+    left: 5px;
+    top: 50%;
+    margin-top: -17px;
+    font-size: 1.5rem;
+    opacity: 1 !important;
+    transition: color 300ms;
+}
+
+.vertical-nav-menu li a.mm-active {
+    color: #669966;
+    background: #e0f3ff;
+    font-weight: bold;
+}
+
+.vertical-nav-menu li a:hover {
+    color: #669966;
+    text-decoration: none;
+}
+
+.vertical-nav-menu li a {
+    /* color: #6c757d; */
+}
+
+.vertical-nav-menu li {
+    font-size: 1rem;
+}
+
+.vertical-nav-menu li a.mm-active{
+    color: #ff6c2c;
+    background: #e0f3ff;
+    font-weight: normal;
+    /* opacity: 1; */
+}
+.vertical-nav-menu ul>li>a.mm-active {
+    color: #ff6c2c;
+    background: #e0f3ff;
+    font-weight: normal;
+}
+
+.vertical-nav-menu li.mm-active>a {
+    font-weight: normal;
+}
+
+.vertical-nav-menu li a.mm-active i.metismenu-icon {
+    opacity: 1;
+}
+
+.ellipsis-1{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.ellipsis-2{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: 2;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+
+.app-header__logo .logo-src {
+    background: url(../images/logo.png) no-repeat;
+    background-size: contain;
+    width: 110px;
+    height: 45px;
+}
+
+table.dataTable td.dt-checkboxes-cell{
+    text-align: center;
+}
+
+.dt-checkboxes-select td{
+    cursor: pointer !important;
+}
+
+.hidden{
+    display: none; !important;
+}
+
+.header-megamenu.nav>li>.nav-link.disabled {
+    opacity: .5;
+    pointer-events: none;
+    cursor: default;
+}
+
+.search-wrapper .input-holder .search-icon span::before {
+    /* background: #ff6c2c !important; */
+}
+.search-wrapper .input-holder .search-icon span::after {
+    /* border: 2px solid #ff6c2c; */
+}
+
+table.dataTable.no-tr-bg tbody>tr.selected:nth-of-type(odd) {
+    /* background-color: rgba(0,0,0,0.03); */
+    background-color: transparent;
+}
+
+table.dataTable.no-tr-bg tbody>tr.selected:nth-of-type(even) {
+    background-color: transparent;
+}
+
+label.required:after {
+    content:" *";
+    color: #d92550 !important;
+}
+
+.selected-notes{
+    background-color: #acbad4 !important;
+}
+
+.widget-chart .widget-numbers {
+    font-size: 2.1rem;
+}
+
+.custom-card{
+    box-shadow: 0 0 0rem transparent !important;
+    border-width: 0 !important;
+}
+
+.page-title-actions .fa{
+    color: #3F6ADC;
+}
+
+.page-title-icon .fa{
+    color: #3F6ADC !important;
+}
+
+#datatable_filter{
+    display: none !important;
+}
+
+.app-page-title{
+    margin-bottom: 0 !important;
+}
+
+.dataTables_empty{
+    display: none !important;
+}
+
+.table th, .table td {
+    padding: .35rem .55rem;
+}
+
+#trancheTable td{
+    padding: .55rem;
+}
+
+.header-btn-lg::before {
+    background: #3f6ad8;
+    opacity: .2;
+}
+
+.app-main__outer.professeur{
+    padding-left: initial !important;
+}
+
+.vertical-nav-menu i.metismenu-state-icon, .vertical-nav-menu i.metismenu-icon {
+    opacity: .5;
+    color: steelblue;
+}
+
+input {
+    overflow: hidden;
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    background-color: transparent;
+}
+
+.dropdown-menu-header .dropdown-menu-header-inner {
+    padding: .5rem .5rem;
+}
+
+.nav-link .nav-link-icon {
+    opacity: 1;
+}

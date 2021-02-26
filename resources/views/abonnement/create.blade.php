@@ -15,20 +15,7 @@
                             <div class="page-title-head center-elem">
                                 <span class="d-inline-block">Abonnement</span>
                             </div>
-                            <div class="page-title-subheading opacity-10">
-                                <h6 class="" aria-label="breadcrumb">
-                                    <ol class="breadcrumb">
-                                        <li class="breadcrumb-item">
-                                            <a>
-                                                <i aria-hidden="true" class="fa fa-home"></i>
-                                            </a>
-                                        </li>
-                                        <li class="breadcrumb-item">
-                                            <a href="{{route("abonnement.index")}}" class="">Liste</a>
-                                        </li>
-                                    </ol>
-                                </h6>
-                            </div>
+                            <div class="page-title-subheading">Cette section est réservée aux réabonnements</div>
                         </div>
                     </div>
 
@@ -39,53 +26,75 @@
 
             @include("layouts.alert")
 
+            {!! Form::open()->route("abonnement.store") !!}
+
             <div class="main-card mb-3 card">
-                <div class="card-header-tab card-header">
-                    <div class="card-header-title font-size-lg text-capitalize font-weight-normal">
-                        <span class="btn-icon-wrapper pr-2 opacity-7">
-                            <i class="fa fa-credit-card fa-w-20"></i>
-                        </span>
-                        Réabonnement
+                <div class="card-header-tab card-header bg-heavy-rain">
+                    <div class="card-header-title font-size-lg font-weight-normal">
+                        <span class="d-inline-block mr-sm-3">Réabonnement</span>
                     </div>
                 </div>
-                <div class="card-body">
-                    {!! Form::open()->route("abonnement.store") !!}
-                    <div class="form-row">
-                        <div class="col-lg-6">
-                            <div class="form-group">
-                                <label for="pressing">Pressing</label>
-                                <select name="pressing" id="pressing" class="multiselect-dropdown form-control @error("pressing") is-invalid @enderror">
-                                    <option disabled {{old("pressing") == null ? "selected" : ""}}>------</option>
-                                    @foreach($pressings as $pressing)
-                                        <option value="{{$pressing->id}}" {{old("pressing") == $pressing->id ? "selected" : ""}}>
-                                            {{$pressing->abonnement->pid}} - {{$pressing->nom}}
+                <div class="card-body p-0" style="background: #fafafa">
+                    <table class="table table-striped mb-0">
+                        <tbody>
+                        <tr>
+                            <td class="fit"><label for="salon" class="col-form-label">Salon</label></td>
+                            <td style="width: 20%">
+                                <select required class="form-control @error("salon") is-invalid @enderror" id="salon" name="salon">
+                                    <option value="" {{old("salon") == null ? "selected" : ""}} disabled>----</option>
+                                    @foreach($salons as $salon)
+                                        <option value="{{ $salon->pid }}" @if(request()->input("salon") == $salon->pid) selected @endif>
+                                            {{ $salon->pid }} - {{ $salon->nom }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error("pressing") <div class="invalid-feedback">{{$message}}</div> @enderror
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-lg-2">
-                            {!! Form::text("montant", "Montant")->type("number")->min(0) !!}
-                        </div>
-                        <div class="col-lg-2">
-                            {!! Form::text("validite", "Validité")->type("number")->min(0) !!}
-                        </div>
-                        <div class="col-lg-2">
-                            {!! Form::select("mode_paiement", "Mode de paiement")->options($modes->prepend('------', '')) !!}
-                        </div>
-                    </div>
+                                @error("salon") <div class="invalid-feedback">{{$message}}</div> @enderror
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fit"><label for="montant" class="col-form-label">Montant</label></td>
+                            <td style="width: 20%">
+                                <input required type="number" id="montant" name="montant" min="0" class="form-control @error("montant") is-invalid @enderror" value="{{ old("montant") }}">
+                                @error("montant") <div class="invalid-feedback">{{$message}}</div> @enderror
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fit"><label for="validite" class="col-form-label">Validité</label></td>
+                            <td style="width: 20%">
+                                <input required type="number" id="validite" name="validite" class="form-control @error("validite") is-invalid @enderror" value="{{ old("validite") }}">
+                                @error("validite") <div class="invalid-feedback">{{$message}}</div> @enderror
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fit"><label for="mode_paiement" class="col-form-label">Mode paiement</label></td>
+                            <td style="width: 20%">
+                                <select required name="mode_paiement" id="mode_paiement" class="form-control @error("mode_paiement") is-invalid @enderror">
+                                    <option value="" disabled {{old("mode_paiement") == null ? "selected" : ""}}>------</option>
+                                    @foreach($modes as $mode => $name)
+                                        <option value="{{$mode}}" {{old("mode_paiement") == $mode ? "selected" : ""}}>
+                                            {{ $name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error("mode_paiement") <div class="invalid-feedback">{{$message}}</div> @enderror
+                            </td>
+                        </tr>
 
-                    <div class="divider"></div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Réabonner</button>
-                    </div>
-                    {!! Form::close() !!}
+                        <tr>
+                            <td class="fit"></td>
+                            <td style="width: 20% !important;">
+                                <button class="btn btn-primary btn-lg">
+                                    Réabonner
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+
+            {!! Form::close() !!}
+
         </div>
     </div>
 

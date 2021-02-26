@@ -1,11 +1,11 @@
 <div class="page-title-actions d-flex align-items-center">
-    <a href="{{route("abonnement.create")}}" class="btn btn-primary">
-        <span class="btn-icon-wrapper pr-2 opacity-7">
-            <i class="fa fa-plus fa-w-20"></i>
-        </span>
-        Nouveau
+    <a href="{{ route("abonnement.index") }}" class="btn-icon-vertical btn bg-heavy-rain mr-2">
+        <i class="fa fa-file-alt btn-icon-wrapper text-primary" style="font-size: 1.5rem;"></i> Parcourir
     </a>
-    <div class="d-inline-block pl-3">
-        <input oninput="filterTable(this)" type="search" class="form-control" style="width: initial" placeholder="Recherche...">
-    </div>
+
+    <a href="{{ route("abonnement.create") }}" class="btn-icon-vertical btn bg-heavy-rain">
+        <i class="fa fa-credit-card btn-icon-wrapper text-primary" style="font-size: 1.5rem;"></i> Réabonner
+    </a>
 </div>
+
+

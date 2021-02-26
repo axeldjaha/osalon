@@ -23,6 +23,10 @@
 
         <div class="app-drawer-overlay d-none animated fadeIn"></div>
 
+        <!-- Modal -->
+        @yield("modal")
+        <!--/Modal -->
+
         @include("layouts.foot")
 
     </body>

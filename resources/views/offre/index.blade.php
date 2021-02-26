@@ -8,27 +8,14 @@
                 <div class="page-title-wrapper">
                     <div class="page-title-heading">
                         <div class="page-title-icon">
-                            <i class="fa fa-gift text-orange">
+                            <i class="fa fa-coins">
                             </i>
                         </div>
                         <div>
                             <div class="page-title-head center-elem">
                                 <span class="d-inline-block">Offre</span>
                             </div>
-                            <div class="page-title-subheading opacity-10">
-                                <h6 class="" aria-label="breadcrumb">
-                                    <ol class="breadcrumb">
-                                        <li class="breadcrumb-item">
-                                            <a>
-                                                <i aria-hidden="true" class="fa fa-home"></i>
-                                            </a>
-                                        </li>
-                                        <li class="breadcrumb-item">
-                                            <a href="{{route("offre.index")}}" class="">Liste</a>
-                                        </li>
-                                    </ol>
-                                </h6>
-                            </div>
+                            <div class="page-title-subheading">Cette section est réservée à l'offre</div>
                         </div>
                     </div>
 

@@ -9,6 +9,7 @@ use App\Transaction;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use stdClass;
 
@@ -24,9 +25,7 @@ class AbonnementController extends Controller
         $data["title"] = "Abonnement";
         $data["active"] = "abonnement";
 
-        $data["abonnements"] = Abonnement::with("salon")
-            ->where("echeance", "<", Carbon::now())
-            ->get();
+        $data["salons"] = Salon::orderBy("nom")->get();
 
         return view("abonnement.index", $data);
     }
@@ -41,7 +40,7 @@ class AbonnementController extends Controller
         $data["title"] = "Abonnement";
         $data["active"] = "abonnement";
 
-        $data["salons"] = Salon::with("abonnement")->orderBy("nom")->get();
+        $data["salons"] = Salon::orderBy("nom")->get();
         $data["modes"] = collect([
             Transaction::$MODE_ESPECE => Transaction::$MODE_ESPECE,
             Transaction::$MODE_PAIEMENT_LIGNE => Transaction::$MODE_PAIEMENT_LIGNE,
@@ -66,71 +65,6 @@ class AbonnementController extends Controller
         return view("abonnement.reabonnement", $data);
     }
 
-    public function reabonner(Request $request, Salon $salon)
-    {
-        $this->validate($request, [
-            "montant" => "required|numeric",
-            "validite" => "required|numeric",
-            "mode_paiement" => "required",
-        ]);
-
-        $reference = $salon->id . Carbon::now()->timestamp;
-        $transaction = $salon->transactions()->where("statut", "!=", Transaction::$STATUT_TERMINE)->first();
-        if($transaction != null)
-        {
-            $transaction->update([
-                "reference" => $reference,
-                "montant" => $request->montant,
-                "validite" => $request->validite,
-                "statut" => Transaction::$STATUT_TERMINE,
-                "mode_paiement" => $request->mode_paiement,
-                "date_transaction" => Carbon::now(),
-                "salon_id" => $salon->id,
-                "offre_id" => null,
-            ]);
-        }
-        else
-        {
-            Transaction::create([
-                "reference" => $reference,
-                "montant" => $request->montant,
-                "validite" => $request->validite,
-                "statut" => Transaction::$STATUT_TERMINE,
-                "mode_paiement" => $request->mode_paiement,
-                "date_transaction" => Carbon::now(),
-                "salon_id" => $salon->id,
-                "offre_id" => null,
-            ]);
-        }
-
-        $abonnement  = Carbon::parse($salon->abonnement->echeance);
-        if($abonnement->greaterThanOrEqualTo(Carbon::now()))
-        {
-            $echeance = $abonnement->addDays($request->validite);
-        }
-        else
-        {
-            $echeance = Carbon::now()->addDays($request->validite);
-        }
-
-        $salon->abonnement->update([
-            "echeance" => $echeance
-        ]);
-
-        $message =
-            "Réabonnement effectué avec succès!".
-            "\nVotre compte est actif jusqu'au " . $echeance->format("d/m/Y") . ".";
-        $sms = new stdClass();
-        $sms->to = [$salon->users()->where("role", User::$ROLE_SUPERVISEUR)->first()->telephone];
-        $sms->message = $message;
-        Queue::push(new SendSMS($sms));
-
-        session()->flash('type', 'alert-success');
-        session()->flash('message', 'Réabonnement effectué avec succès!');
-
-        return redirect()->route("abonnement.index");
-    }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -144,61 +78,71 @@ class AbonnementController extends Controller
             "montant" => "required|numeric",
             "validite" => "required|numeric",
             "mode_paiement" => "required",
-            "salon" => "required|exists:salons,id",
+            "salon" => "required|exists:salons,pid",
         ]);
 
-        $salon = Salon::findOrFail($request->salon);
-
-        $reference = $salon->id . Carbon::now()->timestamp;
-        $transaction = $salon->transactions()->where("statut", "!=", Transaction::$STATUT_TERMINE)->first();
-        if($transaction != null)
+        DB::transaction(function () use ($request)
         {
-            $transaction->update([
-                "reference" => $reference,
+            $salon = Salon::where("pid", $request->salon)->firstOrFail();
+
+            $reference = $salon->id . Carbon::now()->timestamp;
+            $transaction = $salon->transactions()->where("statut", "!=", Transaction::$STATUT_TERMINE)->first();
+            if($transaction != null)
+            {
+                $transaction->update([
+                    "reference" => $reference,
+                    "montant" => $request->montant,
+                    "validite" => $request->validite,
+                    "statut" => Transaction::$STATUT_TERMINE,
+                    "mode_paiement" => $request->mode_paiement,
+                    "date" => Carbon::now(),
+                    "salon_id" => $salon->id,
+                    "offre_id" => null,
+                ]);
+            }
+            else
+            {
+                Transaction::create([
+                    "reference" => $reference,
+                    "montant" => $request->montant,
+                    "validite" => $request->validite,
+                    "statut" => Transaction::$STATUT_TERMINE,
+                    "mode_paiement" => $request->mode_paiement,
+                    "date" => Carbon::now(),
+                    "salon_id" => $salon->id,
+                    "offre_id" => null,
+                ]);
+            }
+
+            $dernierAbonnement  = Carbon::parse($salon->abonnements()->orderBy("id", "desc")->first()->echeance);
+            if($dernierAbonnement->greaterThanOrEqualTo(Carbon::now()))
+            {
+                $echeance = $dernierAbonnement->addDays($request->validite);
+            }
+            else
+            {
+                $echeance = Carbon::now()->addDays($request->validite);
+            }
+
+            Abonnement::create([
+                "date" => Carbon::today(),
+                "echeance" => $echeance,
                 "montant" => $request->montant,
-                "validite" => $request->validite,
-                "statut" => Transaction::$STATUT_TERMINE,
-                "mode_paiement" => $request->mode_paiement,
-                "date_transaction" => Carbon::now(),
                 "salon_id" => $salon->id,
-                "offre_id" => null,
             ]);
-        }
-        else
-        {
-            Transaction::create([
-                "reference" => $reference,
-                "montant" => $request->montant,
-                "validite" => $request->validite,
-                "statut" => Transaction::$STATUT_TERMINE,
-                "mode_paiement" => $request->mode_paiement,
-                "date_transaction" => Carbon::now(),
-                "salon_id" => $salon->id,
-                "offre_id" => null,
-            ]);
-        }
 
-        $abonnement  = Carbon::parse($salon->abonnement->echeance);
-        if($abonnement->greaterThanOrEqualTo(Carbon::now()))
-        {
-            $echeance = $abonnement->addDays($request->validite);
-        }
-        else
-        {
-            $echeance = Carbon::now()->addDays($request->validite);
-        }
+            $message =
+                "Votre réabonnement a été effectué avec succès!".
+                "\nSalon: $salon->nom" .
+                //"\nMontant: $request->montant" .
+                "\nCompte actif jusqu'au: " . $echeance->format("d/m/Y") .
+                "\nL'équipe de " . config("app.name");
+            $sms = new stdClass();
+            $sms->to = $salon->users()->pluck("telephone")->toArray();
+            $sms->message = $message;
+            Queue::push(new SendSMS($sms));
 
-        $salon->abonnement->update([
-            "echeance" => $echeance
-        ]);
-
-        $message =
-            "Réabonnement effectué avec succès!".
-            "\nVotre compte est actif jusqu'au " . $echeance->format("d/m/Y") . ".";
-        $sms = new stdClass();
-        $sms->to = [$salon->users()->where("role", User::$ROLE_SUPERVISEUR)->first()->telephone];
-        $sms->message = $message;
-        Queue::push(new SendSMS($sms));
+        }, 1);
 
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Réabonnement effectué avec succès!');

@@ -1,4 +1,4 @@
-<div class="app-sidebar sidebar-shadow">
+<div class="app-sidebar sidebar-shadow" style="background: #fafafa">
     <div class="app-header__logo">
         <div class="logo-src"></div>
         <div class="header__pane ml-auto">
@@ -35,24 +35,15 @@
                 <li class="app-sidebar__heading"> </li>
                 <li>
                     <a href="{{route("dashboard")}}" class="">
-                        <i class="metismenu-icon pe-7s-home"></i>
-                        Tableau de bord
+                        <i class="metismenu-icon fa fa-home"></i>
+                        Accueil
                     </a>
                 </li>
                 @can('Pressings')
                     <li>
-                        <a href="{{route("pressing.index")}}" class="{{$active == "pressing" ? "mm-active" : ""}}">
-                            <i class="metismenu-icon lnr-apartment"></i>
-                            Pressings
-                        </a>
-                    </li>
-                @endcan
-
-                @can('Users')
-                    <li>
-                        <a href="{{route("user.index")}}" class="{{$active == "user" ? "mm-active" : ""}}">
-                            <i class="metismenu-icon lnr-user"></i>
-                            Utilisateurs
+                        <a href="{{route("salon.index")}}" class="{{$active == "salon" ? "mm-active" : ""}}">
+                            <i class="metismenu-icon fa fa-tachometer-alt"></i>
+                            Salons
                         </a>
                     </li>
                 @endcan
@@ -69,7 +60,7 @@
                 @can('Transactions')
                     <li>
                         <a href="{{route("transaction.index")}}" class="{{$active == "transaction" ? "mm-active" : ""}}">
-                            <i class="metismenu-icon fa lnr-database"></i>
+                            <i class="metismenu-icon fa fa-coins"></i>
                             Transactions
                         </a>
                     </li>
@@ -79,25 +70,16 @@
                     <li>
                         <a href="{{route("offre.index")}}" class="{{$active == "offre" ? "mm-active" : ""}}">
                             <i class="metismenu-icon fa fa-gift"></i>
-                            Offres
-                        </a>
-                    </li>
-                @endcan
-
-                @can('Prospects')
-                    <li>
-                        <a href="{{route("fichier.index")}}" class="{{$active == "prospect" ? "mm-active" : ""}}">
-                            <i class="metismenu-icon fa fa-file-excel"></i>
-                            Prospects
+                            Offre
                         </a>
                     </li>
                 @endcan
 
                 @can('SMS')
                     <li>
-                        <a href="{{route("sms.create")}}" class="{{$active == "sms" ? "mm-active" : ""}}">
-                            <i class="metismenu-icon pe-7s-chat"></i>
-                            Envoi SMS
+                        <a href="{{route("sms.create")}}" class="{{$active == 'sms' ? 'mm-active' : ''}}">
+                            <i class="metismenu-icon fa fa-paper-plane"></i>
+                            SMS
                         </a>
                     </li>
                 @endcan

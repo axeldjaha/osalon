@@ -58,6 +58,10 @@ class CreateForeignKeys extends Migration
             $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
             $table->foreign('offre_id')->references('id')->on('offres')->onDelete('set null');
         });
+
+        Schema::table('contacts', function (Blueprint $table) {
+            $table->foreign('sms_groupe_id')->references('id')->on('sms_groupes')->onDelete('cascade');
+        });
     }
 
     /**

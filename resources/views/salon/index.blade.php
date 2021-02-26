@@ -8,16 +8,18 @@
                 <div class="page-title-wrapper">
                     <div class="page-title-heading">
                         <div class="page-title-icon">
-                            <i class="fa fa-coins">
+                            <i class="fa fa-tachometer-alt text-orange">
                             </i>
                         </div>
                         <div>
                             <div class="page-title-head center-elem">
-                                <span class="d-inline-block">Transactions</span>
+                                <span class="d-inline-block">Salon</span>
                             </div>
-                            <div class="page-title-subheading">Cette section est réservée aux transactions</div>
+                            <div class="page-title-subheading">Cette section est réservée à la gestion des salons</div>
                         </div>
                     </div>
+
+                    @include("salon.actions")
 
                 </div>
             </div>
@@ -27,7 +29,10 @@
             <div class="main-card mb-3 card">
                 <div class="card-header-tab card-header bg-heavy-rain">
                     <div class="card-header-title font-size-lg font-weight-normal">
-                        <span class="d-inline-block mr-sm-3">Les 100 dernières transactions</span>
+                        <span class="d-inline-block mr-sm-3">Parcourir</span>
+                        <div class="text-transform-initial mr-sm-3">
+                            Total: <span class="badge badge-primary">{{ count($salons) }}</span>
+                        </div>
                     </div>
                     <div class="btn-actions-pane-right d-flex align-items-center ">
                         <input type="search" oninput="filterTable(this, 'datatable')" class="form-control form-control-sm" placeholder="Chercher dans la liste">
@@ -37,25 +42,25 @@
                     <table id="datatable" class="table table-hover table-striped table-bordered" style="margin-bottom: 0 !important; margin-top: 0 !important;">
                         <thead class="bg-heavy-rain">
                         <tr>
-                            <th>Référence</th>
                             <th>Salon</th>
+                            <th>Adresse</th>
                             <th>Pid</th>
-                            <th>Montant</th>
-                            <th>Validité</th>
-                            <th>Mode paiement</th>
-                            <th>Date</th>
+                            <th>Créé le</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($transactions as $transaction)
+                        @foreach($salons as $salon)
                             <tr>
-                                <td>{{$transaction->reference}}</td>
-                                <td>{{$transaction->salon->nom}}</td>
-                                <td>{{$transaction->salon->pid}}</td>
-                                <td>{{number_format($transaction->montant, 0, ",", " ")}}</td>
-                                <td>{{$transaction->validite}}</td>
-                                <td>{{$transaction->mode_paiement}}</td>
-                                <td><span hidden>{{$transaction->date_transaction}}</span> {{date("d/m/Y", strtotime($transaction->date_transaction))}}</td>
+                                <td>{{$salon->nom}}</td>
+                                <td>{{$salon->adresse}}</td>
+                                <td>{{$salon->pid}}</td>
+                                <td><span hidden>{{$salon->created_at}}</span> {{date("d/m/Y", strtotime($salon->created_at))}}</td>
+                                <td>
+                                    <a class="btn btn-link btn-sm mr-sm-2 pt-0 pb-0" href="{{ route("salon.show", $salon->id) }}">
+                                        <i class="fa fa-tasks"></i> Détails
+                                    </a>
+                                </td>
                             </tr>
                         @endforeach
                         </tbody>

@@ -3,248 +3,208 @@
 @section("content")
 
     <div class="app-main__outer">
-        {!! Form::open()->route("sms.delete.checked")->id("inboxForm")->delete() !!}
-        <div class="app-main__inner p-0">
-            <div class="app-inner-layout chat-layout">
-                <div class="app-inner-layout__header" style="background: rgba(255,255,255,0.45);">
-                    <div class="app-page-title">
-                        <div class="page-title-wrapper">
-                            <div class="page-title-heading">
-                                <div class="page-title-icon">
-                                    <i class="pe-7s-chat text-orange"></i>
-                                </div>
-                                <div>
-                                    <div class="page-title-head center-elem">
-                                        <span class="d-inline-block">Envoi SMS</span>
-                                    </div>
-                                    <div class="page-title-subheading opacity-10">
-                                        <h6 class="" aria-label="breadcrumb">
-                                            <ol class="breadcrumb">
-                                                <li class="breadcrumb-item">
-                                                    <a>
-                                                        <i aria-hidden="true" class="fa fa-home"></i>
-                                                    </a>
-                                                </li>
-                                                <li class="breadcrumb-item">
-                                                    <a href="{{route("sms.index")}}" class="">Boîte d'envoi</a>
-                                                </li>
-                                            </ol>
-                                        </h6>
-                                    </div>
-                                </div>
-                            </div>
-
-                            @include("sms.actions")
-
+        <div class="app-main__inner">
+            <div class="app-page-title">
+                <div class="page-title-wrapper">
+                    <div class="page-title-heading">
+                        <div class="page-title-icon">
+                            <i class="fa fa-mail-bulk text-orange">
+                            </i>
                         </div>
-                    </div>
-                </div>
-
-                @include("layouts.alert")
-
-                <div class="app-inner-layout__wrapper" style="">
-
-                    <div class="app-inner-layout__sidebar card bg-white" style="flex: 3">
-                        <div class="app-inner-layout__sidebar-header">
-                            <div class="bg-white">
-                                <table id="smssent" class="mb-0 table table-hover table-striped" style="margin: 0 !important;">
-                                    <thead>
-                                    <th class="text-center cursor-pointer" style="width: 15%"></th>
-                                    <th class="fit" style="">A</th>
-                                    <th style="width: 40%">Message</th>
-                                    <th>Date</th>
-                                    </thead>
-                                    <tbody>
-                                    @foreach($smsSent as $sms)
-                                        <tr class="cursor-pointer"
-                                            data-message="{{$sms->message}}"
-                                            data-to="{{$sms->to}}"
-                                            data-sent-by="{{$sms->sent_by}}"
-                                            data-date="{{date("d/m/Y à H:i", strtotime($sms->created_at))}}"
-                                            data-delete="{{route("sms.destroy", $sms)}}" onclick="showSMS(this)" >
-                                            <td class="text-center cursor-pointer" style="color: transparent !important;">{{$sms->id}}</td>
-                                            <td>
-                                                <div class="widget-content p-0 mr-5">
-                                                    <div class="widget-content-wrapper">
-                                                        <div class="widget-content-left">
-                                                            <div class="widget-heading ellipsis-1">{{$sms->to}}</div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td class="text-left">
-                                                <div class="ellipsis-1">{{$sms->message}}</div>
-                                            </td>
-                                            <td class="fit">
-                                                <span hidden>{{$sms->created_at}}</span>
-                                                <i class="fa fa-calendar-alt opacity-4 mr-2"></i>
-                                                {{ date("d/m/Y", strtotime($sms->created_at)) }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                    </tbody>
-                                </table>
-
-                                <div class="d-flex justify-content-between px-4 mt-3">
-                                    <button
-                                        onclick="return confirm('Supprimer la sélection ?')"
-                                        type="submit" class="btn btn-link btn-sm">
-                                        <i class="lnr-trash text-danger"></i> Supprimer la sélection
-                                    </button>
-                                    <nav class="mt-3 d-inline-block" aria-label="Page navigation example">
-                                        <ul class="pagination">
-                                            <li class="page-item"><a href="javascript:void(0);" class="page-link" aria-label="Previous"><span aria-hidden="true">«</span><span class="sr-only">Previous</span></a></li>
-                                            <li class="page-item"><a href="javascript:void(0);" class="page-link">1</a></li>
-                                            <li class="page-item active"><a href="javascript:void(0);" class="page-link">2</a></li>
-                                            <li class="page-item"><a href="javascript:void(0);" class="page-link">3</a></li>
-                                            <li class="page-item"><a href="javascript:void(0);" class="page-link">4</a></li>
-                                            <li class="page-item"><a href="javascript:void(0);" class="page-link">5</a></li>
-                                            <li class="page-item"><a href="javascript:void(0);" class="page-link" aria-label="Next"><span aria-hidden="true">»</span><span class="sr-only">Next</span></a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
+                        <div>
+                            <div class="page-title-head center-elem">
+                                <span class="d-inline-block">Envoi SMS</span>
                             </div>
+                            <div class="page-title-subheading">Cette section est réservée à l'envoi de SMS</div>
                         </div>
                     </div>
 
-                    <div class="app-inner-layout__content card" style="flex: 2">
-                        <div class="table-responsive">
-                            <div class="app-inner-layout__top-pane">
-                                <div class="pane-left">
-                                    <div class="mobile-app-menu-btn">
-                                        <button type="button" class="hamburger hamburger--elastic">
-                                            <span class="hamburger-box">
-                                                <span class="hamburger-inner"></span>
-                                            </span>
-                                        </button>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="chat-wrapper">
-                                <div class="float-right">
-                                    <div class="chat-box-wrapper chat-box-wrapper-right pt-0">
-                                        <div>
-                                            <div class="d-flex justify-content-between align-items-center mb-2" style="width: 100%">
-                                                <div>
-                                                    <div class="d-flex align-items-center">
-                                                        <i class="lnr-users text-dark header-icon" style="font-size: 1.5rem"></i>
-                                                        <div class="ml-2 d-inline-block">
-                                                            A:
-                                                            <strong id="sms_to" class=""></strong>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <small>Envoyé par :</small>
-                                                        <small id="sms_sent_by" class="opacity-8"> </small>
-                                                    </div>
-                                                </div>
-                                                <button style="display: none" id="sms_delete"
-                                                        form-action=""
-                                                        form-method="delete"
-                                                        onclick="submitLinkForm(this)"
-                                                        confirm-message="Supprimer le message ?"
-                                                        href="#" class="confirm btn btn-sm text-danger">
-                                                    <i class="lnr-trash font-size-lg"></i>
-                                                </button>
-                                            </div>
-                                            <div class="divider"></div>
-                                            <div id="sms_body" class="chat-box">Cliquez sur un message pour afficher son contenu dans cette zone</div>
-                                            <div class="d-flex justify-content-end align-items-center mt-2">
-                                                <div class="datewrapper" style="display: none">
-                                                    <i class="fa fa-calendar-alt opacity-6 mr-1"></i>
-                                                    <small id="sms_date" class="opacity-8"> </small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
+                    @include("sms.actions")
 
                 </div>
             </div>
+
+            @include("layouts.alert")
+
+            {!! Form::open()->delete()->route("sms.destroy")->id("smsForm") !!}
+
+            <div class="main-card mb-3 card">
+                <div hidden class="card-header-tab card-header bg-heavy-rain">
+                    <div class="card-header-title font-size-lg font-weight-normal">
+                        <span class="d-inline-block mr-sm-3">Historique d'envoi</span>
+                        <div class="text-transform-initial mr-sm-3">
+                            <span class="badge badge-primary">{{ \App\Sms::count() }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0 table-responsive" style="background: #fafafa">
+                    <table id="checkboxtableUnordered" class="table table-hover table-striped" style="margin-top: 0 !important; margin-bottom: 0 !important;">
+                        <thead class="bg-heavy-rain">
+                        <th class="text-center" style="width: 40px"></th>
+                        <th>A</th>
+                        <th style="width: 40%">Message</th>
+                        <th class="fit">Envoyé par</th>
+                        <th class="fit">Date</th>
+                        <th>Action</th>
+                        </thead>
+                        <tbody>
+                        @php($i = 0)
+                        @foreach($smses as $sms)
+                            <tr>
+                                <td style="color: transparent !important;">{{ $sms->id }}</td>
+                                <td>{{ $sms->to }}</td>
+                                <td style="background: @if($i % 2 == 0) rgba(213,218,235,0.4) @else rgba(213,218,235,0.2) @endif"><div>{{ $sms->message }}</div></td>
+                                <td class="fit">{{ $sms->user }}</td>
+                                <td class="fit">{{ \Illuminate\Support\Carbon::parse($sms->created_at)->locale('fr')->isoFormat('Do MMM YYYY à HH:m') }}</td>
+                                <td class="">
+                                    <button type="button"
+                                            class="btn btn-link text-danger"
+                                            onclick="deleteSMS('{{ $sms->id }}')">
+                                        <i class="fa fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            @php($i++)
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card-footer justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="mr-sm-3">
+                            Total:
+                            <span class="badge badge-primary">{{ number_format(\App\Sms::count(), 0, ",", " ") }}</span>
+                        </div>
+
+                        <span class="mr-sm-2">Pour la sélection:</span>
+                        @if(count($smses))
+                            <button class="btn btn-link text-danger mr-sm-3" >
+                                <i class="fa fa-trash-alt mr-sm-1"></i>
+                                Supprimer
+                            </button>
+                        @else
+                            <a class="btn disabled opacity-5">
+                                <i class="fa fa-trash-alt mr-sm-1"></i>
+                                Supprimer
+                            </a>
+                        @endif
+                    </div>
+                    {{ $smses->links() }}
+                </div>
+            </div>
+
+            {!! Form::close() !!}
+
         </div>
-
-        {!! Form::close() !!}
-
     </div>
 
     <script>
-        $(function () {
-            var table = $('#smssent').DataTable({
-                responsive: true,
-                "bFilter": false, // show search input
-                "paging": false,
-                "ordering": true,
-                "info": false,
-                "searching": true,
-                "language": {
-                    "lengthMenu": "Afficher _MENU_ liste de contacts par page",
-                    "zeroRecords": "Aucun enregistrement",
-                    "infoEmpty": "No records available",
-                    "search":         "",
-                    "paginate": {
-                        "first":      "Premier",
-                        "last":       "Dernier",
-                        "next":       "Suivant",
-                        "previous":   "Précédent"
-                    },
-                },
+        $(document).ready(function () {
 
-                'columnDefs': [
-                    {
-                        'targets': 0,
-                        'checkboxes': {'selectRow': true},
+            var form = $("form#smsForm");
+
+            window.deleteSMS = function(smsId){
+                event.stopPropagation();
+
+                $.confirm({
+                    title: "Information",
+                    content: "Supprimer ce message ?",
+                    //icon: 'fa fa-info-circle',
+                    //type: 'red',
+                    backgroundDismiss: true,
+                    buttons: {
+                        Oui: {
+                            text: "Oui",
+                            btnClass: "btn btn-danger",
+                            keys: ['enter', 'shift'],
+                            action: function(){
+                                $(form).unbind();
+                                $(form).append(
+                                    $('<input>')
+                                        .attr('type', 'hidden')
+                                        .attr('name', 'smses[]')
+                                        .val(smsId)
+                                ).submit();
+                            }
+                        },
+                        Annuler: {
+                            text: "Annuler",
+                            //btnClass: negativeBtnClass,
+                            keys: ['enter', 'shift'],
+                            action: function(){
+
+                            }
+                        },
                     }
-                ],
-                //'select': {'style': 'multi'},
-                select: {
-                    style:    'multi',
-                    selector: 'td:first-child'
-                },
-                'order': []
-            });
-
-            $("#smssent_filter").css("display", "none"); // hidden search input
-
-            window.filterSMSTable = function(input)
-            {
-                $('#smssent').DataTable().search($(input).val()).draw();
-                $('#smssent').DataTable().search($(input).val()).draw();
+                });
             };
 
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
             // Handle form submission event
-            $('#inboxForm').on('submit', function(e){
+            $('form#smsForm').on('submit', function(e){
+
+                event.preventDefault();
+
                 var form = this;
-                var rows_selected = table.column(0).checkboxes.selected();
-                $.each(rows_selected, function(index, rowId){
-                    $(form).append(
-                        $('<input>')
-                            .attr('type', 'hidden')
-                            .attr('name', 'checked[]')
-                            .val(rowId)
-                    );
-                });
+
+                var rows_selected = checkboxtableUnordered.column(0).checkboxes.selected();
+
+                if(rows_selected.length === 0)
+                {
+                    $.alert({
+                        backgroundDismiss: true,
+                        title: 'Information',
+                        //icon: 'fa fa-info-circle',
+                        content: "Aucune ligne n'a été cochée.",
+                    });
+                }
+                else
+                {
+                    $.confirm({
+                        title: "Information",
+                        content: "Supprimer la sélection ?",
+                        //icon: 'fa fa-info-circle',
+                        //type: 'red',
+                        backgroundDismiss: true,
+                        buttons: {
+                            Oui: {
+                                text: "Oui",
+                                btnClass: "btn btn-danger",
+                                keys: ['enter', 'shift'],
+                                action: function(){
+                                    $.each(rows_selected, function(index, rowId){
+                                        $(form).append(
+                                            $('<input>')
+                                                .attr('type', 'hidden')
+                                                .attr('name', 'smses[]')
+                                                .val(rowId)
+                                        );
+                                    });
+                                    $(form).unbind();
+                                    $(form).submit();
+                                }
+                            },
+                            Annuler: {
+                                text: "Annuler",
+                                //btnClass: negativeBtnClass,
+                                keys: ['enter', 'shift'],
+                                action: function(){
+
+                                }
+                            },
+                        }
+                    });
+                }
             });
 
-            window.showSMS = function (row)
-            {
-                table.$("tr").removeClass("selected");
-                row = $(row);
-                $("#sms_to").html(row.attr("data-to"));
-                $("#sms_sent_by").html(row.attr("data-sent-by"));
-                $("#sms_date").html(row.attr("data-date"));
-                $("#sms_body").html(row.attr('data-message').replace(/\n/g, '<br>'));
-                $("#sms_delete").attr("form-action", row.attr("data-delete"));
-                row.addClass("selected");
-                $("#sms_delete").show();
-                $("#sms_date").closest("div.datewrapper").show();
-            }
-
-        })
+        });
     </script>
 
 @endsection
+
