@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 
+use App\Salon;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Schema;
 
 class TestController extends Controller
 {
@@ -26,6 +30,7 @@ class TestController extends Controller
             ]);
         });*/
 
+        $salon = Salon::first();
 
 
         return config("app.name");

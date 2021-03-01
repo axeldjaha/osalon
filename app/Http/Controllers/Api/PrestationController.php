@@ -76,23 +76,42 @@ class PrestationController extends ApiController
      * @param PrestationRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(PrestationRequest $request)
+    public function store(Request $request)
     {
         //$data = json_encode($request->json()->all());
         //Fakedata::create(["data" => $data]);
-        //return response()->json(["message" => "super!"], 400);
+        //return response()->json(["message" => "super!"], 200);
 
-        $prestation = Prestation::create([
-            "total" => $request->total,
-            "salon_id" => $request->salon,
-        ]);
-
-        foreach ($request->services as $service)
+        /**
+         * Destroying prestation that has been stored with but user does not know due to connection timeout
+         */
+        $rollback = [];
+        foreach($request->prestations as $prestation)
         {
-            $prestation->services()->sync([$service["id"]], false);
-        }
+            //if new prestation
+            if($prestation["id"] == 0)
+            {
+                $newPrestation = Prestation::create([
+                    "total" => $prestation["total"],
+                    "reference" => $prestation["reference"],
+                    "salon_id" => $prestation["salon_id"],
+                ]);
 
-        return response()->json(new DepenseResource($prestation));
+                foreach ($prestation["services"] as $service)
+                {
+                    $newPrestation->services()->sync([$service["id"]], false);
+                }
+            }
+            else
+            {
+                $rollback[] = $prestation["reference"];
+            }
+        }
+        $this->salon->prestations()->whereIn("reference", $rollback)->delete();
+
+        //sleep(10);
+
+        return response()->json(new DepenseResource(new Prestation()));
     }
 
     /**

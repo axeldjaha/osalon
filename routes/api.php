@@ -67,8 +67,8 @@ Route::middleware(["auth:api", "activated"])->group(function ()
     Route::get('depense','Api\DepenseController@index');
     Route::get('depense/salon/{salon}','Api\DepenseController@show');
 
-    Route::get('recette/mois','Api\BilanController@getRecetteMois');
-    Route::get('recette/salons','Api\BilanController@getRecetteSalons');
+    Route::get('recette','Api\RecetteController@index');
+    Route::get('recette/salon/{salon}','Api\RecetteController@show');
 
     Route::get('prestation','Api\PrestationController@index');
     Route::get('prestation/salon/{salon}','Api\PrestationController@show');
