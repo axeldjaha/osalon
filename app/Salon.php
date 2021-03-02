@@ -49,6 +49,11 @@ class Salon extends Model
         return $this->hasMany(Depense::class);
     }
 
+    public function sms()
+    {
+        return $this->hasMany(Sms::class);
+    }
+
 
     /**
      * ************************************

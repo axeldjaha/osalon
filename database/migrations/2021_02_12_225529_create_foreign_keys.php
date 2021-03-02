@@ -48,6 +48,10 @@ class CreateForeignKeys extends Migration
             $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
         });
 
+        Schema::table('sms', function (Blueprint $table) {
+            $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
+        });
+
 
         /**
          * **************************************************

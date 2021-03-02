@@ -7,8 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class Sms extends Model
 {
     protected $fillable = [
-        "to",
         "message",
+        "recipient",
+        "date",
         "user",
+        "salon_id",
     ];
+
+    public function salon()
+    {
+        return $this->belongsTo(Salon::class);
+    }
 }

@@ -16,22 +16,23 @@ class TestController extends Controller
 
     public function __construct()
     {
-        //$this->middleware('auth');
-        //$this->user = User::where("email", "paxeldp@gmail.com")->first();
-        //$this->salon = $this->user->salons()->first();
+        $this->middleware('auth');
     }
 
     public function test(Request $request)
     {
+        $salon = Salon::first();
+
+
+
+
+
         //DB::table("users")->update(["password" => bcrypt("2909")]);
         /*Client::each(function ($client){
             $client->update([
                 "telephone" => ["01", "05", "07"][rand(0, 2)] . (51197890 + $client->id),
             ]);
         });*/
-
-        $salon = Salon::first();
-
 
         return config("app.name");
     }
