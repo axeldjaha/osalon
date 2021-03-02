@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Fakedata;
-use App\Http\Requests\SmsRequest;
 use App\Http\Resources\SalonResource;
-use App\Http\Resources\ServiceResource;
 use App\Http\Resources\SmsResource;
-use App\Prestation;
 use App\Salon;
 use App\Sms;
 use Illuminate\Http\Request;
@@ -66,34 +62,32 @@ class SmsController extends ApiController
      */
     public function store(Request $request)
     {
-        $data = [];
-        $date = Carbon::now();
+        /**
+         * Rollback data that has been stored but user does not know due to connection timeout
+         */
+        $rollback = [];
         foreach($request->sms as $sentSms)
         {
-            $data[] = [
-                $sentSms["message"],
-                $sentSms["recipient"],
-                $sentSms["date"] ?? $date,
-                $sentSms["user"] ?? $this->user->name,
-                $sentSms["salon_id"] ?? $this->salon->id,
-                $date,
-                $date,
-            ];
+            if($sentSms["id"] == 0)
+            {
+                Sms::create([
+                    "message" => $sentSms["message"],
+                    "recipient" => $sentSms["recipient"],
+                    "date" => $sentSms["date"] ?? Carbon::now(),
+                    "reference" => $sentSms["reference"] ?? Carbon::now(),
+                    "user" => $sentSms["user"] ?? $this->user->name,
+                    "salon_id" => $sentSms["salon_id"] ?? $this->salon->id,
+                ]);
+            }
+            else
+            {
+                $rollback[] = $sentSms["reference"];
+            }
         }
-        if(count($data) > 0)
-        {
-            $modelInstance = new Sms();
-            $columns = [
-                "message",
-                "recipient",
-                "date",
-                "user",
-                "salon_id",
-                "created_at",
-                "updated_at",
-            ];
-            batch()->insert($modelInstance, $columns, $data);
-        }
+
+        $this->salon->sms()->whereIn("reference", $rollback)->delete();
+
+        //sleep(10);
 
         return response()->json(new SmsResource(new Sms()));
     }

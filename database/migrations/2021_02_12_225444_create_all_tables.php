@@ -69,6 +69,7 @@ class CreateAllTables extends Migration
             $table->text('message');
             $table->integer('recipient');
             $table->dateTime('date');
+            $table->string('reference')->nullable();
             $table->string('user');
             $table->unsignedBigInteger('salon_id');
             $table->timestamps();
@@ -116,7 +117,7 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('sms', function (Blueprint $table) {
+        Schema::create('backsms', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('to');
             $table->text('message');

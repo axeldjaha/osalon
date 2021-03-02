@@ -10,6 +10,7 @@ class Sms extends Model
         "message",
         "recipient",
         "date",
+        "reference",
         "user",
         "salon_id",
     ];

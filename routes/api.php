@@ -76,7 +76,7 @@ Route::middleware(["auth:api", "activated"])->group(function ()
     Route::get('prestation','Api\PrestationController@index');
     Route::get('prestation/salon/{salon}','Api\PrestationController@show');
 
-    Route::post('sms','Api\SmsController@index');
+    Route::get('sms','Api\SmsController@index');
     Route::get('sms/salon/{salon}','Api\SmsController@show');
 
     Route::get('abonnement/index','Api\AbonnementController@index');

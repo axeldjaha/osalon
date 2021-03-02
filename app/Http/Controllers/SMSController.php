@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\BackSms;
 use App\Jobs\BulkSMS;
-use App\Sms;
 use App\SMSCounter;
 use App\SmsGroupe;
 use Illuminate\Http\Request;
@@ -24,7 +24,7 @@ class SmsController extends Controller
         $data['title'] = "Envoi SMS";
         $data['active'] = 'sms';
 
-        $data['smses'] = Sms::orderBy("id", "desc")->paginate(25);
+        $data['smses'] = BackSms::orderBy("id", "desc")->paginate(25);
 
         return view("sms.index", $data);
     }
@@ -71,7 +71,7 @@ class SmsController extends Controller
             $groupes = SmsGroupe::whereIn("sms_groupes.id", $request->groupes)->get();
             foreach ($groupes as $groupe)
             {
-                Sms::create([
+                BackSms::create([
                     "to" => $groupe->intitule,
                     "message" => $message,
                     "user" => Auth::user()->name,
@@ -97,7 +97,7 @@ class SmsController extends Controller
      */
     public function destroy(Request $request)
     {
-        if(Sms::destroy($request->smses))
+        if(BackSms::destroy($request->smses))
         {
             session()->flash('type', 'alert-success');
             session()->flash('message', 'Suppression effectuée avec succès!');

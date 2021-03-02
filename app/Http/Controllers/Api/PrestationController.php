@@ -83,7 +83,7 @@ class PrestationController extends ApiController
         //return response()->json(["message" => "super!"], 200);
 
         /**
-         * Destroying prestation that has been stored with but user does not know due to connection timeout
+         * Rollback data that has been stored but user does not know due to connection timeout
          */
         $rollback = [];
         foreach($request->prestations as $prestation)
