@@ -17,7 +17,7 @@ class OffreSeeder extends Seeder
         {
             Offre::create([
                 "intitule" => "Abonnement mensuel",
-                "montant" => 3000,
+                "montant" => 6900,
             ]);
         }
     }

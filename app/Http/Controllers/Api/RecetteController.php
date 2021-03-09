@@ -12,70 +12,51 @@ class RecetteController extends ApiController
     public function index(Request $request)
     {
 
-        $query = "
+        $queryRecetteJournaliere = "
         SELECT (SUM(total)) as recette
-        FROM prestations 
+        FROM prestations
         INNER JOIN salons ON salons.id = prestations.salon_id
-        INNER JOIN salon_user ON salon_user.salon_id = salons.id
-        WHERE salon_user.user_id = ? AND
+        WHERE salons.id = ? AND
               DATE(prestations.created_at) = ?";
-        $recetteJournaliere = DB::select($query, [$this->user->id, Carbon::today()])[0]->recette;
 
-        if($this->user->salons()->count() > 1)
+        $queryRecetteMois = "
+        SELECT (SUM(total)) as recette,
+               MONTH(prestations.created_at) AS index_mois,
+               CASE
+                   WHEN MONTH(prestations.created_at) = 1 THEN 'Janvier'
+                   WHEN MONTH(prestations.created_at) = 2 THEN 'Février'
+                   WHEN MONTH(prestations.created_at) = 3 THEN 'Mars'
+                   WHEN MONTH(prestations.created_at) = 4 THEN 'Avril'
+                   WHEN MONTH(prestations.created_at) = 5 THEN 'Mai'
+                   WHEN MONTH(prestations.created_at) = 6 THEN 'Juin'
+                   WHEN MONTH(prestations.created_at) = 7 THEN 'Juillet'
+                   WHEN MONTH(prestations.created_at) = 8 THEN 'Août'
+                   WHEN MONTH(prestations.created_at) = 9 THEN 'Septembre'
+                   WHEN MONTH(prestations.created_at) = 10 THEN 'Octobre'
+                   WHEN MONTH(prestations.created_at) = 11 THEN 'Novembre'
+                   WHEN MONTH(prestations.created_at) = 12 THEN 'Décembre'
+                   ELSE NULL
+               END AS mois
+        FROM prestations
+        INNER JOIN salons ON salons.id = prestations.salon_id
+        WHERE salons.id = ? AND
+            YEAR(prestations.created_at) = ?
+        GROUP BY index_mois, mois
+        ORDER BY index_mois DESC";
+
+        $salons = [];
+        foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
         {
-            foreach ($this->user->salons as $salon)
-            {
-                $salonsRecette[] = [
-                    "recette" => $salon->prestations()->whereDate('created_at', Carbon::now())->sum("total"),
-                    "salon" => [
-                        "id" => $salon->id,
-                        "nom" => $salon->nom,
-                        "adresse" => $salon->adresse,
-                    ],
-                ];
-            }
-
-            $recette = [
-                "recette_journaliere" => $recetteJournaliere,
-                "recette_salons" => $salonsRecette,
-            ];
-        }
-        else
-        {
-            $query = "
-            SELECT (SUM(total)) as recette,
-                   MONTH(prestations.created_at) AS index_mois,
-                   CASE
-                       WHEN MONTH(prestations.created_at) = 1 THEN 'Janvier' 
-                       WHEN MONTH(prestations.created_at) = 2 THEN 'Février' 
-                       WHEN MONTH(prestations.created_at) = 3 THEN 'Mars' 
-                       WHEN MONTH(prestations.created_at) = 4 THEN 'Avril' 
-                       WHEN MONTH(prestations.created_at) = 5 THEN 'Mai' 
-                       WHEN MONTH(prestations.created_at) = 6 THEN 'Juin' 
-                       WHEN MONTH(prestations.created_at) = 7 THEN 'Juillet' 
-                       WHEN MONTH(prestations.created_at) = 8 THEN 'Août' 
-                       WHEN MONTH(prestations.created_at) = 9 THEN 'Septembre' 
-                       WHEN MONTH(prestations.created_at) = 10 THEN 'Octobre' 
-                       WHEN MONTH(prestations.created_at) = 11 THEN 'Novembre' 
-                       WHEN MONTH(prestations.created_at) = 12 THEN 'Décembre'
-                       ELSE NULL
-                   END AS mois
-            FROM prestations 
-            INNER JOIN salons ON salons.id = prestations.salon_id
-            INNER JOIN salon_user ON salon_user.salon_id = salons.id
-            WHERE salon_user.user_id = ? AND
-                  YEAR(prestations.created_at) = ? 
-            GROUP BY index_mois, mois
-            ORDER BY index_mois DESC";
-            $recettesMois = DB::select($query, [$this->user->id, Carbon::today()->year]);
-
-            $recette = [
-                "recette_journaliere" => $recetteJournaliere,
-                "recette_mois" => $recettesMois,
+            $salons[] = [
+                "id" => $salon->id,
+                "nom" => $salon->nom,
+                "adresse" => $salon->adresse,
+                "recette_journaliere" => DB::select($queryRecetteJournaliere, [$salon->id, Carbon::today()])[0]->recette,
+                "recette_mois" => DB::select($queryRecetteMois, [$salon->id, Carbon::today()->year]),
             ];
         }
 
-        return response()->json($recette);
+        return response()->json($salons);
     }
 
     public function show(Request $request, Salon $salon)
@@ -87,59 +68,51 @@ class RecetteController extends ApiController
         if($this->user->salons()->count() == 1)
         {
             return \response()->json([
-                "recette_journaliere" => 0,
-                "recette_mois" => null
+                "id" => $salon->id,
+                "nom" => $salon->nom,
+                "adresse" => $salon->adresse,
             ], 204);
         }
 
-        /*$query = "
-        SELECT (SUM(total)) as recette,
-               salons.id,
-               salons.nom AS salon
+        $queryRecetteJournaliere = "
+        SELECT (SUM(total)) as recette
         FROM prestations
         INNER JOIN salons ON salons.id = prestations.salon_id
-        INNER JOIN salon_user ON salon_user.salon_id = salons.id
-        WHERE salon_user.user_id = ? AND
-              YEAR(prestations.created_at) = ? AND
-              MONTH(prestations.created_at) = ?
-        GROUP BY salons.id, salons.nom
-        ORDER BY recette DESC";
-        $recetteSalons = DB::select($query, [$this->user->id, Carbon::today()->year, $request->mois ?? 0]);*/
+        WHERE salons.id = ? AND
+              DATE(prestations.created_at) = ?";
 
-        $query = "
-            SELECT (SUM(total)) as recette,
-                   MONTH(prestations.created_at) AS index_mois,
-                   CASE
-                       WHEN MONTH(prestations.created_at) = 1 THEN 'Janvier' 
-                       WHEN MONTH(prestations.created_at) = 2 THEN 'Février' 
-                       WHEN MONTH(prestations.created_at) = 3 THEN 'Mars' 
-                       WHEN MONTH(prestations.created_at) = 4 THEN 'Avril' 
-                       WHEN MONTH(prestations.created_at) = 5 THEN 'Mai' 
-                       WHEN MONTH(prestations.created_at) = 6 THEN 'Juin' 
-                       WHEN MONTH(prestations.created_at) = 7 THEN 'Juillet' 
-                       WHEN MONTH(prestations.created_at) = 8 THEN 'Août' 
-                       WHEN MONTH(prestations.created_at) = 9 THEN 'Septembre' 
-                       WHEN MONTH(prestations.created_at) = 10 THEN 'Octobre' 
-                       WHEN MONTH(prestations.created_at) = 11 THEN 'Novembre' 
-                       WHEN MONTH(prestations.created_at) = 12 THEN 'Décembre'
-                       ELSE NULL
-                   END AS mois
-            FROM prestations 
-            INNER JOIN salons ON salons.id = prestations.salon_id
-            INNER JOIN salon_user ON salon_user.salon_id = salons.id
-            WHERE salon_user.user_id = ? AND
-                  salons.id = ? AND
-                  YEAR(prestations.created_at) = ? 
-            GROUP BY index_mois, mois
-            ORDER BY index_mois DESC";
-        $recettesMois = DB::select($query, [$this->user->id, $salon->id, Carbon::today()->year]);
+        $queryRecetteMois = "
+        SELECT (SUM(total)) as recette,
+               MONTH(prestations.created_at) AS index_mois,
+               CASE
+                   WHEN MONTH(prestations.created_at) = 1 THEN 'Janvier'
+                   WHEN MONTH(prestations.created_at) = 2 THEN 'Février'
+                   WHEN MONTH(prestations.created_at) = 3 THEN 'Mars'
+                   WHEN MONTH(prestations.created_at) = 4 THEN 'Avril'
+                   WHEN MONTH(prestations.created_at) = 5 THEN 'Mai'
+                   WHEN MONTH(prestations.created_at) = 6 THEN 'Juin'
+                   WHEN MONTH(prestations.created_at) = 7 THEN 'Juillet'
+                   WHEN MONTH(prestations.created_at) = 8 THEN 'Août'
+                   WHEN MONTH(prestations.created_at) = 9 THEN 'Septembre'
+                   WHEN MONTH(prestations.created_at) = 10 THEN 'Octobre'
+                   WHEN MONTH(prestations.created_at) = 11 THEN 'Novembre'
+                   WHEN MONTH(prestations.created_at) = 12 THEN 'Décembre'
+                   ELSE NULL
+               END AS mois
+        FROM prestations
+        INNER JOIN salons ON salons.id = prestations.salon_id
+        WHERE salons.id = ? AND
+            YEAR(prestations.created_at) = ?
+        GROUP BY index_mois, mois
+        ORDER BY index_mois DESC";
 
-        $bilan = [
-            "recette_journaliere" => $salon->prestations()->whereDate('created_at', Carbon::now())->sum("total"),
-            "recette_mois" => $recettesMois,
-        ];
-
-        return response()->json($bilan);
+        return response()->json([
+            "id" => $salon->id,
+            "nom" => $salon->nom,
+            "adresse" => $salon->adresse,
+            "recette_journaliere" => DB::select($queryRecetteJournaliere, [$salon->id, Carbon::today()])[0]->recette,
+            "recette_mois" => DB::select($queryRecetteMois, [$salon->id, Carbon::today()->year]),
+        ]);
     }
 
 }
