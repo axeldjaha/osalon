@@ -76,38 +76,18 @@ class PrestationController extends ApiController
      * @param PrestationRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(PrestationRequest $request)
     {
-        //$data = json_encode($request->json()->all());
-        //Fakedata::create(["data" => $data]);
-        //return response()->json(["message" => "super!"], 200);
+        $prestation = Prestation::create([
+            "total" => $request->total,
+            "reference" => $request->reference,
+            "salon_id" => $this->salon->id,
+        ]);
 
-        /**
-         * Rollback data that has been stored but user does not know due to connection timeout
-         */
-        $rollback = [];
-        foreach($request->prestations as $prestation)
+        foreach ($request->services as $service)
         {
-            //if new prestation
-            if($prestation["id"] == 0)
-            {
-                $newPrestation = Prestation::create([
-                    "total" => $prestation["total"],
-                    "reference" => $prestation["reference"],
-                    "salon_id" => $prestation["salon_id"],
-                ]);
-
-                foreach ($prestation["services"] as $service)
-                {
-                    $newPrestation->services()->sync([$service["id"]], false);
-                }
-            }
-            else
-            {
-                $rollback[] = $prestation["reference"];
-            }
+            $prestation->services()->sync([$service["id"]], false);
         }
-        $this->salon->prestations()->whereIn("reference", $rollback)->delete();
 
         //sleep(10);
 
