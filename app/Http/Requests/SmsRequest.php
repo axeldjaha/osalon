@@ -29,8 +29,6 @@ class SmsRequest extends FormRequest
         return [
             "message" => "required",
             "recipient" => "required|numeric",
-            "date" => "nullable|date",
-            "user" => "nullable",
         ];
     }
 
@@ -48,20 +46,6 @@ class SmsRequest extends FormRequest
         {
             $response = [
                 "message" => $exception->validator->errors()->get("recipient")[0],
-            ];
-            throw new HttpResponseException(response()->json($response, 422));
-        }
-        elseif($exception->validator->errors()->has("date"))
-        {
-            $response = [
-                "message" => $exception->validator->errors()->get("date")[0],
-            ];
-            throw new HttpResponseException(response()->json($response, 422));
-        }
-        elseif($exception->validator->errors()->has("user"))
-        {
-            $response = [
-                "message" => $exception->validator->errors()->get("user")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }

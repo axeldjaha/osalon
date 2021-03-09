@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Fakedata;
+use App\Http\Requests\SmsRequest;
 use App\Http\Resources\SalonResource;
 use App\Http\Resources\SmsResource;
 use App\Salon;
@@ -57,39 +59,20 @@ class SmsController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
-     * @return Response
+     * @param SmsRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(SmsRequest $request)
     {
-        /**
-         * Rollback data that has been stored but user does not know due to connection timeout
-         */
-        $rollback = [];
-        foreach($request->sms as $sentSms)
-        {
-            if($sentSms["id"] == 0)
-            {
-                Sms::create([
-                    "message" => $sentSms["message"],
-                    "recipient" => $sentSms["recipient"],
-                    "date" => $sentSms["date"] ?? Carbon::now(),
-                    "reference" => $sentSms["reference"] ?? Carbon::now(),
-                    "user" => $sentSms["user"] ?? $this->user->name,
-                    "salon_id" => $sentSms["salon_id"] ?? $this->salon->id,
-                ]);
-            }
-            else
-            {
-                $rollback[] = $sentSms["reference"];
-            }
-        }
+        $sms = Sms::create([
+            "message" => $request->message,
+            "recipient" => $request->recipient,
+            "date" => Carbon::now(),
+            "user" => $this->user->name,
+            "salon_id" => $this->salon->id,
+        ]);
 
-        $this->salon->sms()->whereIn("reference", $rollback)->delete();
-
-        //sleep(10);
-
-        return response()->json(new SmsResource(new Sms()));
+        return response()->json(new SmsResource($sms));
     }
 
     /**

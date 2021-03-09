@@ -70,7 +70,7 @@ class CreateAllTables extends Migration
             $table->integer('recipient');
             $table->dateTime('date');
             $table->string('reference')->nullable();
-            $table->string('user');
+            $table->string('user')->nullable();
             $table->unsignedBigInteger('salon_id');
             $table->timestamps();
         });
