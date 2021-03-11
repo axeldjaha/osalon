@@ -36,7 +36,7 @@ class SalonController extends ApiController
      * Store a newly created resource in storage.
      *
      * @param SalonRequest $request
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(SalonRequest $request)
     {
@@ -82,8 +82,7 @@ class SalonController extends ApiController
                     //Envoi du mot de passe par SMS
                     $message =
                         "Votre mot de passe est: $password" .
-                        "\nTéléchargez l'application " . config("app.name") . " sur playstore." .
-                        "\n" . config("app.playstore");
+                        "\nTéléchargez l'application " . config("app.name") . " sur playstore.";
                     $sms = new \stdClass();
                     $sms->to = [$user->telephone];
                     $sms->message = $message;
@@ -119,9 +118,9 @@ class SalonController extends ApiController
      *
      * @param SalonRequest $request
      * @param \App\Salon $salon
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(SalonRequest $request, Salon $salon)
+    public function update(SalonRequest $request, Salon $salon): \Illuminate\Http\JsonResponse
     {
         if(!$this->user->salons()->where("id", $salon->id)->update([
             "nom" => $request->nom,

@@ -87,8 +87,7 @@ class UserController extends ApiController
                 //Envoi du mot de passe par SMS
                 $message =
                     "Votre mot de passe est: $password" .
-                    "\nTéléchargez l'application " . config("app.name") . " sur playstore." .
-                    "\n" . config("app.playstore");
+                    "\nTéléchargez l'application " . config("app.name") . " sur playstore.";
                 $sms = new \stdClass();
                 $sms->to = [$request->telephone];
                 $sms->message = $message;

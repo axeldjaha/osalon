@@ -19,7 +19,7 @@ return [
 
     'telephone' => env('APP_TELEPHONE', '58572785'),
 
-    'playstore' => env('PLAYSTORE_LINK', "O'salon"),
+    'playstore' => env('PLAYSTORE_LINK', null),
 
 
     /*
