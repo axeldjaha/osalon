@@ -9,7 +9,7 @@
                             <table role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
                                 <tbody>
                                 <tr>
-                                    <td style="word-break:break-word;font-size:0px;padding-bottom: 30px;" align="center">
+                                    <td style="word-break:break-word;font-size:0px;" align="center">
                                         <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-spacing:0px" align="center" border="0">
                                             <tbody>
                                             <tr>
