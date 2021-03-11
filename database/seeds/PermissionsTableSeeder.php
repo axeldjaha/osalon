@@ -13,13 +13,10 @@ class PermissionsTableSeeder extends Seeder
     public function run()
     {
         $permissions = [
-            "Admins",
-            "Pressings",
-            "Users",
+            "Salons",
             "Abonnements",
             "Transactions",
-            "Offres",
-            "Prospects",
+            "Offre",
             "SMS",
         ];
 

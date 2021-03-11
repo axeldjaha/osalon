@@ -79,7 +79,7 @@ class SendSMS implements ShouldQueue
 
         $this->sms->to = $to;
 
-        $this->sendWith1s2u();
+        $this->letexto();
     }
 
     /**
@@ -87,7 +87,7 @@ class SendSMS implements ShouldQueue
      */
     public function letexto()
     {
-        $sender = env("SMS_SENDER");
+        $sender = config("app.sms_sender");
 
         $baseUrl = 'http://www.letexto.com/send_message';
 
@@ -98,8 +98,8 @@ class SendSMS implements ShouldQueue
          * $secret = '/secret/aayxEoIfSNMykVKsvJ9UG7tyXoiJpUfsUFPnTmvB';
          */
 
-        $user = '/user/paxeldp@gmail.com';
-        $secret = '/secret/aayxEoIfSNMykVKsvJ9UG7tyXoiJpUfsUFPnTmvB';
+        $user = '/user/repasdamour@gmail.com';
+        $secret = '/secret/PyFuvhByC*hDohDRSx5fD3tFeYA9xVhLCqgDzlKK';
         $msg = '/msg/'.$this->sms->message;
         $receiver = '/receiver/'.$this->sms->to;
         $sender = '/sender/'.$sender;
@@ -123,7 +123,7 @@ class SendSMS implements ShouldQueue
      */
     public function sendWith1s2u()
     {
-        $sender = env("SMS_SENDER");
+        $sender = config("app.sms_sender");
 
         $this->sms->type = Str::is($this->smsCounter->smsInfo->encoding, 'UTF16') ? 1 : 0;
 
