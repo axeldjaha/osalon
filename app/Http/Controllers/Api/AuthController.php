@@ -187,7 +187,7 @@ class AuthController extends Controller
         ]);
 
         return response()->json([
-            "message" => "Un code a été envoyé sur votre email, valide 1 heure.",
+            "message" => "Un code vous a été envoyé par email, valide 1 heure.",
         ]);
     }
 
