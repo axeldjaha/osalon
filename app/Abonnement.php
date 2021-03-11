@@ -10,7 +10,7 @@ class Abonnement extends Model
      * Nombre de jour d'essai
      * @var int
      */
-    public static $TRIAL = 10;
+    public static $TRIAL = 7;
 
     protected $fillable = [
         "date",

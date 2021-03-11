@@ -98,8 +98,8 @@ class SendSMS implements ShouldQueue
          * $secret = '/secret/aayxEoIfSNMykVKsvJ9UG7tyXoiJpUfsUFPnTmvB';
          */
 
-        $user = '/user/repasdamour@gmail.com';
-        $secret = '/secret/PyFuvhByC*hDohDRSx5fD3tFeYA9xVhLCqgDzlKK';
+        $user = '/user/paxeldp@gmail.com';
+        $secret = '/secret/aayxEoIfSNMykVKsvJ9UG7tyXoiJpUfsUFPnTmvB';
         $msg = '/msg/'.$this->sms->message;
         $receiver = '/receiver/'.$this->sms->to;
         $sender = '/sender/'.$sender;
