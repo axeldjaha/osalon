@@ -21,6 +21,8 @@ return [
 
     'playstore' => env('PLAYSTORE_LINK', null),
 
+    'sms_sender' => env('SMS_SENDER', "O'salon"),
+
 
     /*
     |--------------------------------------------------------------------------

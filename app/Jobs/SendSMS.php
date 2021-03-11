@@ -87,7 +87,7 @@ class SendSMS implements ShouldQueue
      */
     public function letexto()
     {
-        $sender = env("SMS_SENDER");
+        $sender = config("app.sms_sender");
 
         $baseUrl = 'http://www.letexto.com/send_message';
 
