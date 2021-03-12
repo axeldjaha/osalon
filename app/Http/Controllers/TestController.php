@@ -47,10 +47,20 @@ Mois: 60";
         });*/
 
 
-        $year = date("y");
-        $month = date("m");
-        $pid = $year . $month . Salon::whereMonth("created_at", Carbon::now()->month)->count();
-        dd($pid);
+        $time = Carbon::now()->format("H:i:s");
+
+        $date = Carbon::now();
+        $comptesDeLaSemaine = Salon::whereBetween("created_at", [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
+        $comptesDuMois = Salon::whereYear("created_at", $date->year)->whereMonth("created_at", $date->month)->count();
+        $message = "Nouveau compte" .
+        "%0ASalon: $time" .
+        "%0AAdresse: $time" .
+        "%0ASemaine: $time" .
+        "%0AMois: $time";
+        $sms = new stdClass();
+        $sms->to = ["58572785"];
+        $sms->message = $message;
+        //Queue::push(new SendSMS($sms));
 
         return config("app.name");
     }

@@ -12,6 +12,11 @@ class WelcomeController extends Controller
         return response()->file(public_path() . "/docs/cgu.pdf");
     }
 
+    public function download()
+    {
+        return response()->file(public_path() . "/apk/Osalon-v1.0.0.apk");
+    }
+
     public function privacy()
     {
         return view("privacy");
