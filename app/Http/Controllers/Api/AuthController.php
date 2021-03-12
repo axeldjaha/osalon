@@ -41,16 +41,14 @@ class AuthController extends Controller
         $status = 200;
         $statusMessage = "Ok";
 
-        DB::transaction(function () use (&$status, &$statusMessage, $request){
+        DB::transaction(function () use (&$status, &$statusMessage, $request)
+        {
+            $year = date("y");
+            $month = date("m");
+            $pid = $year . $month . (Salon::whereMonth("created_at", Carbon::now()->month)->count() + 1);
             $salon = Salon::create([
                 "nom" => $request->salon,
                 "adresse" => $request->adresse,
-            ]);
-
-            $year = date("y");
-            $month = date("m");
-            $pid = $year . $month . Salon::whereMonth("created_at", Carbon::now()->month)->count();
-            $salon->update([
                 "pid" => $pid,
             ]);
 
