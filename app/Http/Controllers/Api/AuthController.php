@@ -88,8 +88,8 @@ class AuthController extends Controller
             {
                 //Envoi d'une notification par SMS
                 $message =
-                    "$salon->nom a été rattaché à votre compte " . config('app.name') . "." .
-                    "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
+                    "$salon->nom a été rattaché à votre compte " . config('app.name') . ".
+                    Vous pouvez suivre les activités de ce salon à distance partout où vous etes.";
                 $sms = new \stdClass();
                 $sms->to = [$user->telephone];
                 $sms->message = $message;
