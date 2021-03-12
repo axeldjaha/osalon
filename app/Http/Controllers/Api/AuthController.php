@@ -164,27 +164,29 @@ class AuthController extends Controller
      */
     public function code(CodeRequest $request)
     {
-        /*
+        DB::transaction(function () use ($request){
+            /*
          * Le code doit être unique
          * Car dans le reset le mail du user n'est pas associé au code. Et c'est fait exprès.
          */
-        $string = '0123456789';
-        do
-        {
-            $code = Str::upper(substr(str_shuffle($string), 0, 4));
+            $string = '0123456789';
+            do
+            {
+                $code = Str::upper(substr(str_shuffle($string), 0, 4));
 
-        }while(DB::table("password_resets")->where(["code" => $code])->count());
+            }while(DB::table("password_resets")->where(["code" => $code])->exists());
 
-        $data['code'] = $code;
+            $data['code'] = $code;
 
-        Queue::push(new MailJob($request->email, new RequestCodeEmail($data)));
+            Queue::push(new MailJob($request->email, new RequestCodeEmail($data)));
 
-        DB::table("password_resets")->where(["email" => $request->email])->delete();
-        DB::table("password_resets")->insert([
-            "email" => $request->email,
-            "code" => $code,
-            "created_at" => Carbon::now(),
-        ]);
+            DB::table("password_resets")->where(["email" => $request->email])->delete();
+            DB::table("password_resets")->insert([
+                "email" => $request->email,
+                "code" => $code,
+                "created_at" => Carbon::now(),
+            ]);
+        }, 1);
 
         return response()->json([
             "message" => "Un code vous a été envoyé par email, valide 1 heure.",
