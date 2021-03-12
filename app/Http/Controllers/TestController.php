@@ -12,6 +12,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
+use stdClass;
 
 class TestController extends Controller
 {
@@ -27,6 +28,15 @@ class TestController extends Controller
     {
         $salon = Salon::first();
 
+        $message = "Nouveau compte
+Salon: $salon->nom
+Adresse: $salon->adresse
+Semaine: 15
+Mois: 60";
+        $sms = new stdClass();
+        $sms->to = ["0758572785"];
+        $sms->message = "Ok?";
+        //Queue::push(new SendSMS($sms));
 
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);
