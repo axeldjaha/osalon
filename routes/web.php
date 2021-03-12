@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get("/cgu", "WelcomeController@cgu");
+Route::get("/privacy", "WelcomeController@privacy");
 
 Route::get("/test", "TestController@test");
 

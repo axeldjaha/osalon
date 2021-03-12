@@ -11,4 +11,10 @@ class WelcomeController extends Controller
     {
         return response()->file(public_path() . "/docs/cgu.pdf");
     }
+
+    public function privacy()
+    {
+        return view("privacy");
+    }
+
 }
