@@ -49,8 +49,9 @@ class AuthController extends Controller
 
             $year = date("y");
             $month = date("m");
+            $pid = $year . $month . Salon::whereMonth("created_at", Carbon::now()->month)->count();
             $salon->update([
-                "pid" => $year * 1000 + $month * 100 + $salon->id * 10 + $salon->id,
+                "pid" => $pid,
             ]);
 
             Abonnement::create([

@@ -46,6 +46,12 @@ Mois: 60";
             ]);
         });*/
 
+
+        $year = date("y");
+        $month = date("m");
+        $pid = $year . $month . Salon::whereMonth("created_at", Carbon::now()->month)->count();
+        dd($pid);
+
         return config("app.name");
     }
 
