@@ -87,8 +87,6 @@ class SendSMS implements ShouldQueue
      */
     public function letexto()
     {
-        $sender = config("app.sms_sender");
-
         $baseUrl = 'http://www.letexto.com/send_message';
 
         /**
@@ -97,22 +95,25 @@ class SendSMS implements ShouldQueue
          * $user = '/user/paxeldp@gmail.com';
          * $secret = '/secret/aayxEoIfSNMykVKsvJ9UG7tyXoiJpUfsUFPnTmvB';
          */
-
-        $user = '/user/paxeldp@gmail.com';
-        $secret = '/secret/aayxEoIfSNMykVKsvJ9UG7tyXoiJpUfsUFPnTmvB';
-        $msg = '/msg/'.$this->sms->message;
-        $receiver = '/receiver/'.$this->sms->to;
-        $sender = '/sender/'.$sender;
-        $cltmsgid = '/cltmsgid/'.'1';
-        $baseUrl .= $user;
-        $baseUrl .= $secret;
-        $baseUrl .= $msg;
-        $baseUrl .= $receiver;
-        $baseUrl .= $sender;
-        $baseUrl .= $cltmsgid;
+        $baseUrl = 'http://www.letexto.com/sendCampaign';
+        $email = 'paxeldp@gmail.com';
+        $secret = 'aayxEoIfSNMykVKsvJ9UG7tyXoiJpUfsUFPnTmvB';
+        $message = $this->sms->message;
+        $receiver = $this->sms->to;
+        $sender = config("app.sms_sender");
+        $cltmsgid = 1;
 
         $client = new Client();
-        $client->request('GET', $baseUrl);
+        $client->request('POST', $baseUrl, [
+            'query' => [
+                'email' => $email,
+                'secret' => $secret,
+                'message' => $message,
+                'receiver' => $receiver,
+                'sender' => $sender,
+                'cltmsgid' => $cltmsgid,
+            ]
+        ]);
     }
 
     /**

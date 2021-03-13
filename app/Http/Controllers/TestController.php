@@ -28,17 +28,6 @@ class TestController extends Controller
     {
         $salon = Salon::first();
 
-        $message = "Nouveau compte
-Salon: $salon->nom
-Adresse: $salon->adresse
-Semaine: 15
-Mois: 60";
-        $sms = new stdClass();
-        $sms->to = ["0758572785"];
-        $sms->message = "Ok?";
-        //Queue::push(new SendSMS($sms));
-
-
         //DB::table("users")->update(["password" => bcrypt("2909")]);
         /*Client::each(function ($client){
             $client->update([
@@ -57,10 +46,12 @@ Mois: 60";
         "%0AAdresse: $time" .
         "%0ASemaine: $time" .
         "%0AMois: $time";
+        $message = "Téléchargez l'application\n" . config("app.playstore");
         $sms = new stdClass();
         $sms->to = ["58572785"];
         $sms->message = $message;
         //Queue::push(new SendSMS($sms));
+
 
         return config("app.name");
     }
