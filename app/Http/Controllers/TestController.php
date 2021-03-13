@@ -60,7 +60,7 @@ Mois: 60";
         $sms = new stdClass();
         $sms->to = ["58572785"];
         $sms->message = $message;
-        Queue::push(new SendSMS($sms));
+        //Queue::push(new SendSMS($sms));
 
         return config("app.name");
     }
