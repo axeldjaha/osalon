@@ -85,8 +85,8 @@ class UserController extends ApiController
                 ]);
 
                 //Envoi du mot de passe par SMS
-                $message = "Votre mot de passe est: $password
-                Téléchargez l'application " . config("app.name") . " sur playstore.";
+                $message = "Votre mot de passe est: $password" .
+                "%0ATéléchargez l'application " . config("app.name") . " sur playstore.";
                 $sms = new \stdClass();
                 $sms->to = [$request->telephone];
                 $sms->message = $message;
@@ -100,8 +100,8 @@ class UserController extends ApiController
                 $salon = $this->salon->nom;
                 //Envoi d'une notification par SMS
                 $message =
-                    "$salon a été rattaché à votre compte " . config('app.name') . ".
-                    Vous pouvez suivre les activités de ce salon à distance partout où vous etes.";
+                    "$salon a été rattaché à votre compte " . config('app.name') .
+                    "%0AVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
                 $sms = new \stdClass();
                 $sms->to = [$request->telephone];
                 $sms->message = $message;
