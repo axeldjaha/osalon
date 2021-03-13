@@ -21,8 +21,6 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get("/telecharger", "WelcomeController@download");
-
 Route::get("/privacy", "WelcomeController@privacy");
 
 Route::get("/test", "TestController@test");
