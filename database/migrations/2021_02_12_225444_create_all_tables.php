@@ -40,6 +40,20 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
+        Schema::create('images', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('nom');
+            $table->unsignedBigInteger('lien_id');
+            $table->timestamps();
+        });
+
+        Schema::create('liens', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('url');
+            $table->unsignedBigInteger('sms_id')->nullable();
+            $table->timestamps();
+        });
+
         Schema::create('prestations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('total');
@@ -53,6 +67,7 @@ class CreateAllTables extends Migration
             $table->string('nom');
             $table->string('adresse')->nullable();
             $table->integer('pid')->nullable();
+            $table->bigInteger('sms')->default(0);
             $table->timestamps();
         });
 
@@ -74,7 +89,6 @@ class CreateAllTables extends Migration
             $table->unsignedBigInteger('salon_id');
             $table->timestamps();
         });
-
 
 
         /**

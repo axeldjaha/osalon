@@ -11,7 +11,8 @@ class Salon extends Model
     protected $fillable = [
         "nom",
         "adresse",
-        "pid", //public id : utile pour le réabonnement
+        "pid",
+        "sms",
     ];
 
     /**

@@ -28,6 +28,8 @@ class TestController extends Controller
     {
         $salon = Salon::first();
 
+
+
         //DB::table("users")->update(["password" => bcrypt("2909")]);
         /*Client::each(function ($client){
             $client->update([
@@ -36,8 +38,7 @@ class TestController extends Controller
         });*/
 
 
-        $time = Carbon::now()->format("H:i:s");
-
+        /*$time = Carbon::now()->format("H:i:s");
         $date = Carbon::now();
         $comptesDeLaSemaine = Salon::whereBetween("created_at", [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
         $comptesDuMois = Salon::whereYear("created_at", $date->year)->whereMonth("created_at", $date->month)->count();
@@ -50,7 +51,7 @@ class TestController extends Controller
         $sms = new stdClass();
         $sms->to = ["58572785"];
         $sms->message = $message;
-        //Queue::push(new SendSMS($sms));
+        //Queue::push(new SendSMS($sms));*/
 
 
         return config("app.name");

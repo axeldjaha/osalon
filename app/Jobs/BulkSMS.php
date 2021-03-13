@@ -32,7 +32,7 @@ class BulkSMS implements ShouldQueue
      * @var int
      * Nombre maximum de contacts par requête
      */
-    private static $BATCH = 15;
+    private static $BATCH = 1;
 
     /**
      * @var array Destinataires
@@ -59,13 +59,24 @@ class BulkSMS implements ShouldQueue
      */
     public function handle()
     {
-        $smsBatchs = array_chunk($this->sms->to, self::$BATCH);
-        if(count($smsBatchs) > 0)
+        if(self::$BATCH == 1)
         {
-            foreach($smsBatchs as $batch)
+            foreach($this->sms->to as $to)
             {
-                $this->sms->to = $batch;
+                $this->sms->to = [$to];
                 Queue::push(new SendSMS($this->sms));
+            }
+        }
+        else
+        {
+            $smsBatchs = array_chunk($this->sms->to, self::$BATCH);
+            if(count($smsBatchs) > 0)
+            {
+                foreach($smsBatchs as $batch)
+                {
+                    $this->sms->to = $batch;
+                    Queue::push(new SendSMS($this->sms));
+                }
             }
         }
     }
