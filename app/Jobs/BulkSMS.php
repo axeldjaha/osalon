@@ -59,24 +59,13 @@ class BulkSMS implements ShouldQueue
      */
     public function handle()
     {
-        if(self::$BATCH == 1)
+        $smsBatchs = array_chunk($this->sms->to, self::$BATCH);
+        if(count($smsBatchs) > 0)
         {
-            foreach($this->sms->to as $to)
+            foreach($smsBatchs as $batch)
             {
-                $this->sms->to = [$to];
+                $this->sms->to = $batch;
                 Queue::push(new SendSMS($this->sms));
-            }
-        }
-        else
-        {
-            $smsBatchs = array_chunk($this->sms->to, self::$BATCH);
-            if(count($smsBatchs) > 0)
-            {
-                foreach($smsBatchs as $batch)
-                {
-                    $this->sms->to = $batch;
-                    Queue::push(new SendSMS($this->sms));
-                }
             }
         }
     }

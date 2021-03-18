@@ -79,7 +79,7 @@ class SendSMS implements ShouldQueue
 
         $this->sms->to = $to;
 
-        $this->letexto();
+        //todo $this->letexto();
     }
 
     /**

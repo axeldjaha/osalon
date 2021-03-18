@@ -105,7 +105,7 @@ class SmsController extends ApiController
                 $url = Str::random(4);
 
             }while(Lien::where('url', $url)->count());
-            $lien = Lien::create(['url' => $url]);
+            $lien = Lien::create(['url' => $url, "sms_id" => $sms->id]);
 
             /**
              * Enregistrement des images
@@ -123,6 +123,9 @@ class SmsController extends ApiController
             }
         }
 
+        /**
+         * Le lien se termine par 5 caractères alphanumériques
+         */
         $imagesLink = isset($lien) ? config("app.url") . "/" . $lien->url : null;
 
         $message = str_replace("\r\n", "\n", trim($request->message . "\n" . $imagesLink));
@@ -142,13 +145,19 @@ class SmsController extends ApiController
                 "salon_id" => $this->salon->id,
             ]);
 
-            $lien->update(["sms_id" => $sms->id]);
+            if(isset($lien))
+            {
+                $lien->update(["sms_id" => $sms->id]);
+            }
 
             Queue::push(new BulkSMS($message, $to));
         }
         else
         {
-            $lien->delete();
+            if(isset($lien))
+            {
+                $lien->delete();
+            }
 
             return response()->json([
                 "message" => "Volume SMS insuffisant, veuillez recharger votre compte."
