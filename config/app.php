@@ -17,7 +17,7 @@ return [
 
     'version' => env('APP_VERSION', 'v1.0.0'),
 
-    'telephone' => env('APP_TELEPHONE', '58572785'),
+    'telephone' => env('APP_TELEPHONE', '0758572785'),
 
     'playstore' => env('PLAYSTORE_LINK', null),
 
