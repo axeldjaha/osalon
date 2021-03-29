@@ -141,6 +141,7 @@ class SmsController extends ApiController
                 /**
                  * Enregistrement des images
                  */
+                Fakedata::create(["data" => "file: " . $request->files->count()]);
                 foreach ($request->files as $file)
                 {
                     $image = \App\Image::create([
@@ -152,6 +153,7 @@ class SmsController extends ApiController
                     $img->save("$destinationPath/$filename");
 
                     $image->update(["nom" => $filename]);
+                    Fakedata::create(["data" => $filename]);
                 }
             }
 
