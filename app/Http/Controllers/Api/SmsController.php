@@ -92,7 +92,7 @@ class SmsController extends ApiController
         /**
          * Images link length
          */
-        $linkLength = 4;
+        $linkLength = $request->files->count() > 0 ? 4 : 0;
 
         /**
          * Le lien se termine par 5 caractères alphanumériques y compris le slash
@@ -155,7 +155,7 @@ class SmsController extends ApiController
                 }
             }
 
-            Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender")));
+            //todo Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender")));
         }
         else
         {

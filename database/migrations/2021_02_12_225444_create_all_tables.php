@@ -42,14 +42,14 @@ class CreateAllTables extends Migration
 
         Schema::create('images', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('nom');
+            $table->string('nom')->nullable();
             $table->unsignedBigInteger('lien_id');
             $table->timestamps();
         });
 
         Schema::create('liens', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('url');
+            $table->string('url')->nullable();
             $table->unsignedBigInteger('sms_id')->nullable();
             $table->timestamps();
         });
