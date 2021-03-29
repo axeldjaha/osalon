@@ -23,6 +23,8 @@ return [
 
     'sms_sender' => env('SMS_SENDER', "O'SALON"),
 
+    'sms_client_sender' => env('SMS_CLIENT_SENDER', "MONSALON"),
+
 
     /*
     |--------------------------------------------------------------------------

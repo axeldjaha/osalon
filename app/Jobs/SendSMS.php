@@ -54,9 +54,10 @@ class SendSMS implements ShouldQueue
      * @param null $api
      * @param null $sender
      */
-    public function __construct(\stdClass $sms)
+    public function __construct(\stdClass $sms, $sender = null)
     {
         $this->sms = $sms;
+        $this->sender = $sender;
 
         //todo To remove when Moov SMS API is implemented
         $this->smsCounter = new SMSCounter();
@@ -79,7 +80,7 @@ class SendSMS implements ShouldQueue
 
         $this->sms->to = $to;
 
-        //todo $this->letexto();
+        $this->letexto();
     }
 
     /**
@@ -100,7 +101,7 @@ class SendSMS implements ShouldQueue
         $secret = 'aayxEoIfSNMykVKsvJ9UG7tyXoiJpUfsUFPnTmvB';
         $message = $this->sms->message;
         $receiver = $this->sms->to;
-        $sender = config("app.sms_sender");
+        $sender = $this->sender ?? config("app.sms_sender");
         $cltmsgid = 1;
 
         $client = new Client();
@@ -124,7 +125,7 @@ class SendSMS implements ShouldQueue
      */
     public function sendWith1s2u()
     {
-        $sender = config("app.sms_sender");
+        $sender = $this->sender ?? config("app.sms_sender");
 
         $this->sms->type = Str::is($this->smsCounter->smsInfo->encoding, 'UTF16') ? 1 : 0;
 

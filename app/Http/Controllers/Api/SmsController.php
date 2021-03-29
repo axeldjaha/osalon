@@ -89,44 +89,19 @@ class SmsController extends ApiController
             ], 422);
         }
 
-        if($request->files->count())
-        {
-            $destinationPath = public_path() ."/sms";
-
-            if (!file_exists($destinationPath)) {
-                File::makeDirectory($destinationPath); //creates directory
-            }
-
-            /**
-             * Création du lien
-             */
-            do
-            {
-                $url = Str::random(4);
-
-            }while(Lien::where('url', $url)->count());
-            $lien = Lien::create(['url' => $url, "sms_id" => $sms->id]);
-
-            /**
-             * Enregistrement des images
-             */
-            foreach ($request->files as $file)
-            {
-                $filename = md5($this->user->id . time()).'.'.$file->getClientOriginalExtension();
-                $img = Image::make($file->getRealPath());
-                $img->save("$destinationPath/$filename");
-
-                \App\Image::create([
-                    "nom" => $filename,
-                    "lien_id" => $lien->id,
-                ]);
-            }
-        }
+        /**
+         * Images link length
+         */
+        $linkLength = 4;
 
         /**
-         * Le lien se termine par 5 caractères alphanumériques
+         * Le lien se termine par 5 caractères alphanumériques y compris le slash
          */
-        $imagesLink = isset($lien) ? config("app.url") . "/" . $lien->url : null;
+        $imagesLink = config("app.url") . "/";
+        for ($index = 0; $index < $linkLength; $index++)
+        {
+            $imagesLink .= $index + 1;
+        }
 
         $message = str_replace("\r\n", "\n", trim($request->message . "\n" . $imagesLink));
         $smsCounter = new SMSCounter();
@@ -145,12 +120,42 @@ class SmsController extends ApiController
                 "salon_id" => $this->salon->id,
             ]);
 
-            if(isset($lien))
+            if($request->files->count())
             {
-                $lien->update(["sms_id" => $sms->id]);
+                $destinationPath = public_path() ."/files";
+
+                if (!file_exists($destinationPath)) {
+                    File::makeDirectory($destinationPath); //creates directory
+                }
+
+                /**
+                 * Création du lien
+                 */
+                do
+                {
+                    $url = Str::random($linkLength);
+
+                }while(Lien::where('url', $url)->count());
+                $lien = Lien::create(['url' => $url, "sms_id" => $sms->id]);
+
+                /**
+                 * Enregistrement des images
+                 */
+                foreach ($request->files as $file)
+                {
+                    $image = \App\Image::create([
+                        "lien_id" => $lien->id,
+                    ]);
+
+                    $filename = md5($image->id) . '.' . $file->getClientOriginalExtension();
+                    $img = Image::make($file->getRealPath());
+                    $img->save("$destinationPath/$filename");
+
+                    $image->update(["nom" => $filename]);
+                }
             }
 
-            Queue::push(new BulkSMS($message, $to));
+            Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender")));
         }
         else
         {
@@ -160,7 +165,7 @@ class SmsController extends ApiController
             }
 
             return response()->json([
-                "message" => "Volume SMS insuffisant, veuillez recharger votre compte."
+                "message" => "Crédit SMS insuffisant. Veuillez recharger votre compte."
             ], 402);
         }
 
