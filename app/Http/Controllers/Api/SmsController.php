@@ -74,11 +74,11 @@ class SmsController extends ApiController
     {
         /*$data = json_encode($request->json()->all());
         Fakedata::create(["data" => $request->message]);
-        Fakedata::create(["data" => count($request->clients)]);
+        Fakedata::create(["data" => count($request->to)]);
         return response()->json(["message" => "super!"], 400);*/
 
         $to = $this->salon->clients()
-            ->whereIn("id", $request->clients)
+            ->whereIn("id", $request->to)
             ->pluck("telephone")
             ->toArray();
 
@@ -139,7 +139,7 @@ class SmsController extends ApiController
 
             $sms = Sms::create([
                 "message" => $request->message,
-                "recipient" => count($request->clients),
+                "recipient" => count($request->to),
                 "date" => Carbon::now(),
                 "user" => $this->user->name,
                 "salon_id" => $this->salon->id,

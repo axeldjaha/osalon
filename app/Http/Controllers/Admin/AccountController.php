@@ -56,7 +56,7 @@ class AccountController extends Controller
     {
         $this->validate($request, [
             "nom" => "required",
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'photo' => 'nullable|image|max:2048',
         ]);
 
         $user = Auth::user();
