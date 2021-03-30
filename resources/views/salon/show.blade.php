@@ -32,33 +32,51 @@
                         <span class="d-inline-block mr-sm-3">Détails</span>
                     </div>
                 </div>
-                <div class="card-body" style="background: #fafafa">
+                <div class="card-body">
                     <div class="row">
-                        <strong class="col-lg-3">Pid</strong>
-                        <label class="col-auto">{{$salon->pid}}</label>
-                    </div>
-                    <div class="row">
-                        <strong class="col-lg-3">Nom salon</strong>
-                        <label class="col-auto">{{$salon->nom}}</label>
-                    </div>
-                    <div class="row">
-                        <strong class="col-lg-3">Adresse</strong>
-                        <label class="col-auto">{{$salon->adresse}}</label>
-                    </div>
-                    <div class="row">
-                        <strong class="col-lg-3">Date création</strong>
-                        <label class="col-auto">{{date("d/m/Y", strtotime($salon->created_at))}}</label>
-                    </div>
+                        <div class="col-sm">
+                            <table class="table table-striped mb-0">
+                                <tbody>
+                                <tr>
+                                    <td class="fitx"><strong>Nom</strong></td>
+                                    <td>{{ $salon->nom }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fitx"><strong>Pid</strong></td>
+                                    <td>{{ $salon->pid }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fitx"><strong>Adresse</strong></td>
+                                    <td>{{ $salon->adresse }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="fitx"><strong>Créé le</strong></td>
+                                    <td>{{ date("d/m/Y", strtotime($salon->created_at)) }}</td>
+                                </tr>
 
-                    <div class="dropdown-divider"></div>
-                    <div class="mt-3 clearfix">
-                        <a form-action="{{route("salon.destroy", $salon)}}"
-                           form-method="delete"
-                           confirm-message="Supprimer le salon ?"
-                           onclick="submitLinkForm(this)"
-                           href="#"
-                           class="confirm btn btn-link text-danger">Supprimer le salon ?
-                        </a>
+                                </tbody>
+                            </table>
+                            <div class="dropdown-divider"></div>
+                            <div class="mt-3 clearfix">
+                                <a form-action="{{route("salon.destroy", $salon)}}"
+                                   form-method="delete"
+                                   confirm-message="Supprimer le salon ?"
+                                   onclick="submitLinkForm(this)"
+                                   href="#"
+                                   class="confirm btn btn-outline-danger">Supprimer le salon
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-sm">
+                            <table>
+                                <thead>
+                                <th>Date</th>
+                                <th>Validité</th>
+                                <th>Mode </th>
+                                </thead>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

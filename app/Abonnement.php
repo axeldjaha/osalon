@@ -13,9 +13,10 @@ class Abonnement extends Model
     public static $TRIAL = 7;
 
     protected $fillable = [
-        "date",
-        "echeance",
         "montant",
+        "validite",
+        "echeance",
+        "mode_paiement",
         "salon_id",
     ];
 

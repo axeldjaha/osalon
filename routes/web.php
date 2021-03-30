@@ -31,7 +31,13 @@ Route::middleware("auth")->group(function ()
      * SALON
      */
     Route::group(['middleware' => ['permission:Pressings']], function () {
-        Route::resource("salon", "SalonController")->only(["index", "show", "destroy"]);
+        Route::get("salon", "SalonController@index")->name("salon.index");
+        Route::get("salon/{salon}", "SalonController@show")
+            ->where("salon", "[0-9]+")->name("salon.show");
+        Route::get("salon/{salon}/reabonner", "SalonController@reabonnement")
+            ->where("salon", "[0-9]+")->name("salon.reabonnement");
+        Route::post("salon/{salon}/reabonner", "SalonController@reabonner")
+            ->where("salon", "[0-9]+")->name("salon.reabonner");
     });
 
     /**

@@ -111,7 +111,7 @@ class AuthController extends Controller
             $sms = new stdClass();
             $sms->to = [config("app.telephone")];
             $sms->message = $message;
-            Queue::push(new SendSMS($sms));
+            //Queue::push(new SendSMS($sms));
         }, 1);
 
         return response()->json([

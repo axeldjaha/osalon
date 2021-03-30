@@ -15,20 +15,6 @@ use stdClass;
 
 class AbonnementController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $data["title"] = "Abonnement";
-        $data["active"] = "abonnement";
-
-        $data["salons"] = Salon::orderBy("nom")->get();
-
-        return view("abonnement.index", $data);
-    }
 
     /**
      * Show the form for creating a new resource.
@@ -47,22 +33,7 @@ class AbonnementController extends Controller
             Transaction::$MODE_MOBILE_MONEY => Transaction::$MODE_MOBILE_MONEY,
         ]);
 
-        return view("abonnement.create", $data);
-    }
-
-    public function reabonnement(Salon $salon)
-    {
-        $data["title"] = "Abonnement";
-        $data["active"] = "abonnement";
-
-        $data["salon"] = $salon;
-        $data["modes"] = collect([
-            Transaction::$MODE_ESPECE => Transaction::$MODE_ESPECE,
-            Transaction::$MODE_MOBILE_MONEY => Transaction::$MODE_MOBILE_MONEY,
-            Transaction::$MODE_PAIEMENT_LIGNE => Transaction::$MODE_PAIEMENT_LIGNE,
-        ]);
-
-        return view("abonnement.reabonnement", $data);
+        return view("salon.abonnement.create", $data);
     }
 
     /**
@@ -145,7 +116,7 @@ class AbonnementController extends Controller
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Réabonnement effectué avec succès!');
 
-        return redirect()->route("abonnement.index");
+        return redirect()->route("salon.index");
     }
 
     /**
@@ -162,6 +133,6 @@ class AbonnementController extends Controller
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Suppression effectuée avec succès!');
 
-        return redirect()->route("abonnement.index");
+        return redirect()->route("salon.abonnement.index");
     }
 }
