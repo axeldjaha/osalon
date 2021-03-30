@@ -45,10 +45,10 @@ class TestController extends Controller
         $comptesDeLaSemaine = Salon::whereBetween("created_at", [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
         $comptesDuMois = Salon::whereYear("created_at", $date->year)->whereMonth("created_at", $date->month)->count();
         $message = "Nouveau compte" .
-        "%0ASalon: $time" .
-        "%0AAdresse: $time" .
-        "%0ASemaine: $time" .
-        "%0AMois: $time";
+        "\nSalon: $time" .
+        "\nAdresse: $time" .
+        "\nSemaine: $time" .
+        "\nMois: $time";
         $message = "Téléchargez l'application\n" . config("app.playstore");
         $sms = new stdClass();
         $sms->to = ["58572785"];

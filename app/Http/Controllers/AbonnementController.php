@@ -134,9 +134,7 @@ class AbonnementController extends Controller
             $message =
                 "Votre réabonnement a été effectué avec succès!".
                 "\nSalon: $salon->nom" .
-                //"\nMontant: $request->montant" .
-                "\nCompte actif jusqu'au: " . $echeance->format("d/m/Y") .
-                "\nL'équipe de " . config("app.name");
+                "\nActif jusqu'au: " . $echeance->format("d/m/Y");
             $sms = new stdClass();
             $sms->to = $salon->users()->pluck("telephone")->toArray();
             $sms->message = $message;

@@ -88,7 +88,7 @@ class AuthController extends Controller
                 //Envoi d'une notification par SMS
                 $message =
                     "$salon->nom a été rattaché à votre compte " . config('app.name') .
-                    "%0AVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
+                    "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
                 $sms = new \stdClass();
                 $sms->to = [$user->telephone];
                 $sms->message = $message;
@@ -104,10 +104,10 @@ class AuthController extends Controller
             $comptesDeLaSemaine = Salon::whereBetween("created_at", [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
             $comptesDuMois = Salon::whereYear("created_at", $date->year)->whereMonth("created_at", $date->month)->count();
             $message = "Nouveau compte" .
-            "%0ASalon: $salon->nom" .
-            "%0AAdresse: $salon->adresse" .
-            "%0ASemaine: $comptesDeLaSemaine" .
-            "%0AMois: $comptesDuMois";
+            "\nSalon: $salon->nom" .
+            "\nAdresse: $salon->adresse" .
+            "\nSemaine: $comptesDeLaSemaine" .
+            "\nMois: $comptesDuMois";
             $sms = new stdClass();
             $sms->to = [config("app.telephone")];
             $sms->message = $message;
