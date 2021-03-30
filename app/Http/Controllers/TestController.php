@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 
 use App\Client;
+use App\Http\Resources\OffreSMSResource;
 use App\Jobs\SendSMS;
+use App\OffreSms;
 use App\Salon;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;

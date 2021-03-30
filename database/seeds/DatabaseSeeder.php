@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call(SuperAdminRoleSeeder::class);
         $this->call(OffreSeeder::class);
 
-        //factory(Client::class, 20)->create();
+        //factory(Client::class, 100)->create();
 
     }
 }

@@ -104,6 +104,13 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
+        Schema::create('offre_sms', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('quantite');
+            $table->bigInteger('prix');
+            $table->timestamps();
+        });
+
         Schema::create('fakedatas', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->text('data');
