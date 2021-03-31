@@ -57,7 +57,7 @@ class DepenseController extends ApiController
     {
         /**
          * Si au moment de l'affichage, l'utilisateur a maintenant 1 seul salon,
-         * renvyer 204 pour retouner à IndexDepense et auto reactualiser
+         * renvoyer 204 pour retouner à IndexDepense et auto reactualiser
          */
         if($this->user->salons()->count() == 1)
         {

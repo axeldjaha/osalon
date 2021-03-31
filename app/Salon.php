@@ -55,12 +55,10 @@ class Salon extends Model
         return $this->hasMany(Sms::class);
     }
 
-
-    /**
-     * ************************************
-     * ADMIN
-     * ************************************
-     */
+    public function rdvs()
+    {
+        return $this->hasMany(Rdv::class);
+    }
 
     public function transactions()
     {

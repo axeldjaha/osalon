@@ -31,12 +31,6 @@ class TestController extends Controller
         $salon = Salon::first();
 
 
-        $telephones = explode("/", "0153791279/07.58-.57 2785");
-
-        foreach ($telephones as $telephone)
-        {
-            var_dump(preg_replace('/[\-.\s]/s','', $telephone));
-        }
 
 
 

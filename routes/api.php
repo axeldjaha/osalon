@@ -46,6 +46,8 @@ Route::middleware(["auth:api", "activated", "salon", "abonnement"])->group(funct
 
     Route::apiResource('prestation','Api\PrestationController')->except(["index", "show"]);
 
+    Route::apiResource('rdv','Api\RdvController')->except(["index", "show"]);
+
     Route::apiResource('sms','Api\SmsController')->except(["index", "show"]);
     Route::delete('sms/all/destroy','Api\SmsController@destroyAll');
 });
@@ -78,6 +80,9 @@ Route::middleware(["auth:api", "activated"])->group(function ()
 
     Route::get('sms','Api\SmsController@index');
     Route::get('sms/salon/{salon}','Api\SmsController@show');
+
+    Route::get('rdv','Api\RdvController@index');
+    Route::get('rdv/salon/{salon}','Api\RdvController@show');
 
     Route::get('abonnement/index','Api\AbonnementController@index');
 
