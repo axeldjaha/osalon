@@ -45,7 +45,6 @@
                             <table id="datatable" class="table table-hover table-striped" style="margin-top: 0 !important; margin-bottom: 0 !important;">
                                 <thead class="">
                                 <th>#</th>
-                                <th>Nom</th>
                                 <th>Téléphone</th>
                                 <th>Actions</th>
                                 </thead>
@@ -54,7 +53,6 @@
                                 @foreach($contacts as $contact)
                                     <tr>
                                         <td>{{ $index++ }}</td>
-                                        <td style="padding: .55rem">{{ $contact->nom }}</td>
                                         <td style="padding: .55rem">{{ $contact->telephone }}</td>
                                         <td>
                                             <a form-action ="{{ route("sms.contact.destroy", $contact) }}"

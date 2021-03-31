@@ -8,6 +8,7 @@ use App\Contact;
 use App\SmsGroupe;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -67,6 +68,19 @@ class ImportSmsGroupe implements ToCollection, WithHeadingRow
         if(count($data) > 0)
         {
             batch()->insert($modelInstance, $columns, $data);
+            //Delete duplicated phone number for current groupe
+            $query = "
+            DELETE FROM contacts
+            WHERE id NOT IN (
+                SELECT *
+                FROM (
+                    SELECT MIN(id)
+                    FROM contacts
+                    WHERE sms_groupe_id = ?
+                    GROUP BY contacts.telephone
+                ) temp
+            ) AND sms_groupe_id = ?";
+            DB::delete($query, [$smsGroupe->id, $smsGroupe->id]);
         }
         else
         {
