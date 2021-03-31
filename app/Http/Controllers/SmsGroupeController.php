@@ -29,16 +29,34 @@ class SmsGroupeController extends Controller
             "groupe" => "required|exists:sms_groupes,id",
         ]);
 
-        Contact::create([
-            "nom" => $request->nom,
-            "telephone" => $request->telephone,
-            "sms_groupe_id" => $request->groupe,
-        ]);
+        $smsGroupe = SmsGroupe::find($request->groupe);
+        if($smsGroupe == null)
+        {
+            session()->flash('type', 'alert-danger');
+            session()->flash('message', "Le groupe n'existe pas ou a été supprimé.");
+            return back();
+        }
+
+        if(!$smsGroupe->contacts()->where("telephone", $this->formatPhoneNumber($request->telephone))->exists())
+        {
+            Contact::create([
+                "nom" => $request->nom,
+                "telephone" => $request->telephone,
+                "sms_groupe_id" => $request->groupe,
+            ]);
+        }
 
         session()->flash('type', 'alert-success');
         session()->flash('message', "Contact ajouté avec succès!");
 
         return redirect()->route("sms.fichier.show", $request->groupe);
+    }
+
+    public function formatPhoneNumber($telephone)
+    {
+        $phoneNumber = preg_replace('/[\-.\s]/s','', $telephone);
+        $phoneNumber = substr($phoneNumber, 0, 10);
+        return $phoneNumber;
     }
 
     public function show(SmsGroupe $smsGroupe)
