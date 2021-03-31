@@ -16,7 +16,7 @@
         "doctrine/dbal": "^2.9",
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "^6.5",
-        "intervention/image": "^2.5",
+
         "laravel-lang/lang": "~4.0",
         "laravel/framework": "5.8.*",
         "laravel/tinker": "^1.0",
