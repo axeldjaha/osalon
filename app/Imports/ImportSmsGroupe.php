@@ -8,6 +8,7 @@ use App\Contact;
 use App\SmsGroupe;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -35,17 +36,23 @@ class ImportSmsGroupe implements ToCollection, WithHeadingRow
         ]);
 
         $date = Carbon::now();
+        $createdAt = $date;
+        $updatedAt = $date;
         foreach ($rows as $row)
         {
-            $data[] = [
-                "nom" => $row["nom"] ?? null,
-                "telephone" => $row["telephone"] ?? null,
-                "sms_groupe_id" => $smsGroupe->id,
-                $date,
-                $date,
-            ];
+            $telephone = $this->formatPhoneNumber($row["telephone"]);
+            if(Str::length($telephone) == 8 || Str::length($telephone) == 10)
+            {
+                $data[] = [
+                    "nom" => $row["nom"] ?? null,
+                    "telephone" => $telephone,
+                    "sms_groupe_id" => $smsGroupe->id,
+                    $createdAt,
+                    $updatedAt,
+                ];
 
-            $this->rows++;
+                $this->rows++;
+            }
         }
 
         $modelInstance = new Contact();
@@ -70,6 +77,13 @@ class ImportSmsGroupe implements ToCollection, WithHeadingRow
     public function getRowCount(): int
     {
         return $this->rows;
+    }
+
+    public function formatPhoneNumber($telephone)
+    {
+        $phoneNumber = preg_replace('/[\-.\s]/s','', $telephone);
+        $phoneNumber = substr($phoneNumber, 0, 10);
+        return $phoneNumber;
     }
 
 }

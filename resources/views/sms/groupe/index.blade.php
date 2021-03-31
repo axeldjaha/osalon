@@ -57,14 +57,14 @@
                                                 <i class="fa fa-file-export"></i> Exporter
                                             </a>
 
-                                            <button type="button"
-                                                    class="btn btn-link btn-sm"
-                                                    onclick="confirm(this)"
-                                                    confirm-message="Supprimer la liste de contacts ?"
-                                                    form-method="delete"
-                                                    form-action ="{{ route("sms.fichier.destroy", $groupe) }}">
+                                            <a form-action="{{route("sms.fichier.destroy", $groupe)}}"
+                                               form-method="delete"
+                                               confirm-message="Supprimer la liste de contacts ?"
+                                               onclick="submitLinkForm(this)"
+                                               href="#"
+                                               class="confirm btn btn-link btn-sm">
                                                 <i class="fa fa-trash-alt text-danger"></i> Supprimer
-                                            </button>
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach
