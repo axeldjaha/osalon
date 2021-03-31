@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Abonnement;
 use App\Http\Resources\AbonnementResource;
 
 class AbonnementController extends ApiController
@@ -16,7 +17,7 @@ class AbonnementController extends ApiController
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
                 "pid" => $salon->pid,
-                "abonnement" => new AbonnementResource($salon->abonnements()->orderBy("id", "desc")->first()),
+                "abonnement" => new AbonnementResource($salon->abonnements()->orderBy("id", "desc")->first() ?? new Abonnement()),
             ];
         }
 

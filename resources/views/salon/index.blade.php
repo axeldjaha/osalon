@@ -67,9 +67,9 @@
                                 <td>{{$salon->pid}}</td>
                                 <td><span hidden>{{$salon->created_at}}</span> {{date("d/m/Y", strtotime($salon->created_at))}}</td>
                                 @php($abonnement = $salon->abonnements()->orderBy("id", "desc")->first())
-                                <td><span hidden>{{$abonnement->echeance}}</span> {{date("d/m/Y", strtotime($abonnement->echeance))}}</td>
+                                <td><span hidden>{{$abonnement->echeance ?? null}}</span> @if($abonnement != null) {{date("d/m/Y", strtotime($abonnement->echeance))}} @endif</td>
                                 <td class="">
-                                    @if(\Illuminate\Support\Carbon::parse($abonnement->echeance)->greaterThanOrEqualTo(\Illuminate\Support\Carbon::now()))
+                                    @if($abonnement != null && \Illuminate\Support\Carbon::parse($abonnement->echeance)->greaterThanOrEqualTo(\Illuminate\Support\Carbon::now()))
                                         <span class="badge badge-success badge-pill">Actif</span>
                                     @else
                                         <span class="badge badge-danger badge-pill">Expiré<span>

@@ -23,7 +23,7 @@ class AbonnementMiddleware
 
         $abonnement = $salon->abonnements()->orderBy("id", "desc")->first();
 
-        if(Carbon::parse($abonnement->echeance)->lessThan(Carbon::now()))
+        if($abonnement == null || Carbon::parse($abonnement->echeance)->lessThan(Carbon::now()))
         {
             return response()->json([
                 "message" => "Votre abonnement a expiré, veuillez vous réabonner."

@@ -38,6 +38,8 @@ Route::middleware("auth")->group(function ()
             ->where("salon", "[0-9]+")->name("salon.reabonnement");
         Route::post("salon/{salon}/reabonner", "SalonController@reabonner")
             ->where("salon", "[0-9]+")->name("salon.reabonner");
+        Route::delete("salon/{salon}/abonnement/{abonnement}/delete", "SalonController@destroyAbonnement")
+            ->name("salon.abonnement.destroy");
     });
 
     /**
@@ -48,13 +50,6 @@ Route::middleware("auth")->group(function ()
         Route::get("user/{user}/acces", "UserController@acces")->name("user.acces");
         Route::put("user/{user}/lock", "UserController@lock")->name("user.lock");
         Route::put("user/{user}/unlock", "UserController@unlock")->name("user.unlock");
-    });
-
-    /**
-     * ABONNEMENT
-     */
-    Route::group(['middleware' => ['permission:Abonnements']], function () {
-        Route::resource("abonnement", "AbonnementController")->only(["index", "create", "store"]);
     });
 
     /**

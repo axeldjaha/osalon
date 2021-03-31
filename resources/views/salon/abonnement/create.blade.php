@@ -31,6 +31,9 @@
             <div class="main-card mb-3 card">
                 <div class="card-header-tab card-header bg-heavy-rain">
                     <div class="card-header-title font-size-lg font-weight-normal">
+                        <a href="{{ route("salon.index") }}" class="btn btn-link btn-sm mr-sm-3" style="text-transform: initial">
+                            <i class="fa fa-chevron-left"></i> Retour
+                        </a>
                         <span class="d-inline-block mr-sm-3">Réabonnement</span>
                     </div>
                 </div>

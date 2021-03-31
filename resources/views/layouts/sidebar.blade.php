@@ -48,15 +48,6 @@
                     </li>
                 @endcan
 
-                @can('Abonnements')
-                    <li>
-                        <a href="{{route("abonnement.index")}}" class="{{$active == "abonnement" ? "mm-active" : ""}}">
-                            <i class="metismenu-icon fa fa-credit-card"></i>
-                            Abonnement
-                        </a>
-                    </li>
-                @endcan
-
                 @can('Transactions')
                     <li>
                         <a href="{{route("transaction.index")}}" class="{{$active == "transaction" ? "mm-active" : ""}}">

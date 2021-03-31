@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Offre;
+use App\OffreSms;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Carbon;
 
@@ -17,7 +18,7 @@ class AbonnementResource extends JsonResource
     public function toArray($request)
     {
         return [
-            "montant" => $this->montant,
+            "montant" => $this->montant ?? Offre::orderBy("id", "desc")->first()->montant,
             "date" => date("d/m/Y", strtotime($this->date)),
             "echeance" => date("d/m/Y", strtotime($this->echeance)),
             "expired" => Carbon::parse($this->echeance)->lessThan(Carbon::now()),

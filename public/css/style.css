@@ -1,12 +1,12 @@
-.text-orange{ color: #ff6c2c !important;}
+.text-orange{ color: #f68b1e !important;}
 .text-vert{ color: #669966 !important;}
 .text-black{ color: #000000 !important;}
 
 
-.bg-orange{ background-color: #ff6c2c !important; }
+.bg-orange{ background-color: #f68b1e !important; }
 .bg-vert{ background-color: #669966 !important; }
 
-.border-orange{ border: 1px solid #ff6c2c !important;}
+.border-orange{ border: 1px solid #f68b1e !important;}
 
 .fit
 {
@@ -14,10 +14,10 @@
 }
 
 .search-wrapper .input-holder .search-icon span::before {
-    /* background: #ff6c2c !important; */
+    /* background: #f68b1e !important; */
 }
 .search-wrapper .input-holder .search-icon span::after {
-    /* border: 2px solid #ff6c2c; */
+    /* border: 2px solid #f68b1e; */
 }
 
 .cursor-pointer{
@@ -62,13 +62,13 @@ menu i.metismenu-icon {
 }
 
 .vertical-nav-menu li a.mm-active{
-    color: #ff6c2c;
+    color: #f68b1e;
     background: #e0f3ff;
     font-weight: normal;
     /* opacity: 1; */
 }
 .vertical-nav-menu ul>li>a.mm-active {
-    color: #ff6c2c;
+    color: #f68b1e;
     background: #e0f3ff;
     font-weight: normal;
 }
@@ -123,10 +123,10 @@ table.dataTable td.dt-checkboxes-cell{
 }
 
 .search-wrapper .input-holder .search-icon span::before {
-    /* background: #ff6c2c !important; */
+    /* background: #f68b1e !important; */
 }
 .search-wrapper .input-holder .search-icon span::after {
-    /* border: 2px solid #ff6c2c; */
+    /* border: 2px solid #f68b1e; */
 }
 
 table.dataTable.no-tr-bg tbody>tr.selected:nth-of-type(odd) {

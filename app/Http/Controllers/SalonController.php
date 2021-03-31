@@ -67,7 +67,7 @@ class SalonController extends Controller
         $data["salon"] = $salon;
         $data["modes"] = collect([
             Transaction::$MODE_ESPECE => Transaction::$MODE_ESPECE,
-            Transaction::$MODE_PAIEMENT_LIGNE => Transaction::$MODE_PAIEMENT_LIGNE,
+            //Transaction::$MODE_PAIEMENT_LIGNE => Transaction::$MODE_PAIEMENT_LIGNE,
             Transaction::$MODE_MOBILE_MONEY => Transaction::$MODE_MOBILE_MONEY,
         ]);
 
@@ -122,7 +122,7 @@ class SalonController extends Controller
                 ]);
             }
 
-            $dernierAbonnement  = Carbon::parse($salon->abonnements()->orderBy("id", "desc")->first()->echeance);
+            $dernierAbonnement  = Carbon::parse($salon->abonnements()->orderBy("id", "desc")->first()->echeance ?? Carbon::yesterday());
             if($dernierAbonnement->greaterThanOrEqualTo(Carbon::now()))
             {
                 $echeance = $dernierAbonnement->addDays($request->validite);
@@ -133,9 +133,10 @@ class SalonController extends Controller
             }
 
             Abonnement::create([
-                "date" => Carbon::today(),
-                "echeance" => $echeance,
                 "montant" => $request->montant,
+                "validite" => $request->validite,
+                "echeance" => $echeance,
+                "mode_paiement" => $request->mode_paiement,
                 "salon_id" => $salon->id,
             ]);
 
@@ -154,6 +155,24 @@ class SalonController extends Controller
         session()->flash('message', 'Réabonnement effectué avec succès!');
 
         return redirect()->route("salon.index");
+    }
+
+    /**
+     * Destroy abonnement
+     *
+     * @param Salon $salon
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws Exception
+     */
+    public function destroyAbonnement(Salon $salon, Abonnement  $abonnement)
+    {
+        if($salon->abonnements()->where("id", $abonnement->id)->delete())
+        {
+            session()->flash('type', 'alert-success');
+            session()->flash('message', 'Suppression effectuée avec succès!');
+        }
+
+        return back();
     }
 
     /**
