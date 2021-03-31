@@ -67,6 +67,18 @@ Route::middleware("auth")->group(function ()
     });
 
     /**
+     * OFFRES SMS
+     */
+    Route::group(['middleware' => ['permission:Offres SMS']], function () {
+        Route::get("offres/sms", "OffreSmsController@index")->name("offre.sms.index");
+        Route::get("offres/sms/create", "OffreSmsController@create")->name("offre.sms.create");
+        Route::post("offres/sms/create", "OffreSmsController@store")->name("offre.sms.store");
+        Route::get("offres/sms/{offreSms}/edit", "OffreSmsController@edit")->name("offre.sms.edit");
+        Route::put("offres/sms/{offreSms}/edit", "OffreSmsController@update")->name("offre.sms.update");
+        Route::delete("offres/sms/{offreSms}", "OffreSmsController@destroy")->name("offre.sms.destroy");
+    });
+
+    /**
      * SMS
      */
     Route::group(['middleware' => ['can:Envoi SMS']], function () {

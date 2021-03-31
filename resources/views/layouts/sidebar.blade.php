@@ -61,7 +61,16 @@
                     <li>
                         <a href="{{route("offre.index")}}" class="{{$active == "offre" ? "mm-active" : ""}}">
                             <i class="metismenu-icon fa fa-gift"></i>
-                            Offre
+                            Offre abonnement
+                        </a>
+                    </li>
+                @endcan
+
+                @can('Offres SMS')
+                    <li>
+                        <a href="{{route("offre.sms.index")}}" class="{{$active == "offresms" ? "mm-active" : ""}}">
+                            <i class="metismenu-icon fa fa-gift"></i>
+                            Offre SMS
                         </a>
                     </li>
                 @endcan
@@ -70,7 +79,7 @@
                     <li>
                         <a href="{{route("sms.create")}}" class="{{$active == 'sms' ? 'mm-active' : ''}}">
                             <i class="metismenu-icon fa fa-paper-plane"></i>
-                            SMS
+                            Envoi SMS
                         </a>
                     </li>
                 @endcan
