@@ -51,8 +51,6 @@ class ImportSmsGroupe implements ToCollection, WithHeadingRow
                     $createdAt,
                     $updatedAt,
                 ];
-
-                $this->rows++;
             }
         }
 
@@ -86,6 +84,8 @@ class ImportSmsGroupe implements ToCollection, WithHeadingRow
         {
             $smsGroupe->delete();
         }
+
+        $this->rows = $smsGroupe->contacts->count();
     }
 
     public function getRowCount(): int

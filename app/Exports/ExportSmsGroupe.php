@@ -25,12 +25,10 @@ class ExportSmsGroupe implements FromCollection, WithMapping, WithHeadings,
         $this->collection = $collection;
 
         $this->columns = [
-            "nom",
             "telephone",
         ];
 
         $this->headings = [
-            "nom" => "Nom",
             "telephone" => "Téléphone",
         ];
     }
