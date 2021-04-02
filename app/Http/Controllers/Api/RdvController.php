@@ -65,10 +65,36 @@ class RdvController extends ApiController
      */
     public function show(Request $request, Salon $salon)
     {
-        $rdvs = $salon->rdvs()
-            ->where("date", "=", $request->date)
-            ->orderBy("heure")
-            ->get();
+        if($request->date != null)
+        {
+            $rdvs = $salon->rdvs()
+                ->where("date", "=", $request->date)
+                ->orderBy("heure")
+                ->get();
+        }
+        else
+        {
+            $query = "
+            SELECT date,
+              COUNT(*) AS total
+            FROM rdvs
+            WHERE salon_id = ? AND date >= ?
+            GROUP BY date
+            ORDER BY date";
+            $rdvData = [];
+            $rdvs = DB::select($query, [$salon->id, Carbon::today()]);
+            foreach ($rdvs as $rdv)
+            {
+                $rdvData[] = [
+                    "date" => $rdv->date,
+                    "date_iso_format" => ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('ddd DD MMMM')),
+                    "total" => $rdv->total,
+                    "salon_id" => $salon->id,
+                ];
+            }
+
+            return response()->json($rdvData);
+        }
 
         return response()->json(RdvResource::collection($rdvs));
     }
