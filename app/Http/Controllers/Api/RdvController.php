@@ -11,6 +11,7 @@ use App\Salon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class RdvController extends ApiController
 {
@@ -22,19 +23,33 @@ class RdvController extends ApiController
      */
     public function index()
     {
+        $query = "
+        SELECT date,
+          COUNT(*) AS total
+        FROM rdvs
+        WHERE salon_id = ? AND date >= ?
+        GROUP BY date
+        ORDER BY date";
         $salons = [];
         foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
         {
-            $rdvs = $salon->rdvs()
-                ->where("date", ">=", Carbon::today())
-                ->orderBy("date")
-                ->get();
+            $rdvData = [];
+            $rdvs = DB::select($query, [$salon->id, Carbon::today()]);
+            foreach ($rdvs as $rdv)
+            {
+                $rdvData[] = [
+                    "date" => $rdv->date,
+                    "date_iso_format" => ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('ddd DD MMMM')),
+                    "total" => $rdv->total,
+                    "salon_id" => $salon->id,
+                ];
+            }
 
             $salons[] = [
                 "id" => $salon->id,
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
-                "rdvs" => RdvResource::collection($rdvs),
+                "rdvs" => $rdvData,
             ];
         }
 
@@ -44,14 +59,15 @@ class RdvController extends ApiController
     /**
      * Show prestations for given salon
      *
+     * @param Request $request
      * @param Salon $salon
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Salon $salon)
+    public function show(Request $request, Salon $salon)
     {
         $rdvs = $salon->rdvs()
-            ->where("date", ">=", Carbon::today())
-            ->orderBy("date")
+            ->where("date", "=", $request->date)
+            ->orderBy("heure")
             ->get();
 
         return response()->json(RdvResource::collection($rdvs));
