@@ -31,28 +31,6 @@ class TestController extends Controller
     {
         $salon = Salon::first();
 
-        $query = "
-        SELECT date,
-          COUNT(*) AS total
-        FROM rdvs
-        WHERE salon_id = ? AND date >= ?
-        GROUP BY date
-        ORDER BY date";
-        $rdvs = DB::select($query, [$salon->id, Carbon::today()]);
-        $data = [];
-        foreach ($rdvs as $rdv)
-        {
-            $date = Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('ddd DD MMMM');
-            //var_dump($date);
-            $data[] = [
-                "date" => $rdv->date,
-                "date_iso_format" => Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('ddd DD MMMM'),
-                "total" => $rdv->total,
-                "salon_id" => $rdv->salon_id,
-            ];
-        }
-
-        var_dump($data);
 
 
 
