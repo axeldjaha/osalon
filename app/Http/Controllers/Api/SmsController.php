@@ -23,6 +23,22 @@ use Intervention\Image\Facades\Image;
 class SmsController extends ApiController
 {
 
+    public function getBalance()
+    {
+        $salons = [];
+        foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
+        {
+            $salons[] = [
+                "id" => $salon->id,
+                "nom" => $salon->nom,
+                "adresse" => $salon->adresse,
+                "sms_balance" => $salon->sms,
+            ];
+        }
+
+        return response()->json($salons);
+    }
+
     /**
      * Display a listing of the resource.
      *

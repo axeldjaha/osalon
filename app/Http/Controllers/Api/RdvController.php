@@ -65,6 +65,15 @@ class RdvController extends ApiController
      */
     public function show(Request $request, Salon $salon)
     {
+        /**
+         * Si au moment de l'affichage, l'utilisateur a maintenant 1 seul salon,
+         * renvoyer 204 pour retouner à Index et auto reactualiser
+         */
+        if($request->date == null && $this->user->salons()->count() == 1)
+        {
+            return \response()->json(new SalonResource(new Salon()), 204);
+        }
+
         if($request->date != null)
         {
             $rdvs = $salon->rdvs()

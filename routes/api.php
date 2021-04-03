@@ -88,4 +88,6 @@ Route::middleware(["auth:api", "activated"])->group(function ()
 
     Route::get('sms/offres','Api\OffreSMSController@index');
 
+    Route::get('sms/balance','Api\SmsController@getBalance');
+
 });
