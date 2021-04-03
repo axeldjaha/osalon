@@ -29,6 +29,7 @@ class SalonRequest extends FormRequest
         return [
             "nom" => "required",
             "adresse" => "required",
+            "telephone" => "nullable",
         ];
     }
 
@@ -47,6 +48,13 @@ class SalonRequest extends FormRequest
         {
             $response = [
                 "message" => $exception->validator->errors()->get("adresse")[0],
+            ];
+            throw new HttpResponseException(response()->json($response, 422));
+        }
+        elseif($exception->validator->errors()->has("telephone"))
+        {
+            $response = [
+                "message" => $exception->validator->errors()->get("telephone")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }

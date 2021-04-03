@@ -46,6 +46,7 @@ class SalonController extends ApiController
             $salon = Salon::create([
                 "nom" => $request["nom"],
                 "adresse" => $request["adresse"],
+                "telephone" => $request["telephone"] ?? null,
             ]);
 
             $year = date("y");
@@ -125,6 +126,7 @@ class SalonController extends ApiController
         if(!$this->user->salons()->where("id", $salon->id)->update([
             "nom" => $request->nom,
             "adresse" => $request->adresse,
+            "telephone" => $request->telephone,
         ]))
         {
             return response()->json([

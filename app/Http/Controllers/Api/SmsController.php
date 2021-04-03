@@ -94,9 +94,10 @@ class SmsController extends ApiController
         return response()->json(["message" => "super!"], 400);*/
 
         $to = $this->salon->clients()
-            ->whereIn("id", $request->to)
+            ->whereIn("telephone", $request->to)
             ->pluck("telephone")
             ->toArray();
+        $to = array_unique($to);
 
         if(count($to) == 0)
         {

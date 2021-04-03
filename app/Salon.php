@@ -11,6 +11,7 @@ class Salon extends Model
     protected $fillable = [
         "nom",
         "adresse",
+        "telephone",
         "pid",
         "sms",
     ];

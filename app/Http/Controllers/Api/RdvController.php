@@ -49,6 +49,7 @@ class RdvController extends ApiController
                 "id" => $salon->id,
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
+                "telephone" => $salon->telephone,
                 "rdvs" => $rdvData,
             ];
         }
