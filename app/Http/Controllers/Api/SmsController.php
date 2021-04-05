@@ -107,21 +107,28 @@ class SmsController extends ApiController
             ], 422);
         }
 
-        /**
-         * Images link length
-         */
-        $linkLength = $request->files->count() > 0 ? 4 : 0;
-
-        /**
-         * Le lien se termine par 5 caractères alphanumériques y compris le slash
-         */
-        $imagesLink = config("app.url") . "/";
-        for ($index = 0; $index < $linkLength; $index++)
+        if($request->files->count())
         {
-            $imagesLink .= $index + 1;
+            /**
+             * Création du lien
+             */
+            do
+            {
+                $url = Str::random(5);
+            }
+            while(Lien::where('url', $url)->count());
+            $lien = Lien::create(['url' => $url, "sms_id" => null]);
+
+            $url = config("app.url") . "/img/" . $lien->url;
+            $message = trim($request->message) .
+                "\nCliquez pour voir les photos" .
+                "\n" . $url;
+        }
+        else
+        {
+            $message = trim($request->message);
         }
 
-        $message = str_replace("\r\n", "\n", trim($request->message . "\n" . $imagesLink));
         $smsCounter = new SMSCounter();
         $smsInfo = $smsCounter->count($message);
         $volume = $smsInfo->messages * count($to);
@@ -131,7 +138,7 @@ class SmsController extends ApiController
             $this->salon->decrement("sms", $volume);
 
             $sms = Sms::create([
-                "message" => $request->message,
+                "message" => $message,
                 "recipient" => count($request->to),
                 "date" => Carbon::now(),
                 "user" => $this->user->name,
@@ -146,20 +153,11 @@ class SmsController extends ApiController
                     File::makeDirectory($destinationPath); //creates directory
                 }
 
-                /**
-                 * Création du lien
-                 */
-                do
-                {
-                    $url = Str::random($linkLength);
-
-                }while(Lien::where('url', $url)->count());
-                $lien = Lien::create(['url' => $url, "sms_id" => $sms->id]);
+                $lien->update(["sms_id" => $sms->id]);
 
                 /**
                  * Enregistrement des images
                  */
-                Fakedata::create(["data" => "file: " . $request->files->count()]);
                 foreach ($request->files as $file)
                 {
                     $image = \App\Image::create([
@@ -171,11 +169,10 @@ class SmsController extends ApiController
                     $img->save("$destinationPath/$filename");
 
                     $image->update(["nom" => $filename]);
-                    Fakedata::create(["data" => $filename]);
                 }
             }
 
-            Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender")));
+            //Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender")));
         }
         else
         {

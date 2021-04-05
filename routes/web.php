@@ -115,6 +115,6 @@ Route::middleware("auth")->group(function ()
     Route::put("compte/acces", "Admin\AccountController@updateAcces")->name("account.acces.update");
     Route::get("compte/infos", "Admin\AccountController@infos")->name("account.infos");
     Route::put("compte/infos", "Admin\AccountController@updateInfos")->name("account.infos.update");
-
-
 });
+
+Route::get("img/{url}", "ImageController@show");
