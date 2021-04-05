@@ -49,6 +49,7 @@ Route::middleware(["auth:api", "activated", "salon", "abonnement"])->group(funct
     Route::apiResource('rdv','Api\RdvController')->except(["index", "show"]);
 
     Route::apiResource('sms','Api\SmsController')->except(["index", "show"]);
+    Route::post('sms/rdv','Api\SmsController@rappelerRDV');
     Route::delete('sms/all/destroy','Api\SmsController@destroyAll');
 });
 
