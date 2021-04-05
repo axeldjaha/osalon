@@ -14,6 +14,7 @@ use App\SMSCounter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
@@ -191,55 +192,6 @@ class SmsController extends ApiController
         return response()->json(new SmsResource(new Sms()));
     }
 
-    public function rappelerRDV(Request $request)
-    {
-        $to = $this->salon->rdvs()
-            ->whereIn("telephone", $request->to)
-            ->pluck("telephone")
-            ->toArray();
-        $to = array_unique($to);
-
-        if(count($to) == 0)
-        {
-            return response()->json([
-                "message" => "Aucun client n'a été sélectionné."
-            ], 422);
-        }
-
-        $message = str_replace("\r\n", "\n", trim($request->message));
-        $smsCounter = new SMSCounter();
-        $smsInfo = $smsCounter->count($message);
-        $volume = $smsInfo->messages * count($to);
-
-        if($volume <= $this->salon->sms)
-        {
-            $this->salon->decrement("sms", $volume);
-
-            $sms = Sms::create([
-                "message" => $request->message,
-                "recipient" => count($request->to),
-                "date" => Carbon::now(),
-                "user" => $this->user->name,
-                "salon_id" => $this->salon->id,
-            ]);
-
-            Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender")));
-        }
-        else
-        {
-            if(isset($lien))
-            {
-                $lien->delete();
-            }
-
-            return response()->json([
-                "message" => "Crédit SMS insuffisant. Veuillez recharger votre compte."
-            ], 402);
-        }
-
-        return response()->json(new SmsResource(new Sms()));
-    }
-
     /**
      * Remove the specified resource from storage.
      *
@@ -267,9 +219,9 @@ class SmsController extends ApiController
      * @param Salon $salon
      * @return \Illuminate\Http\JsonResponse
      */
-    public function destroyAll(Salon $salon)
+    public function destroyAll()
     {
-        $salon->sms()->truncate();
+        $this->salon->sms()->delete();
 
         return response()->json(null, 204);
     }

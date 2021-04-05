@@ -3,15 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 
+use App\Client;
+use App\Fakedata;
 use App\Http\Requests\RdvRequest;
 use App\Http\Resources\RdvResource;
 use App\Http\Resources\SalonResource;
+use App\Http\Resources\SmsResource;
+use App\Jobs\BulkSMS;
 use App\Rdv;
 use App\Salon;
+use App\Sms;
+use App\SMSCounter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 
 class RdvController extends ApiController
 {
@@ -39,7 +46,7 @@ class RdvController extends ApiController
             {
                 $rdvData[] = [
                     "date" => $rdv->date,
-                    "date_iso_format" => ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('ddd DD MMMM')),
+                    "date_iso_format" => ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('dddd DD MMMM')),
                     "total" => $rdv->total,
                     "salon_id" => $salon->id,
                 ];
@@ -97,7 +104,7 @@ class RdvController extends ApiController
             {
                 $rdvData[] = [
                     "date" => $rdv->date,
-                    "date_iso_format" => ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('ddd DD MMMM')),
+                    "date_iso_format" => ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('dddd DD MMMM')),
                     "total" => $rdv->total,
                     "salon_id" => $salon->id,
                 ];
@@ -155,6 +162,96 @@ class RdvController extends ApiController
         $rdv = $rdv->fresh();
 
         return response()->json(new RdvResource($rdv));
+    }
+
+    /**
+     * Rappeler les RDV aux clientes par SMS
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function rappelerRDV(Request $request)
+    {
+        $to = $this->salon->rdvs()
+            ->whereIn("id", $request->to)
+            ->pluck("telephone")
+            ->toArray();
+        $to = array_unique($to);
+
+        if(count($to) == 0)
+        {
+            return response()->json([
+                "message" => "Aucun client n'a été sélectionné."
+            ], 422);
+        }
+
+        $message = str_replace("\r\n", "\n", trim($request->message));
+        $smsCounter = new SMSCounter();
+        $smsInfo = $smsCounter->count($message);
+        $volume = $smsInfo->messages * count($to);
+
+        if($volume <= $this->salon->sms)
+        {
+            $this->salon->decrement("sms", $volume);
+
+            $newClients = [];
+            $now = Carbon::now();
+            $createdAt = $now;
+            $updatedAt = $now;
+
+            foreach ($request->to as $id)
+            {
+                $rdv = Rdv::find($id);
+                $date = ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('dddd DD MMMM'));
+                $message = str_replace(["#Nom", "#Date", "#Heure"], [$rdv->nom, $date, date("H:i", strtotime($rdv->heure))], $request->message);
+                Sms::create([
+                    "message" => $message,
+                    "recipient" => 1,
+                    "date" => Carbon::now(),
+                    "user" => $this->user->name,
+                    "salon_id" => $this->salon->id,
+                ]);
+
+                if(!$this->salon->clients()->where("telephone", $rdv->telephone)->exists())
+                {
+                    $newClients[] = [
+                        $rdv->nom,
+                        $rdv->telephone,
+                        $this->salon->id,
+                        $createdAt,
+                        $updatedAt,
+                    ];
+                }
+                else
+                {
+                    Fakedata::create(["data" => $rdv->telephone]);
+                }
+
+                Queue::push(new BulkSMS($message, [$rdv->telephone], config("app.sms_client_sender")));
+            }
+
+            if(count($newClients) > 0)
+            {
+                $columns = [
+                    "nom",
+                    "telephone",
+                    "salon_id",
+                    "created_at",
+                    "updated_at",
+                ];
+                $model = new Client();
+                batch()->insert($model, $columns, $newClients);
+            }
+
+        }
+        else
+        {
+            return response()->json([
+                "message" => "Crédit SMS insuffisant. Veuillez recharger votre compte."
+            ], 402);
+        }
+
+        return response()->json(new SmsResource(new Sms()));
     }
 
     /**
