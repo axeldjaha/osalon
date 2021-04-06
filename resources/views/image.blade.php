@@ -2,34 +2,32 @@
 
 <head>
     <title>{{ \Illuminate\Support\Str::slug($salon->nom . "-" . date("d-m-Y", strtotime($sms->created_at))) }} </title>
+
     <meta name="viewport" content="width=device-width, minimum-scale=0.1">
-    @include("layouts.head")
+    <!-- jQuery library -->
+    <script src="{{asset("js/jquery-3.5.0.min.js")}}"></script>
+
+    <link href="{{asset('main.css')}}" rel="stylesheet">
+
+    <link href="{{asset('css/style.css')}}" rel="stylesheet">
+
     <script type="text/javascript" src="{{asset('assets/scripts/main.js')}}"></script>
 </head>
 
-<body style="margin: 0px; background: #0e0e0e; height: 100%">
-<div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <img class="d-block w-100" src="https://i.ibb.co/br4trDh/Fire-Shot-Capture-010-Paiement-de-scolarit-ecolepro-net.png" alt="First slide">
-        </div>
-        <div class="carousel-item">
-            <img class="d-block w-100" src="https://i.ibb.co/brZ9wjr/device-2021-02-22-033330.png" alt="Second slide">
-        </div>
-        <div class="carousel-item">
-            <img class="d-block w-100" src="https://i.ibb.co/nQBTjRn/Fire-Shot-Capture-007-El-ves-ecolepro-net.png" alt="Second slide">
-        </div>
+<body style="margin: 0px; background: #fafafa;">
 
-    </div>
-    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
-    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
+<div class="bg-orange p-2">
+    <p class="font-size-md mb-0 text-center text-white"><strong>Défilez pour voir les images</strong></p>
 </div>
+<div class="row m-0">
+
+    @foreach($sms->lien->images as $image)
+        <div class="col-md-auto mb-2">
+            <img class="img-fluid" src="{{ asset("files") . "/" . $image->nom }}" alt="image-{{ $image->id }}">
+        </div>
+    @endforeach
+</div>
+
 </body>
 
 </html>
