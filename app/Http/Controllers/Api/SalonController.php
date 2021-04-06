@@ -46,7 +46,7 @@ class SalonController extends ApiController
             $salon = Salon::create([
                 "nom" => $request["nom"],
                 "adresse" => $request["adresse"],
-                "telephone" => $request["telephone"] ?? null,
+                "telephone" => $this->user->telephone,
             ]);
 
             $year = date("y");
@@ -57,7 +57,8 @@ class SalonController extends ApiController
 
             Abonnement::create([
                 "date" => Carbon::now(),
-                "montant" => Offre::first()->montant ?? null,
+                "montant" => Offre::first()->montant ?? 0,
+                "validite" => Abonnement::$TRIAL,
                 "echeance" => Carbon::now()->addDays(Abonnement::$TRIAL),
                 "salon_id" => $salon->id,
             ]);
@@ -83,7 +84,8 @@ class SalonController extends ApiController
                     //Envoi du mot de passe par SMS
                     $message =
                         "Votre mot de passe est: $password" .
-                        "\nTéléchargez l'application " . config("app.name") . " sur playstore.";
+                        "\nTéléchargez l'application " . config("app.name") . " sur playstore\n" .
+                        config("app.playstore");
                     $sms = new \stdClass();
                     $sms->to = [$user->telephone];
                     $sms->message = $message;
@@ -95,7 +97,7 @@ class SalonController extends ApiController
                 {
                     //Envoi d'une notification par SMS
                     $message =
-                        "$salon a été rattaché à votre compte " . config('app.name') . "." .
+                        "$salon->nom a été rattaché à votre compte " . config('app.name') . "." .
                         "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
                     $sms = new \stdClass();
                     $sms->to = [$user->telephone];

@@ -75,10 +75,11 @@ class User extends Authenticatable implements JWTSubject
     public static function generatePassword()
     {
         $numbers = '123456789';
-        $part1 = substr(str_shuffle($numbers), 0, 3);
-        $letters = 'abcdefghklmnpqrstuvwxyz';
-        $part2 = substr(str_shuffle($letters), 0, 1);
-        $password = Str::upper($part1 . $part2);
+        $part1 = substr(str_shuffle($numbers), 0, 4);
+        //$letters = 'abcdefghklmnpqrstuvwxyz';
+        //$part2 = substr(str_shuffle($letters), 0, 1);
+        //$password = Str::upper($part1 . $part2);
+        $password = Str::upper($part1);
 
         return $password;
     }

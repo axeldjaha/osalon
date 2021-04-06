@@ -49,6 +49,7 @@ class AuthController extends Controller
             $salon = Salon::create([
                 "nom" => $request->salon,
                 "adresse" => $request->adresse,
+                "telephone" => $request->telephone,
                 "pid" => $pid,
             ]);
 
