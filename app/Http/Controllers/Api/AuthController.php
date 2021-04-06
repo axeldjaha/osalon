@@ -56,6 +56,7 @@ class AuthController extends Controller
             Abonnement::create([
                 "date" => Carbon::now(),
                 "montant" => Offre::first()->montant ?? null,
+                "validite" => Abonnement::$TRIAL,
                 "echeance" => Carbon::now()->addDays(Abonnement::$TRIAL),
                 "salon_id" => $salon->id,
             ]);
