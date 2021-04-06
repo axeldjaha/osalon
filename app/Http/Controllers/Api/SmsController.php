@@ -172,7 +172,7 @@ class SmsController extends ApiController
                 }
             }
 
-            //Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender")));
+            Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender")));
         }
         else
         {

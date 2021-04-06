@@ -63,16 +63,20 @@ class ClientController extends ApiController
      * Store a newly created resource in storage.
      *
      * @param ClientRequest $request
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(ClientRequest $request)
     {
-        $client = Client::create([
-            "nom" => $request->nom,
-            "telephone" => $request->telephone,
-            "anniversaire" => $request->anniversaire, //1970-04-24
-            "salon_id" => $request->salon,
-        ]);
+        $client = $this->salon->clients()->where("telephone", $request->telephone)->first();
+        if($client == null)
+        {
+            $client = Client::create([
+                "nom" => $request->nom,
+                "telephone" => $request->telephone,
+                "anniversaire" => $request->anniversaire, //1970-04-24
+                "salon_id" => $request->salon,
+            ]);
+        }
 
         return response()->json(new ClientResource($client));
     }

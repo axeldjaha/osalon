@@ -11,7 +11,6 @@ class RecetteController extends ApiController
 {
     public function index(Request $request)
     {
-
         $queryRecetteJournaliere = "
         SELECT (SUM(total)) as recette
         FROM prestations
