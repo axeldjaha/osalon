@@ -89,9 +89,9 @@ class SmsController extends ApiController
      */
     public function store(Request $request)
     {
-        /*$data = json_encode($request->json()->all());
-        Fakedata::create(["data" => $request->message]);
-        Fakedata::create(["data" => count($request->to)]);
+        /*$data = json_encode($request->all());
+        //Fakedata::create(["data" => $request->message]);
+        Fakedata::create(["data" => $data]);
         return response()->json(["message" => "super!"], 400);*/
 
         $to = $this->salon->clients()
@@ -147,7 +147,7 @@ class SmsController extends ApiController
 
             if($request->files->count())
             {
-                $destinationPath = public_path() ."/files";
+                $destinationPath = public_path('/files/');
 
                 if (!file_exists($destinationPath)) {
                     File::makeDirectory($destinationPath); //creates directory
@@ -165,8 +165,7 @@ class SmsController extends ApiController
                     ]);
 
                     $filename = md5($image->id) . '.' . $file->getClientOriginalExtension();
-                    $img = Image::make($file->getRealPath());
-                    $img->save("$destinationPath/$filename");
+                    $file->move($destinationPath, $filename);
 
                     $image->update(["nom" => $filename]);
                 }
