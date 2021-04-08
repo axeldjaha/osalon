@@ -40,9 +40,10 @@ class SalonController extends ApiController
      */
     public function store(SalonRequest $request)
     {
+        $salon = null;
         $status = 200;
 
-        DB::transaction(function () use (&$status, $request){
+        DB::transaction(function () use (&$status, $request, &$salon){
             $salon = Salon::create([
                 "nom" => $request["nom"],
                 "adresse" => $request["adresse"],
@@ -111,9 +112,17 @@ class SalonController extends ApiController
             }
         }, 1);
 
-        return response()->json([
-            "message" => "Votre salon a été créé. Le mot de passe de la gérante lui a été envoyé par SMS",
-        ], $status);
+        $salon = [
+            "id" => $salon->id,
+            "nom" => $salon->nom,
+            "adresse" => $salon->adresse,
+            "telephone" => $salon->telephone,
+            "pid" => $salon->pid,
+            "created_at" => "Votre salon a été créé. Le mot de passe de la gérante lui a été envoyé par SMS",
+        ];
+
+        return response()->json($salon);
+
     }
 
     /**
