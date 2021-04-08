@@ -34,6 +34,9 @@
                         </a>
                         <span class="d-inline-block mr-sm-3">Détails</span>
                     </div>
+                    <div class="btn-actions-pane-right d-flex align-items-center ">
+                        <a class="btn btn-primary" href="{{route("abonnement.create", $salon)}}">Réabonner</a>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -76,13 +79,16 @@
                             </table>
                         </div>
 
-                        <div class="col-sm">
-                            <h5>Abonnement</h5>
+                        <div class="col-sm-auto">
                             <table id="datatable" class="table table-hover table-striped table-bordered" style="margin-bottom: 0 !important; margin-top: 0 !important;">
+                                <thead class="bg-heavy-rainx">
+                                <th colspan="6">Abonnements</th>
+                                </thead>
                                 <thead class="">
                                 <th>Date</th>
                                 <th>Montant</th>
                                 <th>Validité</th>
+                                <th>Échéance</th>
                                 <th>Mode paiement</th>
                                 <th>Action</th>
                                 </thead>
@@ -92,9 +98,13 @@
                                         <td><span hidden>{{ $abonnement->created_at }}</span> {{ date("d/m/Y", strtotime($abonnement->created_at)) }}</td>
                                         <td>{{ number_format($abonnement->montant, 0, ",", " ") }}</td>
                                         <td>{{ $abonnement->validite }}</td>
+                                        <td><span hidden>{{ $abonnement->echeance }}</span> {{ date("d/m/Y", strtotime($abonnement->echeance)) }}</td>
                                         <td>{{ $abonnement->mode_paiement }}</td>
                                         <td>
-                                            <button form-action="{{route("salon.abonnement.destroy", [$salon, $abonnement])}}"
+                                            <a class="btn btn-link btn-sm mr-sm-2" href="{{ route("abonnement.edit", [$salon, $abonnement]) }}">
+                                                <i class="fa fa-edit"></i> Modifier
+                                            </a>
+                                            <button form-action="{{route("abonnement.destroy", [$salon, $abonnement])}}"
                                                form-method="delete"
                                                confirm-message="Supprimer l'abonnement ?"
                                                onclick="submitLinkForm(this)"
@@ -110,7 +120,7 @@
                 </div>
 
                 <div class="card-footer">
-                    <a form-action="{{route("salon.destroy", $salon)}}"
+                    <a form-action="{{route("salon.delete", $salon)}}"
                        form-method="delete"
                        confirm-message="Supprimer le salon ?"
                        onclick="submitLinkForm(this)"

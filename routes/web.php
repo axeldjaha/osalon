@@ -30,16 +30,20 @@ Route::middleware("auth")->group(function ()
     /**
      * SALON
      */
-    Route::group(['middleware' => ['permission:Pressings']], function () {
+    Route::group(['middleware' => ['permission:Salon']], function ()
+    {
         Route::get("salon", "SalonController@index")->name("salon.index");
         Route::get("salon/{salon}", "SalonController@show")
             ->where("salon", "[0-9]+")->name("salon.show");
-        Route::get("salon/{salon}/reabonner", "SalonController@reabonnement")
-            ->where("salon", "[0-9]+")->name("salon.reabonnement");
-        Route::post("salon/{salon}/reabonner", "SalonController@reabonner")
-            ->where("salon", "[0-9]+")->name("salon.reabonner");
-        Route::delete("salon/{salon}/abonnement/{abonnement}/delete", "SalonController@destroyAbonnement")
-            ->name("salon.abonnement.destroy");
+        Route::delete("salon/{salon}", "SalonController@destroy")->name("salon.delete");
+    });
+
+    /**
+     * ABONNEMENT
+     */
+    Route::group(['middleware' => ['permission:Abonnement']], function ()
+    {
+        Route::resource("salon/{salon}/abonnement", "AbonnementController")->except(["index", "show"]);
     });
 
     /**

@@ -79,7 +79,7 @@
                                     <a class="btn btn-link btn-sm mr-sm-2 pt-0 pb-0" href="{{ route("salon.show", $salon) }}">
                                         <i class="fa fa-tasks"></i> Détails
                                     </a>
-                                    <a class="btn btn-primary btn-sm" href="{{route("salon.reabonnement", $salon)}}">Réabonner</a>
+                                    <a class="btn btn-primary btn-sm" href="{{route("abonnement.create", $salon)}}">Réabonner</a>
                                 </td>
                             </tr>
                         @endforeach

@@ -6,7 +6,6 @@ use App\Abonnement;
 use App\Jobs\SendSMS;
 use App\Salon;
 use App\Transaction;
-use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -19,17 +18,18 @@ class AbonnementController extends Controller
     /**
      * Show the form for creating a new resource.
      *
+     * @param Salon $salon
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Salon  $salon)
     {
-        $data["title"] = "Abonnement";
-        $data["active"] = "abonnement";
+        $data["title"] = "Salon";
+        $data["active"] = "salon";
 
-        $data["salons"] = Salon::orderBy("nom")->get();
+        $data["salon"] = $salon;
         $data["modes"] = collect([
             Transaction::$MODE_ESPECE => Transaction::$MODE_ESPECE,
-            Transaction::$MODE_PAIEMENT_LIGNE => Transaction::$MODE_PAIEMENT_LIGNE,
+            //Transaction::$MODE_PAIEMENT_LIGNE => Transaction::$MODE_PAIEMENT_LIGNE,
             Transaction::$MODE_MOBILE_MONEY => Transaction::$MODE_MOBILE_MONEY,
         ]);
 
@@ -40,52 +40,22 @@ class AbonnementController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
+     * @param Salon $salon
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(Request $request, Salon $salon)
     {
         $this->validate($request, [
-            "montant" => "required|numeric",
-            "validite" => "required|numeric",
+            "montant" => "required|numeric|min:0",
+            "validite" => "required|numeric|min:0",
             "mode_paiement" => "required",
-            "salon" => "required|exists:salons,pid",
+            "salon" => "required|exists:salons,id",
         ]);
 
-        DB::transaction(function () use ($request)
+        DB::transaction(function () use ($request, $salon)
         {
-            $salon = Salon::where("pid", $request->salon)->firstOrFail();
-
-            $reference = $salon->id . Carbon::now()->timestamp;
-            $transaction = $salon->transactions()->where("statut", "!=", Transaction::$STATUT_TERMINE)->first();
-            if($transaction != null)
-            {
-                $transaction->update([
-                    "reference" => $reference,
-                    "montant" => $request->montant,
-                    "validite" => $request->validite,
-                    "statut" => Transaction::$STATUT_TERMINE,
-                    "mode_paiement" => $request->mode_paiement,
-                    "date" => Carbon::now(),
-                    "salon_id" => $salon->id,
-                    "offre_id" => null,
-                ]);
-            }
-            else
-            {
-                Transaction::create([
-                    "reference" => $reference,
-                    "montant" => $request->montant,
-                    "validite" => $request->validite,
-                    "statut" => Transaction::$STATUT_TERMINE,
-                    "mode_paiement" => $request->mode_paiement,
-                    "date" => Carbon::now(),
-                    "salon_id" => $salon->id,
-                    "offre_id" => null,
-                ]);
-            }
-
-            $dernierAbonnement  = Carbon::parse($salon->abonnements()->orderBy("id", "desc")->first()->echeance);
+            $dernierAbonnement  = Carbon::parse($salon->abonnements()->orderBy("id", "desc")->first()->echeance ?? Carbon::yesterday());
             if($dernierAbonnement->greaterThanOrEqualTo(Carbon::now()))
             {
                 $echeance = $dernierAbonnement->addDays($request->validite);
@@ -96,16 +66,15 @@ class AbonnementController extends Controller
             }
 
             Abonnement::create([
-                "date" => Carbon::today(),
-                "echeance" => $echeance,
                 "montant" => $request->montant,
+                "validite" => $request->validite,
+                "echeance" => $echeance,
+                "mode_paiement" => $request->mode_paiement,
                 "salon_id" => $salon->id,
             ]);
 
             $message =
-                "Votre réabonnement a été effectué avec succès!".
-                "\nSalon: $salon->nom" .
-                "\nActif jusqu'au: " . $echeance->format("d/m/Y");
+                "Votre réabonnement a été effectué avec succès!";
             $sms = new stdClass();
             $sms->to = $salon->users()->pluck("telephone")->toArray();
             $sms->message = $message;
@@ -119,20 +88,80 @@ class AbonnementController extends Controller
         return redirect()->route("salon.index");
     }
 
+    public function edit(Salon  $salon, Abonnement $abonnement)
+    {
+        $data["title"] = "Salon";
+        $data["active"] = "salon";
+
+        $data["abonnement"] = $abonnement;
+        $data["modes"] = collect([
+            Transaction::$MODE_ESPECE => Transaction::$MODE_ESPECE,
+            //Transaction::$MODE_PAIEMENT_LIGNE => Transaction::$MODE_PAIEMENT_LIGNE,
+            Transaction::$MODE_MOBILE_MONEY => Transaction::$MODE_MOBILE_MONEY,
+        ]);
+
+        return view("salon.abonnement.edit", $data);
+    }
+
+    /**
+     * Update
+     *
+     * @param Request $request
+     * @param Salon $salon
+     * @param Abonnement $abonnement
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function update(Request $request, Salon $salon, Abonnement $abonnement)
+    {
+        $this->validate($request, [
+            "montant" => "required|numeric|min:0",
+            "validite" => "required|numeric|min:0",
+            "mode_paiement" => "required",
+            "salon" => "required|exists:salons,id",
+        ]);
+
+        $abonnement->delete();
+
+        $dernierAbonnement  = Carbon::parse($salon->abonnements()->orderBy("id", "desc")->first()->echeance ?? Carbon::yesterday());
+        if($dernierAbonnement->greaterThanOrEqualTo(Carbon::now()))
+        {
+            $echeance = $dernierAbonnement->addDays($request->validite);
+        }
+        else
+        {
+            $echeance = Carbon::now()->addDays($request->validite);
+        }
+
+        Abonnement::create([
+            "montant" => $request->montant,
+            "validite" => $request->validite,
+            "echeance" => $echeance,
+            "mode_paiement" => $request->mode_paiement,
+            "salon_id" => $salon->id,
+        ]);
+
+        session()->flash('type', 'alert-success');
+        session()->flash('message', 'Modification effectuée avec succès!');
+
+        return redirect()->route("salon.index");
+    }
+
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Transaction $transaction
+     * @param Salon $salon
+     * @param Abonnement $abonnement
      * @return \Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(Transaction $transaction)
+    public function destroy(Salon $salon, Abonnement $abonnement)
     {
-        $transaction->delete();
+        $abonnement->delete();
 
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Suppression effectuée avec succès!');
 
-        return redirect()->route("salon.abonnement.index");
+        return back();
     }
 }

@@ -26,7 +26,7 @@
 
             @include("layouts.alert")
 
-            {!! Form::open()->route("abonnement.store", [$salon]) !!}
+            {!! Form::open()->route("abonnement.update", [$abonnement->salon, $abonnement])->put() !!}
 
             <div class="main-card mb-3 card">
                 <div class="card-header-tab card-header bg-heavy-rain">
@@ -44,7 +44,7 @@
                             <td class="fit"><label for="salon" class="col-form-label">Salon</label></td>
                             <td style="width: 20%">
                                 <select required class="form-control @error("salon") is-invalid @enderror" id="salon" name="salon">
-                                    <option value="{{ $salon->id }}"> {{ $salon->pid }} - {{ $salon->nom }}</option>
+                                    <option value="{{ $abonnement->salon->id }}"> {{ $abonnement->salon->pid }} - {{ $abonnement->salon->nom }}</option>
                                 </select>
                                 @error("salon") <div class="invalid-feedback">{{$message}}</div> @enderror
                             </td>
@@ -52,14 +52,14 @@
                         <tr>
                             <td class="fit"><label for="montant" class="col-form-label">Montant</label></td>
                             <td style="width: 20%">
-                                <input required type="number" id="montant" name="montant" min="0" class="form-control @error("montant") is-invalid @enderror" value="{{ old("montant") }}">
+                                <input required type="number" id="montant" name="montant" min="0" class="form-control @error("montant") is-invalid @enderror" value="{{ old("montant") ?? $abonnement->montant }}">
                                 @error("montant") <div class="invalid-feedback">{{$message}}</div> @enderror
                             </td>
                         </tr>
                         <tr>
                             <td class="fit"><label for="validite" class="col-form-label">Validité</label></td>
                             <td style="width: 20%">
-                                <input required type="number" id="validite" name="validite" min="0" class="form-control @error("validite") is-invalid @enderror" value="{{ old("validite") }}">
+                                <input required type="number" id="validite" name="validite" min="0" class="form-control @error("validite") is-invalid @enderror" value="{{ old("validite") ?? $abonnement->validite }}">
                                 @error("validite") <div class="invalid-feedback">{{$message}}</div> @enderror
                             </td>
                         </tr>
@@ -69,7 +69,8 @@
                                 <select required name="mode_paiement" id="mode_paiement" class="form-control @error("mode_paiement") is-invalid @enderror">
                                     <option value="" disabled {{old("mode_paiement") == null ? "selected" : ""}}>------</option>
                                     @foreach($modes as $mode => $name)
-                                        <option value="{{$mode}}" {{old("mode_paiement") == $mode ? "selected" : ""}}>
+                                        <option value="{{$mode}}"
+                                                @if(old("mode_paiement") == $mode || $mode == $abonnement->mode) selected @endif>
                                             {{ $name }}
                                         </option>
                                     @endforeach
@@ -82,7 +83,7 @@
                             <td class="fit"></td>
                             <td style="width: 20% !important;">
                                 <button class="btn btn-primary btn-lg">
-                                    Réabonner
+                                    Modifier réabonnement
                                 </button>
                             </td>
                         </tr>
