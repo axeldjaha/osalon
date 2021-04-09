@@ -39,11 +39,20 @@
                         Accueil
                     </a>
                 </li>
-                @can('Pressings')
+                @can('Salons')
                     <li>
                         <a href="{{route("salon.index")}}" class="{{$active == "salon" ? "mm-active" : ""}}">
                             <i class="metismenu-icon fa fa-tachometer-alt"></i>
                             Salons
+                        </a>
+                    </li>
+                @endcan
+
+                @can('Utilisateurs')
+                    <li>
+                        <a href="{{route("user.index")}}" class="{{$active == "user" ? "mm-active" : ""}}">
+                            <i class="metismenu-icon fa fa-users"></i>
+                            Utilisateurs
                         </a>
                     </li>
                 @endcan

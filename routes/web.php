@@ -50,10 +50,8 @@ Route::middleware("auth")->group(function ()
      * USERS
      */
     Route::group(['middleware' => ['permission:Users']], function () {
-        Route::resource("user", "UserController");
-        Route::get("user/{user}/acces", "UserController@acces")->name("user.acces");
-        Route::put("user/{user}/lock", "UserController@lock")->name("user.lock");
-        Route::put("user/{user}/unlock", "UserController@unlock")->name("user.unlock");
+        Route::get("user", "UserController@index")->name("user.index");
+        Route::put("user/password/reset/{user}/", "UserController@resetPassword")->name("user.password.reset");
     });
 
     /**

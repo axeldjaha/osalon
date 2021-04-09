@@ -12,9 +12,11 @@ use App\Salon;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use stdClass;
 
 class TestController extends Controller
@@ -30,7 +32,6 @@ class TestController extends Controller
     public function test(Request $request)
     {
         $salon = Salon::first();
-
 
 
 

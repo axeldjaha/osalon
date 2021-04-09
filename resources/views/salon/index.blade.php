@@ -76,7 +76,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a class="btn btn-link btn-sm mr-sm-2 pt-0 pb-0" href="{{ route("salon.show", $salon) }}">
+                                    <a class="btn btn-link btn-sm mr-sm-2" href="{{ route("salon.show", $salon) }}">
                                         <i class="fa fa-tasks"></i> Détails
                                     </a>
                                     <a class="btn btn-primary btn-sm" href="{{route("abonnement.create", $salon)}}">Réabonner</a>
