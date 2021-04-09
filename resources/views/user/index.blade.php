@@ -57,7 +57,7 @@
                                 <td>
                                     <button form-action="{{ route("user.password.reset", $user) }}"
                                        form-method="put"
-                                       confirm-message="Supprimer l'abonnement ?"
+                                       confirm-message="Réinitialiser mot de passe ?"
                                        onclick="submitLinkForm(this)"
                                        class="confirm btn btn-link btn-sm">
                                         <i class="fa fa-key"></i> Réinitialiser mot de passe
