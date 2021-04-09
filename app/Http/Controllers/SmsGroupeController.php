@@ -37,11 +37,12 @@ class SmsGroupeController extends Controller
             return back();
         }
 
-        if(!$smsGroupe->contacts()->where("telephone", $this->formatPhoneNumber($request->telephone))->exists())
+        $telephone = Contact::formatPhoneNumber($request->telephone);
+        if(!$smsGroupe->contacts()->where("telephone", $telephone)->exists())
         {
             Contact::create([
                 "nom" => $request->nom,
-                "telephone" => $request->telephone,
+                "telephone" => $telephone,
                 "sms_groupe_id" => $request->groupe,
             ]);
         }

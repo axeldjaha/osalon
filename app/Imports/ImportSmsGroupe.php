@@ -41,7 +41,7 @@ class ImportSmsGroupe implements ToCollection, WithHeadingRow
         $updatedAt = $date;
         foreach ($rows as $row)
         {
-            $telephone = $this->formatPhoneNumber($row["telephone"]);
+            $telephone = Contact::formatPhoneNumber($row["telephone"]);
             if(Str::length($telephone) == 8 || Str::length($telephone) == 10)
             {
                 $data[] = [
@@ -66,7 +66,7 @@ class ImportSmsGroupe implements ToCollection, WithHeadingRow
         if(count($data) > 0)
         {
             batch()->insert($modelInstance, $columns, $data);
-            //Delete duplicated phone number for current groupe
+            //Supprimer les doublons pour le groupe actuel
             $query = "
             DELETE FROM contacts
             WHERE id NOT IN (

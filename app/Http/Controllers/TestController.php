@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 
 use App\Client;
+use App\Contact;
 use App\Http\Resources\OffreSMSResource;
 use App\Http\Resources\RdvResource;
 use App\Jobs\SendSMS;
 use App\OffreSms;
 use App\Salon;
+use App\SKien\VCard\VCard;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -17,6 +19,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Osms\Osms;
+use App\SKien\VCard\VCardAddress;
+use App\SKien\VCard\VCardContact;
 use stdClass;
 
 class TestController extends Controller
@@ -32,6 +37,7 @@ class TestController extends Controller
     public function test(Request $request)
     {
         $salon = Salon::first();
+
 
 
 
@@ -60,6 +66,72 @@ class TestController extends Controller
 
 
         return config("app.name");
+    }
+
+    public function exportContactToVcf()
+    {
+        // create object
+        $oVCard = new VCard();
+
+        $index = 0;
+        $except = [
+            "47299508" //Onglerie Elo
+        ];
+        $contacts = Contact::whereNotIn("telephone", $except)->get();
+        $contacts->each(function ($contact) use (&$oVCard, &$index)
+        {
+            $index++;
+            if($index < 10)
+            {
+                $numero = "00" . $index;
+            }
+            elseif($index >= 10 && $index < 100)
+            {
+                $numero = "0" . $index;
+            }
+            elseif($index >= 100)
+            {
+                $numero = $index;
+            }
+            $name = "O' - Prospect Nº " . $numero;
+            // just create new contact
+            $oContact = new VCardContact();
+            $oContact->setName($name, null);
+            $telephone = strlen($contact->telephone) > 8 ? substr($contact->telephone, 2) : $contact->telephone;
+            $oContact->addPhone($telephone, VCard::WORK, false);
+            // insert contact
+            $oVCard->addContact($oContact);
+        });
+
+        // and write to file
+        return $oVCard->write("O'-prospects.vcf", false);
+    }
+
+    public function orangeSMS()
+    {
+        $config = array(
+            'clientId' => 'C0gqKzmECouAf1VMFeg3fkfPruxi5wnV',
+            'clientSecret' => 'fZJtzYAMZTDs9vLm'
+        );
+
+        $osms = new Osms($config);
+
+        // retrieve an access token
+        $response = $osms->getTokenFromConsumerKey();
+
+        if (!empty($response['access_token']))
+        {
+            $senderAddress = 'tel:+22558572785';
+            $receiverAddress = 'tel:+22551197885';
+            $message = 'Hello World!';
+            $senderName = 'Optimus Prime';
+
+            $osms->sendSMS($senderAddress, $receiverAddress, $message, $senderName);
+        }
+        else
+        {
+            dd($response);
+        }
     }
 
 }

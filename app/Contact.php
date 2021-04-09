@@ -16,4 +16,11 @@ class Contact extends Model
     {
         return $this->belongsTo(SmsGroupe::class);
     }
+
+    public static function formatPhoneNumber($telephone)
+    {
+        $phoneNumber = preg_replace('/[\-.\s]/s','', $telephone);
+        $phoneNumber = substr($phoneNumber, 0, 10);
+        return $phoneNumber;
+    }
 }
