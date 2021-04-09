@@ -105,7 +105,7 @@ class AuthController extends Controller
             $date = Carbon::now();
             $comptesDeLaSemaine = Salon::whereBetween("created_at", [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
             $comptesDuMois = Salon::whereYear("created_at", $date->year)->whereMonth("created_at", $date->month)->count();
-            $message = "Nouveau compte" .
+            $message = "Nouvelle inscription" .
             "\nSalon: $salon->nom" .
             "\nAdresse: $salon->adresse" .
             "\nSemaine: $comptesDeLaSemaine" .
@@ -113,7 +113,7 @@ class AuthController extends Controller
             $sms = new stdClass();
             $sms->to = [config("app.telephone")];
             $sms->message = $message;
-            //Queue::push(new SendSMS($sms));
+            Queue::push(new SendSMS($sms));
         }, 1);
 
         return response()->json([
