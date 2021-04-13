@@ -72,6 +72,7 @@ class AuthController extends Controller
                     "name" => $request->name,
                     "telephone" => $request->telephone,
                     "email" => null,
+                    "activated" => false,
                     "password" => bcrypt($password),
                 ]);
 
