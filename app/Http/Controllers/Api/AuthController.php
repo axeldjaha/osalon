@@ -138,6 +138,7 @@ class AuthController extends Controller
         }
 
         $user = auth('api')->user();
+        $user->update(["activated" => true]);
         $user->token = $token;
 
         return response()->json(new AuthUserResource($user));
@@ -218,7 +219,8 @@ class AuthController extends Controller
 
         $user = User::where("email", $code->email)->first();
         $user->update([
-            "password" => bcrypt($request->new_password)
+            "password" => bcrypt($request->new_password),
+            "activated" => true,
         ]);
 
         DB::table("password_resets")->where("email", $code->email)->delete();

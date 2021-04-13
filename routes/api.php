@@ -33,7 +33,7 @@ Route::get('user/sync','Api\AuthController@sync');
 /**
  * Main routes
  */
-Route::middleware(["auth:api", "activated", "salon", "abonnement"])->group(function ()
+Route::middleware(["auth:api", "salon", "abonnement"])->group(function ()
 {
     Route::apiResource('service','Api\ServiceController')->except(["index", "show"]);
 
@@ -57,7 +57,7 @@ Route::middleware(["auth:api", "activated", "salon", "abonnement"])->group(funct
  * Since resources must be created/updated before we can access them,
  * it's not necessary to add abonnement middleware for the routes below
  */
-Route::middleware(["auth:api", "activated"])->group(function ()
+Route::middleware(["auth:api"])->group(function ()
 {
     Route::apiResource('salon','Api\SalonController');
 

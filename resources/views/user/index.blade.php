@@ -45,6 +45,8 @@
                             <th>Nom</th>
                             <th>Téléphone</th>
                             <th>Email</th>
+                            <th>Créé le</th>
+                            <th>Statut</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -54,6 +56,14 @@
                                 <td>{{$user->name}}</td>
                                 <td>{{$user->telephone}}</td>
                                 <td>{{$user->email}}</td>
+                                <td><span hidden>{{ $user->created_at }}</span>{{ date("d/m/Y", strtotime($user->created_at)) }}</td>
+                                <td>
+                                    @if($user->activated)
+                                        <span class="badge badge-success badge-pill">Activé</span>
+                                    @else
+                                        <span class="badge badge-warning badge-pill">Attente<span>
+                                    @endif
+                                </td>
                                 <td>
                                     <button form-action="{{ route("user.password.reset", $user) }}"
                                        form-method="put"

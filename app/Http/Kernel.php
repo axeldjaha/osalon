@@ -3,11 +3,8 @@
 namespace App\Http;
 
 use App\Http\Middleware\AbonnementMiddleware;
-use App\Http\Middleware\ActivatedUsers;
 use App\Http\Middleware\AuthJWT;
-use App\Http\Middleware\ClientsOnly;
 use App\Http\Middleware\SalonMiddleware;
-use App\Http\Middleware\UsersOnly;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -72,7 +69,6 @@ class Kernel extends HttpKernel
         'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
 
         'abonnement' => AbonnementMiddleware::class,
-        'activated' => ActivatedUsers::class,
         'salon' => SalonMiddleware::class,
 
     ];

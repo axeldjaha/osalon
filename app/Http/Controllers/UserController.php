@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Operateur;
 use App\Parametre;
 use App\User;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -18,7 +19,7 @@ class UserController extends Controller
         $data["title"] = "Users";
         $data["active"] = "user";
 
-        $data["users"] = User::orderBy("name")->get();
+        $data["users"] = User::orderBy("id", "desc")->get();
 
         return view("user.index", $data);
     }
@@ -39,7 +40,7 @@ class UserController extends Controller
         /**
          * 1. x = les 4 derniers chiffres du numéro de téléphone
          * 2. si valeur(x) = 0, x = 1
-         * 3. y = les 2 chiffres aprés le premier chiffre du numéro de téléphone
+         * 3. y = le jour
          * 4. z = x * y
          * 5. p = les 4 premiers chiffres de z
          * 6. si longueur(p) inférieur à 4, ajouter des zéro pour obtenir 4 chiffres
@@ -47,7 +48,7 @@ class UserController extends Controller
          */
         $x = substr($user->telephone, -4); //1
         $x == 0 ? $x = 1 : $x; //2
-        $y = substr($user->telephone, 1, 2); //3
+        $y = date("d", strtotime($user->created_at)); //3
         $z = $x * $y; //4
         $p = substr($z, 0, 4); //5
         if(strlen($p) < 4)
@@ -58,6 +59,7 @@ class UserController extends Controller
             }
         }
 
+        dd($p);
         $user->update([
             "password" => bcrypt($p)
         ]);
