@@ -108,7 +108,7 @@ class AuthController extends Controller
             $message = "Nouvelle inscription" .
             "\nSalon: $salon->nom" .
             "\nAdresse: $salon->adresse" .
-            "\nDate: " . date("d/m/Y à H:i", strtotime($salon->created)) .
+            "\nDate: " . date("d/m/Y à H:i", strtotime($salon->created_at)) .
             "\nSemaine: $comptesDeLaSemaine" .
             "\nMois: $comptesDuMois";
             $sms = new stdClass();
