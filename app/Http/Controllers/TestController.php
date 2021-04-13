@@ -75,10 +75,17 @@ class TestController extends Controller
 
         $index = 0;
         $except = [
-            "47299508" //Onglerie Elo
+            "47299508", //Onglerie Elo
+            "07006225", //Perfect Nails
         ];
-        $contacts = Contact::whereNotIn("telephone", $except)->get();
-        $contacts->each(function ($contact) use (&$oVCard, &$index)
+        $data = [];
+        $contacts = Contact::whereNotIn("telephone", $except)->pluck("telephone")->toArray();
+        foreach ($contacts as $contact)
+        {
+            $data[] = strlen($contact) > 8 ? substr($contact, 2) : $contact;
+        }
+        $contacts = array_unique($data);
+        foreach ($contacts as $telephone)
         {
             $index++;
             if($index < 10)
@@ -97,11 +104,11 @@ class TestController extends Controller
             // just create new contact
             $oContact = new VCardContact();
             $oContact->setName($name, null);
-            $telephone = strlen($contact->telephone) > 8 ? substr($contact->telephone, 2) : $contact->telephone;
+            $telephone = strlen($telephone) > 8 ? substr($telephone, 2) : $telephone;
             $oContact->addPhone($telephone, VCard::WORK, false);
             // insert contact
             $oVCard->addContact($oContact);
-        });
+        }
 
         // and write to file
         return $oVCard->write("O'-prospects.vcf", false);
