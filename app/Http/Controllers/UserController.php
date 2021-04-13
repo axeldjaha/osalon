@@ -59,7 +59,6 @@ class UserController extends Controller
             }
         }
 
-        dd($p);
         $user->update([
             "password" => bcrypt($p)
         ]);
