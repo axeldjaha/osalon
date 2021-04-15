@@ -73,7 +73,7 @@ class SalonController extends ApiController
                 //si user n'existe pas
                 if($user == null)
                 {
-                    $password = User::generatePassword();
+                    $password = User::generatePassword($newUser["telephone"]);
 
                     $user = User::create([
                         "name" => $newUser["name"],

@@ -13,18 +13,6 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
 
     /**
-     * Désigne un utilisateur standard. Par exemple un gérant
-     * @var int
-     */
-    public static $ROLE_GERANT = 1;
-
-    /**
-     * Désigne un superviseur.
-     * @var int
-     */
-    public static $ROLE_SUPERVISEUR = 2;
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -70,18 +58,42 @@ class User extends Authenticatable implements JWTSubject
     /**
      * Generate a random password
      *
+     * @param $telephone
      * @return string
      */
-    public static function generatePassword()
+    public static function generatePassword($telephone)
     {
-        $numbers = '123456789';
-        $part1 = substr(str_shuffle($numbers), 0, 4);
+        //$numbers = '123456789';
+        //$part1 = substr(str_shuffle($numbers), 0, 4);
         //$letters = 'abcdefghklmnpqrstuvwxyz';
         //$part2 = substr(str_shuffle($letters), 0, 1);
         //$password = Str::upper($part1 . $part2);
-        $password = Str::upper($part1);
+        //$password = Str::upper($part1);
+        //return $password;
 
-        return $password;
+        /**
+         * 1. x = les 4 derniers chiffres du numéro de téléphone
+         * 2. si valeur(x) = 0, x = 1
+         * 3. y = les 3 chiffres aprés le premier chiffre du numéro de téléphone
+         * 4. z = x * y
+         * 5. p = les 4 premiers chiffres de z
+         * 6. si longueur(p) inférieur à 4, ajouter des zéro pour obtenir 4 chiffres
+         * p est le mot de passe
+         */
+        $x = substr($telephone, -4); //1
+        $x == 0 ? $x = 1 : $x; //2
+        $y = substr($telephone, 1, 3); //3
+        $z = $x * $y; //4
+        $p = substr($z, 0, 4); //5
+        if(strlen($p) < 4)
+        {
+            for ($i = strlen($p); $i < 4; $i++)
+            {
+                $p .= 0; //6
+            }
+        }
+
+        return $p;
     }
 
 }

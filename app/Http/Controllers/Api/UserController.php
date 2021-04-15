@@ -66,7 +66,7 @@ class UserController extends ApiController
             //si user n'existe pas
             if($user == null)
             {
-                $password = User::generatePassword();
+                $password = User::generatePassword($request->telephone);
 
                 $user = User::create([
                     "name" => $request->name,
