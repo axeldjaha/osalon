@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(PermissionsTableSeeder::class);
         $this->call(SuperAdminRoleSeeder::class);
-        $this->call(OffreSeeder::class);
+        $this->call(TypeAbonnementSeeder::class);
 
         //factory(Client::class, 100)->create();
 

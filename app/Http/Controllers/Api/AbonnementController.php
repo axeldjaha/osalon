@@ -17,7 +17,7 @@ class AbonnementController extends ApiController
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
                 "pid" => $salon->pid,
-                "abonnement" => new AbonnementResource($salon->abonnements()->orderBy("id", "desc")->first() ?? new Abonnement()),
+                "abonnement" => new AbonnementResource($salon->abonnement),
             ];
         }
 

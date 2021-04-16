@@ -26,9 +26,9 @@ class Salon extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function abonnements()
+    public function abonnement()
     {
-        return $this->hasMany(Abonnement::class);
+        return $this->hasOne(Abonnement::class);
     }
 
     public function services()
@@ -64,5 +64,10 @@ class Salon extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function paiements()
+    {
+        return $this->hasMany(Paiement::class);
     }
 }

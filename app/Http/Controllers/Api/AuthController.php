@@ -15,6 +15,7 @@ use App\Jobs\SendSMS;
 use App\Offre;
 use App\Salon;
 use App\Mail\RequestCodeEmail;
+use App\Type;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -53,11 +54,14 @@ class AuthController extends Controller
                 "pid" => $pid,
             ]);
 
+           $type = Type::create([
+                "intitule" => Type::$TYPE_ESSAI,
+                "montant" => Type::$MONTANT_ESSAI,
+                "validity" => Type::$VALIDITY_ESSAI,
+            ]);
             Abonnement::create([
-                "date" => Carbon::now(),
-                "montant" => Offre::first()->montant ?? 0,
-                "validite" => Abonnement::$TRIAL,
-                "echeance" => Carbon::now()->addDays(Abonnement::$TRIAL),
+                "montant" => $type->montant,
+                "type_id" => $type->id,
                 "salon_id" => $salon->id,
             ]);
 

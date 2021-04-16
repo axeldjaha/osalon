@@ -42,6 +42,7 @@ class TestController extends Controller
 
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);
+
         /*Client::each(function ($client){
             $client->update([
                 "telephone" => ["01", "05", "07"][rand(0, 2)] . (51000000 + $client->id),

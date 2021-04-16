@@ -18,10 +18,12 @@ class AbonnementResource extends JsonResource
     public function toArray($request)
     {
         return [
-            "montant" => $this->montant ?? Offre::orderBy("id", "desc")->first()->montant,
-            "date" => date("d/m/Y", strtotime($this->date)),
-            "echeance" => date("d/m/Y", strtotime($this->echeance)),
-            "expired" => Carbon::parse($this->echeance)->lessThan(Carbon::now()),
+            "montant" => $this->montant,
+            "echeance" => Carbon::parse($this->created_at)->addDays($this->type->validity)->format("d/m/Y"),
+            "type" => new TypeResource($this->type),
+            "expired" => Carbon::parse($this->created_at)
+                ->addDays($this->type->validity)
+                ->lessThan(Carbon::now()),
         ];
     }
 }

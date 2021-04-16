@@ -21,9 +21,9 @@ class AbonnementMiddleware
     {
         $salon = Salon::find($request->salon);
 
-        $abonnement = $salon->abonnements()->orderBy("id", "desc")->first();
-
-        if($abonnement == null || Carbon::parse($abonnement->echeance)->lessThan(Carbon::now()))
+        $abonnement = $salon->abonnement;
+        $echeance = Carbon::parse($abonnement->created_at)->addDays($abonnement->type->validity);
+        if($abonnement == null || $echeance->lessThan(Carbon::now()))
         {
             return response()->json([
                 "message" => "Votre abonnement a expiré, veuillez vous réabonner."

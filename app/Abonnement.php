@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Abonnement extends Model
 {
+    public static $TYPE_MENSUEL = "Mois";
+    public static $TYPE_ANNUEL = "An";
     /**
      * Nombre de jour d'essai
      * @var int
@@ -14,15 +16,23 @@ class Abonnement extends Model
 
     protected $fillable = [
         "montant",
-        "validite",
-        "echeance",
-        "mode_paiement",
+        "type_id",
         "salon_id",
     ];
 
     public function salon()
     {
         return $this->belongsTo(Salon::class);
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(Type::class);
+    }
+
+    public function paiements()
+    {
+        return $this->hasMany(Paiement::class);
     }
 
 }
