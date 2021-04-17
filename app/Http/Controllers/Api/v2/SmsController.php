@@ -1,25 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\v2;
 
 use App\Fakedata;
+use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\SmsRequest;
 use App\Http\Resources\SalonResource;
 use App\Http\Resources\SmsResource;
-use App\Jobs\BulkSMS;
-use App\Lien;
 use App\Salon;
 use App\Sms;
-use App\SMSCounter;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
 
 class SmsController extends ApiController
 {
@@ -27,7 +18,7 @@ class SmsController extends ApiController
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
@@ -74,7 +65,6 @@ class SmsController extends ApiController
     public function store(Request $request)
     {
         /*$data = json_encode($request->all());
-        //Fakedata::create(["data" => $request->message]);
         Fakedata::create(["data" => $data]);
         return response()->json(["message" => "super!"], 400);*/
 
@@ -93,30 +83,13 @@ class SmsController extends ApiController
 
         $message = trim($request->message);
 
-        $smsCounter = new SMSCounter();
-        $smsInfo = $smsCounter->count($message);
-        $volume = $smsInfo->messages * count($to);
-
-        if($volume <= $this->compte->sms_balance)
-        {
-            $this->compte->decrement("sms_balance", $volume);
-
-            $sms = Sms::create([
-                "to" => count($request->to),
-                "message" => $message,
-                "date" => Carbon::now(),
-                "user" => $this->user->name,
-                "salon_id" => $this->salon->id,
-            ]);
-
-            Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender")));
-        }
-        else
-        {
-            return response()->json([
-                "message" => "Crédit SMS insuffisant. Veuillez recharger votre compte."
-            ], 402);
-        }
+        $sms = Sms::create([
+            "to" => count($request->to),
+            "message" => $message,
+            "date" => Carbon::now(),
+            "user" => $this->user->name,
+            "salon_id" => $this->salon->id,
+        ]);
 
         return response()->json(new SmsResource(new Sms()));
     }

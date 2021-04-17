@@ -83,10 +83,9 @@ class CreateAllTables extends Migration
 
         Schema::create('sms', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->integer('to');
             $table->text('message');
-            $table->integer('recipient');
             $table->dateTime('date');
-            $table->string('reference')->nullable();
             $table->string('user')->nullable();
             $table->unsignedBigInteger('salon_id');
             $table->timestamps();

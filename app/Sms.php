@@ -7,10 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Sms extends Model
 {
     protected $fillable = [
+        "to",
         "message",
-        "recipient",
         "date",
-        "reference",
         "user",
         "salon_id",
     ];
