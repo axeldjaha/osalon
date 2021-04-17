@@ -190,9 +190,9 @@ class RdvController extends ApiController
         $smsInfo = $smsCounter->count($message);
         $volume = $smsInfo->messages * count($to);
 
-        if($volume <= $this->salon->sms)
+        if($volume <= $this->compte->sms_balance)
         {
-            $this->salon->decrement("sms", $volume);
+            $this->compte->decrement("sms_balance", $volume);
 
             $newClients = [];
             $now = Carbon::now();

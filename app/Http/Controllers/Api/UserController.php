@@ -53,14 +53,15 @@ class UserController extends ApiController
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(CreateUserRequest $request)
     {
-        $status = 200;
-        $statusMessage = "Ok";
+        $statusMessage = "L'utilisateur a été créé! Nous venons de lui envoyer son mot de passe par SMS";
+        $status = 201;
 
-        DB::transaction(function () use (&$status, &$statusMessage, $request){
+        DB::transaction(function () use (&$status, &$statusMessage, $request)
+        {
             $user = User::where("telephone", $request->telephone)->first();
 
             //si user n'existe pas
@@ -72,6 +73,8 @@ class UserController extends ApiController
                     "name" => $request->name,
                     "telephone" => $request->telephone,
                     "email" => $request->email,
+                    "activated" => false,
+                    "compte_id" => $this->compte->id,
                     "password" => bcrypt($password),
                 ]);
 
@@ -84,27 +87,35 @@ class UserController extends ApiController
                 $sms->to = [$request->telephone];
                 $sms->message = $message;
                 Queue::push(new SendSMS($sms));
-
-                $statusMessage = "L'utilisateur a été créé! Nous venons de lui envoyer son mot de passe par SMS";
-                $status = 201;
             }
             else
             {
-                $salon = $this->salon->nom;
-                //Envoi d'une notification par SMS
-                $message =
-                    "$salon a été rattaché à votre compte " . config('app.name') .
-                    "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
-                $sms = new \stdClass();
-                $sms->to = [$request->telephone];
-                $sms->message = $message;
-                Queue::push(new SendSMS($sms));
-
-                $statusMessage = "L'utilisateur a été ajouté avec succès! Nous venons de lui envoyer une notification par SMS";
-                $status = 200;
+                if($user->compte->id != $this->compte->id)
+                {
+                    $statusMessage = "Le numéro de telephone saisi est déjà associé à un autre compte.";
+                    $status = 422;
+                    return;
+                }
+                elseif ($user->telephone == $this->user->telephone)
+                {
+                    $statusMessage = "Le numéro de telephone saisi est déjà associé à ce compte.";
+                    $status = 422;
+                    return;
+                }
+                else
+                {
+                    //Envoi d'une notification par SMS
+                    $salon = $this->salon;
+                    $message = "$salon->nom a été ajouté à votre compte " . config('app.name');
+                    $sms = new \stdClass();
+                    $sms->to = [$user->telephone];
+                    $sms->message = $message;
+                    Queue::push(new SendSMS($sms));
+                }
             }
 
             $user->salons()->sync([$this->salon->id], false);
+
         }, 1);
 
         return response()->json([
@@ -116,7 +127,7 @@ class UserController extends ApiController
      * Remove the specified resource from storage.
      *
      * @param User $user
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(User $user)
     {

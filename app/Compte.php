@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Compte extends Model
 {
     protected $fillable = [
-
+        "sms_balance"
     ];
 
     public function salons()

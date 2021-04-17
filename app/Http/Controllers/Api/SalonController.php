@@ -40,28 +40,16 @@ class SalonController extends ApiController
      */
     public function store(SalonRequest $request)
     {
-        $salon = null;
-        $status = 200;
+        $statusMessage = "Votre salon a été créé. Le mot de passe de la gérante lui a été envoyé par SMS";
+        $status = 201;
 
-        DB::transaction(function () use (&$status, $request, &$salon){
+        DB::transaction(function () use (&$status, &$statusMessage, $request)
+        {
             $salon = Salon::create([
                 "nom" => $request["nom"],
                 "adresse" => $request["adresse"],
                 "telephone" => $this->user->telephone,
-            ]);
-
-            $year = date("y");
-            $month = date("m");
-            $salon->update([
-                "pid" => $year * 1000 + $month * 100 + $salon->id * 10 + $salon->id,
-            ]);
-
-            Abonnement::create([
-                "date" => Carbon::now(),
-                "montant" => Offre::first()->montant ?? 0,
-                "validite" => Abonnement::$TRIAL,
-                "echeance" => Carbon::now()->addDays(Abonnement::$TRIAL),
-                "salon_id" => $salon->id,
+                "compte_id" => $this->compte->id,
             ]);
 
             $this->user->salons()->sync([$salon->id], false);
@@ -78,7 +66,9 @@ class SalonController extends ApiController
                     $user = User::create([
                         "name" => $newUser["name"],
                         "telephone" => $newUser["telephone"],
-                        "email" => null,
+                        "email" => $request->email,
+                        "activated" => false,
+                        "compte_id" => $this->compte->id,
                         "password" => bcrypt($password),
                     ]);
 
@@ -91,37 +81,43 @@ class SalonController extends ApiController
                     $sms->to = [$user->telephone];
                     $sms->message = $message;
                     Queue::push(new SendSMS($sms));
-
-                    $status = 201;
                 }
                 else //si le user existe
                 {
-                    //Envoi d'une notification par SMS
-                    $message =
-                        "$salon->nom a été rattaché à votre compte " . config('app.name') . "." .
-                        "\nVous pouvez suivre les activités de ce salon à distance partout où vous etes.";
-                    $sms = new \stdClass();
-                    $sms->to = [$user->telephone];
-                    $sms->message = $message;
-                    Queue::push(new SendSMS($sms));
+                    if($user->compte->id != $this->compte->id)
+                    {
+                        $salon->delete();
 
-                    $status = 200;
+                        $statusMessage = "Le numéro de telephone saisi est déjà associé à un autre compte.";
+                        $status = 422;
+                        return;
+                    }
+                    elseif ($user->telephone == $this->user->telephone)
+                    {
+                        $salon->delete();
+
+                        $statusMessage = "$salon->nom a été ajouté à votre compte";
+                        $status = 201;
+                        return;
+                    }
+                    else
+                    {
+                        //Envoi d'une notification par SMS
+                        $message = "$salon->nom a été ajouté à votre compte " . config('app.name');
+                        $sms = new \stdClass();
+                        $sms->to = [$user->telephone];
+                        $sms->message = $message;
+                        Queue::push(new SendSMS($sms));
+                    }
                 }
 
                 $user->salons()->sync([$salon->id], false);
             }
         }, 1);
 
-        $salon = [
-            "id" => $salon->id,
-            "nom" => $salon->nom,
-            "adresse" => $salon->adresse,
-            "telephone" => $salon->telephone,
-            "pid" => $salon->pid,
-            "created_at" => "Votre salon a été créé. Le mot de passe de la gérante lui a été envoyé par SMS",
-        ];
-
-        return response()->json($salon);
+        return response()->json([
+            "message" => $statusMessage,
+        ], $status);
 
     }
 
@@ -154,7 +150,7 @@ class SalonController extends ApiController
      * Remove the specified resource from storage.
      *
      * @param Service $salon
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Salon $salon)
     {

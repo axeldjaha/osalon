@@ -40,6 +40,7 @@ class TestController extends Controller
         $salon = Salon::first();
 
 
+
         //DB::table("users")->update(["password" => bcrypt("2909")]);
 
         /*Client::each(function ($client){

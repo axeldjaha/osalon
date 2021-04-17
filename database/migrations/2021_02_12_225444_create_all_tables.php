@@ -46,20 +46,6 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('images', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('nom')->nullable();
-            $table->unsignedBigInteger('lien_id');
-            $table->timestamps();
-        });
-
-        Schema::create('liens', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('url')->nullable();
-            $table->unsignedBigInteger('sms_id')->nullable();
-            $table->timestamps();
-        });
-
         Schema::create('paiements', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('montant');

@@ -24,22 +24,6 @@ use Intervention\Image\Facades\Image;
 class SmsController extends ApiController
 {
 
-    public function getBalance()
-    {
-        $salons = [];
-        foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
-        {
-            $salons[] = [
-                "id" => $salon->id,
-                "nom" => $salon->nom,
-                "adresse" => $salon->adresse,
-                "sms_balance" => $salon->sms,
-            ];
-        }
-
-        return response()->json($salons);
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -133,9 +117,9 @@ class SmsController extends ApiController
         $smsInfo = $smsCounter->count($message);
         $volume = $smsInfo->messages * count($to);
 
-        if($volume <= $this->salon->sms)
+        if($volume <= $this->compte->sms_balance)
         {
-            $this->salon->decrement("sms", $volume);
+            $this->compte->decrement("sms_balance", $volume);
 
             $sms = Sms::create([
                 "message" => $message,
