@@ -9,7 +9,7 @@ class Paiement extends Model
     protected $fillable = [
         "montant",
         "abonnement_id",
-        "salon_id",
+        "compte_id",
     ];
 
     public function abonnement()
@@ -17,8 +17,8 @@ class Paiement extends Model
         return $this->belongsTo(Abonnement::class);
     }
 
-    public function salon()
+    public function compte()
     {
-        return $this->belongsTo(Salon::class);
+        return $this->belongsTo(Compte::class);
     }
 }

@@ -11,6 +11,7 @@ use App\Jobs\SendSMS;
 use App\OffreSms;
 use App\Salon;
 use App\SKien\VCard\VCard;
+use App\Type;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -37,8 +38,6 @@ class TestController extends Controller
     public function test(Request $request)
     {
         $salon = Salon::first();
-
-
 
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);

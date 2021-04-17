@@ -16,7 +16,7 @@ class CreateForeignKeys extends Migration
     {
         Schema::table('abonnements', function (Blueprint $table) {
             $table->foreign('type_id')->references('id')->on('types')->onDelete('cascade');
-            $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
+            $table->foreign('compte_id')->references('id')->on('comptes')->onDelete('cascade');
         });
 
         Schema::table('clients', function (Blueprint $table) {
@@ -63,7 +63,15 @@ class CreateForeignKeys extends Migration
 
         Schema::table('paiements', function (Blueprint $table) {
             $table->foreign('abonnement_id')->references('id')->on('abonnements')->onDelete('set null');
-            $table->foreign('salon_id')->references('id')->on('salons')->onDelete('set null');
+            $table->foreign('compte_id')->references('id')->on('comptes')->onDelete('set null');
+        });
+
+        Schema::table('salons', function (Blueprint $table) {
+            $table->foreign('compte_id')->references('id')->on('comptes')->onDelete('cascade');
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreign('compte_id')->references('id')->on('comptes')->onDelete('cascade');
         });
 
 

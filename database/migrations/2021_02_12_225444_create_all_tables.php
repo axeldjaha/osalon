@@ -16,8 +16,9 @@ class CreateAllTables extends Migration
         Schema::create('abonnements', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('montant');
+            $table->dateTime('echeance');
             $table->unsignedBigInteger('type_id');
-            $table->unsignedBigInteger('salon_id');
+            $table->unsignedBigInteger('compte_id');
             $table->timestamps();
         });
 
@@ -27,6 +28,12 @@ class CreateAllTables extends Migration
             $table->string('telephone')->nullable();
             $table->date('anniversaire')->nullable();
             $table->unsignedBigInteger('salon_id');
+            $table->timestamps();
+        });
+
+        Schema::create('comptes', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->bigInteger('sms_balance')->default(0);
             $table->timestamps();
         });
 
@@ -57,7 +64,7 @@ class CreateAllTables extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('montant');
             $table->unsignedBigInteger('abonnement_id')->nullable();
-            $table->unsignedBigInteger('salon_id')->nullable();
+            $table->unsignedBigInteger('compte_id')->nullable();
             $table->timestamps();
         });
 
@@ -76,6 +83,7 @@ class CreateAllTables extends Migration
             $table->string('telephone');
             $table->integer('pid')->nullable();
             $table->bigInteger('sms')->default(0);
+            $table->unsignedBigInteger('compte_id');
             $table->timestamps();
         });
 

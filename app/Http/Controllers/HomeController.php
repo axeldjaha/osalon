@@ -36,19 +36,6 @@ class HomeController extends Controller
         $data["title"] = "Tableau de bord";
         $data["active"] = "dashboard";
 
-        $data["moisCourant"] = Carbon::now()->locale('fr')->isoFormat('MMMM YYYY');
-        $data["users"] = User::count();
-        $data["salons"] = Salon::count();
-        $transactions = Transaction::whereYear("date", date("Y"))
-            ->whereMonth("date", date("m"))
-            ->get();
-        $data["transactions"] = $transactions->count();
-        $data["montantTransactions"] = $transactions->sum("montant");
-        $data["abonnementsExp"] = Abonnement::whereDate("echeance", "<", Carbon::now())->count();
-
-        /*$data["sms"] = Sms::whereYear("created_at", date("Y"))
-            ->whereMonth("created_at", date("m"))
-            ->count();*/
 
         return view('home', $data);
     }

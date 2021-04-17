@@ -22,7 +22,7 @@ class SalonController extends Controller
 
         $data["salons"] = Salon::orderBy("nom", 'asc')->get();
         $query = "
-        SELECT DISTINCT(salon_id)
+        SELECT DISTINCT(compte_id)
         FROM abonnements
         WHERE DATE (echeance) >= ?";
         $data["actifs"] = DB::select($query, [Carbon::now()]);

@@ -10,6 +10,10 @@ class OffreSMSController extends ApiController
 {
     public function index()
     {
-        return response()->json(OffreSMSResource::collection(OffreSms::orderBy("quantite")->get()));
+        $compte = [
+            "sms_balance" => $this->compte->sms_balance,
+            "offre_sms" => OffreSMSResource::collection(OffreSms::orderBy("quantite")->get()),
+        ];
+        return response()->json($compte);
     }
 }

@@ -15,14 +15,15 @@ class Abonnement extends Model
     public static $TRIAL = 7;
 
     protected $fillable = [
+        "echeance",
         "montant",
         "type_id",
-        "salon_id",
+        "compte_id",
     ];
 
-    public function salon()
+    public function compte()
     {
-        return $this->belongsTo(Salon::class);
+        return $this->belongsTo(Compte::class);
     }
 
     public function type()

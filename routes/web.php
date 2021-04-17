@@ -55,13 +55,6 @@ Route::middleware("auth")->group(function ()
     });
 
     /**
-     * TRANSACTIONS
-     */
-    Route::group(['middleware' => ['permission:Transactions']], function () {
-        Route::get("transaction", "TransactionController@index")->name("transaction.index");
-    });
-
-    /**
      * OFFRES
      */
     Route::group(['middleware' => ['permission:Offres']], function () {

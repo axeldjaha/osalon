@@ -57,15 +57,6 @@
                     </li>
                 @endcan
 
-                @can('Transactions')
-                    <li>
-                        <a href="{{route("transaction.index")}}" class="{{$active == "transaction" ? "mm-active" : ""}}">
-                            <i class="metismenu-icon fa fa-coins"></i>
-                            Transactions
-                        </a>
-                    </li>
-                @endcan
-
                 @can('Offres')
                     <li>
                         <a href="{{route("offre.index")}}" class="{{$active == "offre" ? "mm-active" : ""}}">

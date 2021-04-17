@@ -19,11 +19,10 @@ class AbonnementMiddleware
      */
     public function handle($request, Closure $next)
     {
-        $salon = Salon::find($request->salon);
+        $compte = auth("api")->user()->compte;
 
-        $abonnement = $salon->abonnement;
-        $echeance = Carbon::parse($abonnement->created_at)->addDays($abonnement->type->validity);
-        if($abonnement == null || $echeance->lessThan(Carbon::now()))
+        $abonnement = $compte->abonnement;
+        if($abonnement == null || Carbon::parse($abonnement->echeance)->lessThan(Carbon::now()))
         {
             return response()->json([
                 "message" => "Votre abonnement a expiré, veuillez vous réabonner."

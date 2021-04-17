@@ -40,7 +40,7 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-sm">
+                        <div class="col-sm-6">
                             <table class="table table-striped mb-0">
                                 <tbody>
                                 <tr>
@@ -59,18 +59,18 @@
                                     <td class="fitx"><strong>Créé le</strong></td>
                                     <td>{{ date("d/m/Y", strtotime($salon->created_at)) }}</td>
                                 </tr>
-                                @php($abonnement = $salon->abonnements()->orderBy("id", "desc")->first())
+                                @php($abonnement = $salon->compte->abonnement)
                                 <tr>
                                     <td class="fitx"><strong>Echéance</strong></td>
-                                    <td>@if($abonnement != null) {{date("d/m/Y", strtotime($abonnement->echeance))}} @endif</td>
+                                    <td>{{date("d/m/Y", strtotime($abonnement->echeance))}}</td>
                                 </tr>
                                 <tr>
-                                    <td class="fitx"><strong>Statut abonnement</strong></td>
+                                    <td class="fitx"><strong>Abonnement</strong></td>
                                     <td>
-                                        @if($abonnement != null && \Illuminate\Support\Carbon::parse($abonnement->echeance)->greaterThanOrEqualTo(\Illuminate\Support\Carbon::now()))
-                                            <span class="badge badge-success badge-pill">Actif</span>
-                                        @else
+                                        @if(\Illuminate\Support\Carbon::parse($abonnement->echeance)->lessThan(\Illuminate\Support\Carbon::now()))
                                             <span class="badge badge-danger badge-pill">Expiré<span>
+                                        @else
+                                            <span class="badge badge-success badge-pill">Actif</span>
                                         @endif
                                     </td>
                                 </tr>
@@ -79,7 +79,7 @@
                             </table>
                         </div>
 
-                        <div class="col-sm-auto">
+                        <div class="col-sm-6">
                             <table id="datatable" class="table table-hover table-striped table-bordered" style="margin-bottom: 0 !important; margin-top: 0 !important;">
                                 <thead class="bg-heavy-rainx">
                                 <th colspan="6">Abonnements</th>
@@ -88,18 +88,14 @@
                                 <th>Date</th>
                                 <th>Montant</th>
                                 <th>Validité</th>
-                                <th>Échéance</th>
-                                <th>Mode paiement</th>
                                 <th>Action</th>
                                 </thead>
                                 <tbody>
-                                @foreach($salon->abonnements()->orderBy("id", "desc")->get() as $abonnement)
+                                @foreach($salon->compte->paiements()->orderBy("id", "desc")->get() as $paiement)
                                     <tr>
-                                        <td><span hidden>{{ $abonnement->created_at }}</span> {{ date("d/m/Y", strtotime($abonnement->created_at)) }}</td>
-                                        <td>{{ number_format($abonnement->montant, 0, ",", " ") }}</td>
-                                        <td>{{ $abonnement->validite }}</td>
-                                        <td><span hidden>{{ $abonnement->echeance }}</span> {{ date("d/m/Y", strtotime($abonnement->echeance)) }}</td>
-                                        <td>{{ $abonnement->mode_paiement }}</td>
+                                        <td><span hidden>{{ $paiement->created_at }}</span> {{ date("d/m/Y", strtotime($paiement->created_at)) }}</td>
+                                        <td>{{ number_format($paiement->montant, 0, ",", " ") }}</td>
+                                        <td>{{ $paiement->abonnement->type->validity }}</td>
                                         <td>
                                             <a class="btn btn-link btn-sm mr-sm-2" href="{{ route("abonnement.edit", [$salon, $abonnement]) }}">
                                                 <i class="fa fa-edit"></i> Modifier

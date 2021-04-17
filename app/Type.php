@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Type extends Model
 {
     public static $TYPE_ESSAI = "Essai";
-    public static $TYPE_MENSUEL = "Mensuel";
-    public static $TYPE_ANNUEL = "Annuel";
+    public static $TYPE_MENSUEL = "Mois";
+    public static $TYPE_ANNUEL = "An";
 
     public static $MONTANT_ESSAI = 0;
     public static $MONTANT_MENSUEL = 10000;

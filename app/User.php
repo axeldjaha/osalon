@@ -22,8 +22,14 @@ class User extends Authenticatable implements JWTSubject
         'telephone',
         'email',
         "activated",
+        "compte_id",
         "password",
     ];
+
+    public function compte()
+    {
+        return $this->belongsTo(Compte::class);
+    }
 
     /**
      * Un user peut être associé à plusieurs salons

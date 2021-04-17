@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Abonnement;
+use App\Compte;
 use App\Http\Requests\CodeRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -44,25 +45,21 @@ class AuthController extends Controller
 
         DB::transaction(function () use (&$status, &$statusMessage, $request)
         {
-            $year = date("y");
-            $month = date("m");
-            $pid = $year . $month . (Salon::whereMonth("created_at", Carbon::now()->month)->count() + 1);
+            $compte = Compte::create([]);
+
             $salon = Salon::create([
                 "nom" => $request->salon,
                 "adresse" => $request->adresse,
                 "telephone" => $request->telephone,
-                "pid" => $pid,
+                "compte_id" => $compte->id,
             ]);
 
-           $type = Type::create([
-                "intitule" => Type::$TYPE_ESSAI,
-                "montant" => Type::$MONTANT_ESSAI,
-                "validity" => Type::$VALIDITY_ESSAI,
-            ]);
+           $type = Type::first();
             Abonnement::create([
                 "montant" => $type->montant,
+                "echeance" => Carbon::now()->addDays($type->validity),
                 "type_id" => $type->id,
-                "salon_id" => $salon->id,
+                "compte_id" => $compte->id,
             ]);
 
             $user = User::where("telephone", $request->telephone)->first();
@@ -77,6 +74,7 @@ class AuthController extends Controller
                     "telephone" => $request->telephone,
                     "email" => null,
                     "activated" => false,
+                    "compte_id" => $compte->id,
                     "password" => bcrypt($password),
                 ]);
 

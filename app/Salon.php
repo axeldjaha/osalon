@@ -12,9 +12,14 @@ class Salon extends Model
         "nom",
         "adresse",
         "telephone",
-        "pid",
         "sms",
+        "compte_id",
     ];
+
+    public function compte()
+    {
+        return $this->belongsTo(Compte::class);
+    }
 
     /**
      * Un salon peut être associé à plusieurs users
@@ -24,11 +29,6 @@ class Salon extends Model
     public function users()
     {
         return $this->belongsToMany(User::class);
-    }
-
-    public function abonnement()
-    {
-        return $this->hasOne(Abonnement::class);
     }
 
     public function services()
@@ -61,13 +61,4 @@ class Salon extends Model
         return $this->hasMany(Rdv::class);
     }
 
-    public function transactions()
-    {
-        return $this->hasMany(Transaction::class);
-    }
-
-    public function paiements()
-    {
-        return $this->hasMany(Paiement::class);
-    }
 }

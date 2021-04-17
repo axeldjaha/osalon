@@ -13,10 +13,13 @@ class ApiController extends Controller
 {
     protected $user;
     protected $salon;
+    protected $compte;
 
     public function __construct(Request $request)
     {
         $this->user = auth("api")->user();
+
+        $this->compte = $this->user->compte;
 
         if($this->user != null)
         {
