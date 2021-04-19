@@ -28,7 +28,7 @@ class PrestationController extends ApiController
         $salons = [];
         foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
         {
-            $depenses = $salon->prestations()
+            $prestations = $salon->prestations()
                 ->whereDate('created_at', $request->date ?? Carbon::now())
                 ->orderBy("created_at", "desc")
                 ->get();
@@ -37,7 +37,7 @@ class PrestationController extends ApiController
                 "id" => $salon->id,
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
-                "encaissements" => PrestationResource::collection($depenses),
+                "encaissements" => PrestationResource::collection($prestations),
             ];
         }
 
@@ -80,7 +80,6 @@ class PrestationController extends ApiController
     {
         $prestation = Prestation::create([
             "total" => $request->total,
-            "reference" => $request->reference,
             "salon_id" => $this->salon->id,
         ]);
 
