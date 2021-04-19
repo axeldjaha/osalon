@@ -39,11 +39,17 @@ Route::middleware("auth")->group(function ()
     });
 
     /**
+     * COMPTES
+     */
+    Route::group(['middleware' => ['permission:Compte']], function () {
+        Route::resource("compte", "CompteController");
+    });
+
+    /**
      * ABONNEMENT
      */
-    Route::group(['middleware' => ['permission:Abonnement']], function ()
-    {
-        Route::resource("salon/{salon}/abonnement", "AbonnementController")->except(["index", "show"]);
+    Route::group(['middleware' => ['permission:Abonnement']], function () {
+        Route::resource("abonnement", "AbonnementController")->only(["create", "store", "destroy"]);
     });
 
     /**
@@ -106,10 +112,10 @@ Route::middleware("auth")->group(function ()
     /**
      * USER ACCOUNT
      */
-    Route::get("compte/acces", "Admin\AccountController@acces")->name("account.access");
-    Route::put("compte/acces", "Admin\AccountController@updateAcces")->name("account.acces.update");
-    Route::get("compte/infos", "Admin\AccountController@infos")->name("account.infos");
-    Route::put("compte/infos", "Admin\AccountController@updateInfos")->name("account.infos.update");
+    Route::get("profile/acces", "Admin\AccountController@acces")->name("account.access");
+    Route::put("profile/acces", "Admin\AccountController@updateAcces")->name("account.acces.update");
+    Route::get("profile/infos", "Admin\AccountController@infos")->name("account.infos");
+    Route::put("profile/infos", "Admin\AccountController@updateInfos")->name("account.infos.update");
 });
 
 Route::get("img/{url}", "ImageController@show");

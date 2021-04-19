@@ -39,6 +39,16 @@
                         Accueil
                     </a>
                 </li>
+
+                @can('Comptes')
+                    <li>
+                        <a href="{{route("compte.index")}}" class="{{$active == "compte" ? "mm-active" : ""}}">
+                            <i class="metismenu-icon fa fa-th"></i>
+                            Comptes
+                        </a>
+                    </li>
+                @endcan
+
                 @can('Salons')
                     <li>
                         <a href="{{route("salon.index")}}" class="{{$active == "salon" ? "mm-active" : ""}}">
@@ -59,7 +69,7 @@
 
                 @can('Offres')
                     <li>
-                        <a href="{{route("offre.index")}}" class="{{$active == "offre" ? "mm-active" : ""}}">
+                        <a href="" class="{{$active == "offre" ? "mm-active" : ""}}">
                             <i class="metismenu-icon fa fa-gift"></i>
                             Offre abonnement
                         </a>

@@ -31,9 +31,4 @@ class Abonnement extends Model
         return $this->belongsTo(Type::class);
     }
 
-    public function paiements()
-    {
-        return $this->hasMany(Paiement::class);
-    }
-
 }

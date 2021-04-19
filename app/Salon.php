@@ -12,7 +12,6 @@ class Salon extends Model
         "nom",
         "adresse",
         "telephone",
-        "sms",
         "compte_id",
     ];
 

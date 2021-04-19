@@ -67,7 +67,6 @@ class SalonController extends ApiController
                         "name" => $newUser["name"],
                         "telephone" => $newUser["telephone"],
                         "email" => $request->email,
-                        "activated" => false,
                         "compte_id" => $this->compte->id,
                         "password" => bcrypt($password),
                     ]);

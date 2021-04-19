@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Client;
+use App\Compte;
 use App\Contact;
 use App\Http\Resources\OffreSMSResource;
 use App\Http\Resources\RdvResource;
@@ -38,6 +39,8 @@ class TestController extends Controller
     public function test(Request $request)
     {
         $salon = Salon::first();
+        $compte = Compte::first();
+
 
 
 

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Abonnement;
+use App\Compte;
 use App\Jobs\SendSMS;
+use App\Paiement;
 use App\Salon;
 use App\Transaction;
+use App\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -16,146 +19,70 @@ class AbonnementController extends Controller
 {
 
     /**
-     * Show the form for creating a new resource.
+     * Create
      *
-     * @param Salon $salon
-     * @return \Illuminate\Http\Response
+     * @param Compte $compte
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function create(Salon  $salon)
+    public function create(Compte $compte)
     {
-        $data["title"] = "Salon";
-        $data["active"] = "salon";
+        $data["title"] = "Comptes";
+        $data["active"] = "compte";
 
-        $data["salon"] = $salon;
-        $data["modes"] = collect([
-            Transaction::$MODE_ESPECE => Transaction::$MODE_ESPECE,
-            //Transaction::$MODE_PAIEMENT_LIGNE => Transaction::$MODE_PAIEMENT_LIGNE,
-            Transaction::$MODE_MOBILE_MONEY => Transaction::$MODE_MOBILE_MONEY,
-        ]);
+        $data["compte"] = $compte;
+        $data["offres"] = Type::orderBy("montant")->get();
 
-        return view("salon.abonnement.create", $data);
+        return view("abonnement.create", $data);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store
      *
-     * @param \Illuminate\Http\Request $request
-     * @param Salon $salon
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Compte $compte
+     * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request, Salon $salon)
+    public function store(Request $request, Compte $compte)
     {
         $this->validate($request, [
-            "montant" => "required|numeric|min:0",
-            "validite" => "required|numeric|min:0",
-            "mode_paiement" => "required",
-            "salon" => "required|exists:salons,id",
+            "montant" => "required|numeric",
+            "offre_id" => "required|exists:types:id",
         ]);
 
-        DB::transaction(function () use ($request, $salon)
-        {
-            $dernierAbonnement  = Carbon::parse($salon->abonnements()->orderBy("id", "desc")->first()->echeance ?? Carbon::yesterday());
-            if($dernierAbonnement->greaterThanOrEqualTo(Carbon::now()))
-            {
-                $echeance = $dernierAbonnement->addDays($request->validite);
-            }
-            else
-            {
-                $echeance = Carbon::now()->addDays($request->validite);
-            }
+        $type = Type::find($request->offre_id);
 
-            Abonnement::create([
-                "montant" => $request->montant,
-                "validite" => $request->validite,
-                "echeance" => $echeance,
-                "mode_paiement" => $request->mode_paiement,
-                "salon_id" => $salon->id,
-            ]);
+        $echeance = Carbon::parse($compte->abonnements()->orderBy("id", "desc")->first()->echeance);
+        $echeance = $echeance->lessThan(Carbon::now()) ?
+            Carbon::now()->addDays($type->validity) : $echeance->addDays($type->validity);
 
-            $message =
-                "Votre réabonnement a été effectué avec succès!";
-            $sms = new stdClass();
-            $sms->to = $salon->users()->pluck("telephone")->toArray();
-            $sms->message = $message;
-            Queue::push(new SendSMS($sms));
+        Abonnement::create([
+            "montant" => $request->montant,
+            "echeance" => $echeance,
+            "type_id" => $type->id,
+            "compte_id" => $compte->id,
+        ]);
 
-        }, 1);
+        $message = "Votre réabonnement a été effectué avec succès!";
+        $sms = new stdClass();
+        $sms->to = $compte->users()->first("telephone")->toArray();
+        $sms->message = $message;
+        Queue::push(new SendSMS($sms));
 
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Réabonnement effectué avec succès!');
 
-        return redirect()->route("salon.index");
-    }
-
-    public function edit(Salon  $salon, Abonnement $abonnement)
-    {
-        $data["title"] = "Salon";
-        $data["active"] = "salon";
-
-        $data["abonnement"] = $abonnement;
-        $data["modes"] = collect([
-            Transaction::$MODE_ESPECE => Transaction::$MODE_ESPECE,
-            //Transaction::$MODE_PAIEMENT_LIGNE => Transaction::$MODE_PAIEMENT_LIGNE,
-            Transaction::$MODE_MOBILE_MONEY => Transaction::$MODE_MOBILE_MONEY,
-        ]);
-
-        return view("salon.abonnement.edit", $data);
-    }
-
-    /**
-     * Update
-     *
-     * @param Request $request
-     * @param Salon $salon
-     * @param Abonnement $abonnement
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function update(Request $request, Salon $salon, Abonnement $abonnement)
-    {
-        $this->validate($request, [
-            "montant" => "required|numeric|min:0",
-            "validite" => "required|numeric|min:0",
-            "mode_paiement" => "required",
-            "salon" => "required|exists:salons,id",
-        ]);
-
-        $abonnement->delete();
-
-        $dernierAbonnement  = Carbon::parse($salon->abonnements()->orderBy("id", "desc")->first()->echeance ?? Carbon::yesterday());
-        if($dernierAbonnement->greaterThanOrEqualTo(Carbon::now()))
-        {
-            $echeance = $dernierAbonnement->addDays($request->validite);
-        }
-        else
-        {
-            $echeance = Carbon::now()->addDays($request->validite);
-        }
-
-        Abonnement::create([
-            "montant" => $request->montant,
-            "validite" => $request->validite,
-            "echeance" => $echeance,
-            "mode_paiement" => $request->mode_paiement,
-            "salon_id" => $salon->id,
-        ]);
-
-        session()->flash('type', 'alert-success');
-        session()->flash('message', 'Modification effectuée avec succès!');
-
-        return redirect()->route("salon.index");
+        return redirect()->route("compte.index");
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param Salon $salon
      * @param Abonnement $abonnement
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      * @throws \Exception
      */
-    public function destroy(Salon $salon, Abonnement $abonnement)
+    public function destroy(Abonnement $abonnement)
     {
         $abonnement->delete();
 

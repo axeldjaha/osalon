@@ -47,6 +47,7 @@
                             <th>Email</th>
                             <th>Créé le</th>
                             <th>Statut</th>
+                            <th class="text-center">Compte ID</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -64,6 +65,7 @@
                                         <span class="badge badge-warning badge-pill">Attente<span>
                                     @endif
                                 </td>
+                                <td class="text-center">{{ $user->compte->id }}</td>
                                 <td>
                                     <button form-action="{{ route("user.password.reset", $user) }}"
                                        form-method="put"

@@ -21,7 +21,7 @@ class AbonnementMiddleware
     {
         $compte = auth("api")->user()->compte;
 
-        $abonnement = $compte->abonnement;
+        $abonnement = $compte->abonnements()->orderBy("id", "desc")->first();
         if($abonnement == null || Carbon::parse($abonnement->echeance)->lessThan(Carbon::now()))
         {
             return response()->json([

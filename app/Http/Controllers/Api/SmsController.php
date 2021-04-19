@@ -74,7 +74,6 @@ class SmsController extends ApiController
     public function store(Request $request)
     {
         /*$data = json_encode($request->all());
-        //Fakedata::create(["data" => $request->message]);
         Fakedata::create(["data" => $data]);
         return response()->json(["message" => "super!"], 400);*/
 

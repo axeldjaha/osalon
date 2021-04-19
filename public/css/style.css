@@ -177,7 +177,7 @@ label.required:after {
 }
 
 .table th, .table td {
-    padding: .35rem .55rem;
+    /* padding: .35rem .55rem; */
 }
 
 #trancheTable td{

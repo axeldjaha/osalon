@@ -15,14 +15,9 @@ class Compte extends Model
         return $this->hasMany(Salon::class);
     }
 
-    public function paiements()
+    public function abonnements()
     {
-        return $this->hasMany(Paiement::class);
-    }
-
-    public function abonnement()
-    {
-        return $this->hasOne(Abonnement::class);
+        return $this->hasMany(Abonnement::class);
     }
 
     public function users()

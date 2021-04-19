@@ -46,14 +46,6 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('paiements', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('montant');
-            $table->unsignedBigInteger('abonnement_id')->nullable();
-            $table->unsignedBigInteger('compte_id')->nullable();
-            $table->timestamps();
-        });
-
         Schema::create('prestations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('total');
