@@ -48,7 +48,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-body p-0x">
+                <div class="card-body" style="background: #fafafa">
                     <div class="row">
                         <div class="col-sm-3">
                             <table class="table table-striped mb-0">
