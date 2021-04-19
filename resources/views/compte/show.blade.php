@@ -92,7 +92,7 @@
                             </table>
                         </div>
 
-                        <div class="col-sm">
+                        <div class="col-sm table-responsive-sm">
                             <table id="datatable" class="table table-hover table-striped table-bordered" style="margin-top: 0 !important;">
                                 <h5 class="font-weight-bold p-1" style="font-size: .88rem">Salons</h5>
                                 <thead class="bg-heavy-rain">

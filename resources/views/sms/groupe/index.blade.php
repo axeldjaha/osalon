@@ -34,7 +34,7 @@
                                 <span class="d-inline-block mr-sm-3">Listes de contacts</span>
                             </div>
                         </div>
-                        <div class="card-body pt-0 table-responsive" style="background: #fafafa">
+                        <div class="card-body pt-0 table-responsive-sm" style="background: #fafafa">
                             <table class="table table-hover table-striped" style="margin-top: 0 !important; margin-bottom: 0 !important;">
                                 <thead class="">
                                 <th>#</th>

@@ -37,7 +37,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body p-0 table-responsive" style="background: #fafafa">
+                <div class="card-body p-0 table-responsive-sm" style="background: #fafafa">
                     <table id="checkboxtableUnordered" class="table table-hover table-striped" style="margin-top: 0 !important; margin-bottom: 0 !important;">
                         <thead class="bg-heavy-rain">
                         <th class="text-center" style="width: 40px"></th>

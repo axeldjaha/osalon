@@ -47,7 +47,7 @@
                         <input type="search" oninput="filterTable(this, 'datatable')" class="form-control form-control-sm" placeholder="Chercher dans la liste">
                     </div>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0 table-responsive-sm">
                     <table id="datatable" class="table table-hover table-striped table-bordered" style="margin-bottom: 0 !important; margin-top: 0 !important;">
                         <thead class="bg-heavy-rain">
                         <tr>
