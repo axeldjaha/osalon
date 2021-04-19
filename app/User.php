@@ -80,7 +80,7 @@ class User extends Authenticatable implements JWTSubject
         /**
          * 1. x = les 4 derniers chiffres du numéro de téléphone
          * 2. si valeur(x) = 0, x = 1
-         * 3. y = les 3 chiffres aprés le premier chiffre du numéro de téléphone
+         * 3. y = le quantième du mois
          * 4. z = x * y
          * 5. p = les 4 premiers chiffres de z
          * 6. si longueur(p) inférieur à 4, ajouter des zéro pour obtenir 4 chiffres
@@ -88,7 +88,7 @@ class User extends Authenticatable implements JWTSubject
          */
         $x = substr($telephone, -4); //1
         $x == 0 ? $x = 1 : $x; //2
-        $y = substr($telephone, 1, 3); //3
+        $y = date("d"); //3
         $z = $x * $y; //4
         $p = substr($z, 0, 4); //5
         if(strlen($p) < 4)
