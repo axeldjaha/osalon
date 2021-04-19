@@ -29,7 +29,7 @@
             <div class="main-card mb-3 card">
                 <div class="card-header-tab card-header bg-heavy-rain" >
                     <div class="card-header-title font-size-lg font-weight-normal">
-                        <a href="{{ route("compte.index") }}" class="btn btn-link btn-sm mr-sm-3" style="text-transform: initial">
+                        <a href="{{ \Illuminate\Support\Facades\URL::previous() }}" class="btn btn-link btn-sm mr-sm-3" style="text-transform: initial">
                             <i class="fa fa-chevron-left"></i> Retour
                         </a>
                         <span class="d-inline-block mr-sm-3">Détails</span>
@@ -94,9 +94,7 @@
 
                         <div class="col-sm">
                             <table id="datatable" class="table table-hover table-striped table-bordered" style="margin-top: 0 !important;">
-                                <thead class="">
-                                <th colspan="6">Salons</th>
-                                </thead>
+                                <h5 class="font-weight-bold p-1" style="font-size: .88rem">Salons</h5>
                                 <thead class="bg-heavy-rain">
                                 <th>Nom</th>
                                 <th>Adresse</th>
@@ -125,9 +123,7 @@
                             </table>
 
                             <table id="datatable" class="table table-hover table-striped table-bordered" style="margin-bottom: 0 !important; margin-top: 0 !important;">
-                                <thead class="">
-                                <th colspan="6">Abonnements</th>
-                                </thead>
+                                <h5 class="font-weight-bold p-1" style="font-size: .88rem">Abonnements</h5>
                                 <thead class="bg-success text-white">
                                 <th>Date</th>
                                 <th>Montant</th>
