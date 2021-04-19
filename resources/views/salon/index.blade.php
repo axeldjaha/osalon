@@ -31,15 +31,7 @@
                     <div class="card-header-title font-size-lg font-weight-normal">
                         <span class="d-inline-block mr-sm-3">SALON</span>
                         <div class="text-transform-initial mr-sm-3">
-                            Total: <span class="badge badge-primary badge-pill">{{ count($salons) }}</span>
-                        </div>
-
-                        <div class="text-transform-initial mr-sm-3">
-                             Actif: <span class="badge badge-success badge-pill">{{ count($actifs) }}</span>
-                        </div>
-
-                        <div class="text-transform-initial mr-sm-3">
-                            Expiré: <span class="badge badge-danger badge-pill">{{ count($salons) - count($actifs) }}</span>
+                            Total <span class="badge badge-primary badge-pill">{{ count($salons) }}</span>
                         </div>
                     </div>
                     <div class="btn-actions-pane-right d-flex align-items-center ">
@@ -50,12 +42,12 @@
                     <table id="datatable" class="table table-hover table-striped table-bordered" style="margin-bottom: 0 !important; margin-top: 0 !important;">
                         <thead class="bg-heavy-rain">
                         <tr>
-                            <th>Salon</th>
+                            <th>Nom</th>
                             <th>Adresse</th>
+                            <th>Téléphone</th>
                             <th>Créé le</th>
-                            <th>Echéance</th>
                             <th>Abonnement</th>
-                            <th>Actions</th>
+                            <th>Compte</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -63,9 +55,9 @@
                             <tr>
                                 <td>{{$salon->nom}}</td>
                                 <td>{{$salon->adresse}}</td>
+                                <td>{{$salon->telephone}}</td>
                                 <td><span hidden>{{$salon->created_at}}</span> {{date("d/m/Y", strtotime($salon->created_at))}}</td>
-                                @php($abonnement = $salon->compte->abonnement)
-                                <td><span hidden>{{$abonnement->echeance ?? null}}</span> @if($abonnement != null) {{date("d/m/Y", strtotime($abonnement->echeance))}} @endif</td>
+                                @php($abonnement = $salon->compte->abonnements()->orderBy("id", "desc")->first())
                                 <td class="">
                                     @if(\Illuminate\Support\Carbon::parse($abonnement->echeance)->lessThan(\Illuminate\Support\Carbon::now()))
                                         <span class="badge badge-danger badge-pill">Expiré<span>
@@ -74,10 +66,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a class="btn btn-link btn-sm mr-sm-2" href="{{ route("salon.show", $salon) }}">
-                                        <i class="fa fa-tasks"></i> Détails
-                                    </a>
-                                    <a class="btn btn-primary btn-sm" href="{{route("abonnement.create", $salon)}}">Réabonner</a>
+                                    <a href="{{ route("compte.show", $salon->compte) }}" class="btn btn-link">Aller au compte</a>
                                 </td>
                             </tr>
                         @endforeach

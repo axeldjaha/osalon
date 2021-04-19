@@ -31,7 +31,7 @@
                     <div class="card-header-title font-size-lg font-weight-normal">
                         <span class="d-inline-block mr-sm-3">Utilisateurs</span>
                         <div class="text-transform-initial mr-sm-3">
-                            Total: <span class="badge badge-primary badge-pill">{{ count($users) }}</span>
+                            Total <span class="badge badge-primary badge-pill">{{ count($users) }}</span>
                         </div>
                     </div>
                     <div class="btn-actions-pane-right d-flex align-items-center ">
@@ -47,7 +47,7 @@
                             <th>Email</th>
                             <th>Créé le</th>
                             <th>Statut</th>
-                            <th class="text-center">Compte ID</th>
+                            <th>Compte</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -65,14 +65,16 @@
                                         <span class="badge badge-warning badge-pill">Attente<span>
                                     @endif
                                 </td>
-                                <td class="text-center">{{ $user->compte->id }}</td>
+                                <td>
+                                    <a href="{{ route("compte.show", $user->compte) }}" class="btn btn-link">Aller au compte</a>
+                                </td>
                                 <td>
                                     <button form-action="{{ route("user.password.reset", $user) }}"
                                        form-method="put"
                                        confirm-message="Réinitialiser mot de passe ?"
                                        onclick="submitLinkForm(this)"
                                        class="confirm btn btn-link btn-sm">
-                                        <i class="fa fa-key"></i> Réinitialiser mot de passe
+                                        <i class="fa fa-key mr-2"></i> Réinitialiser mot de passe
                                     </button>
                                 </td>
                             </tr>

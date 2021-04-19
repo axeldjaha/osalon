@@ -39,8 +39,7 @@ class TestController extends Controller
     public function test(Request $request)
     {
         $salon = Salon::first();
-        $compte = Compte::first();
-
+        $compte = Compte::find(6);
 
 
 

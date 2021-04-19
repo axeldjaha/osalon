@@ -34,13 +34,23 @@
                         </a>
                         <span class="d-inline-block mr-sm-3">Détails</span>
                     </div>
+                    <div class="btn-actions-pane-left d-flex align-items-center ">
+                        <a class="btn btn-primary mr-sm-3" href="{{route("abonnement.create", $compte)}}">Réabonner</a>
+                        <a class="btn btn-warning" href="{{ route("recharge.create", $compte) }}">Recharger SMS</a>
+                    </div>
                     <div class="btn-actions-pane-right d-flex align-items-center ">
-                        <a class="btn btn-primary" href="{{route("abonnement.create", $compte)}}">Réabonner</a>
+                        <a form-action="{{route("compte.destroy", $compte)}}"
+                           form-method="delete"
+                           confirm-message="Supprimer le compte ?"
+                           onclick="submitLinkForm(this)"
+                           href="#"
+                           class="confirm btn btn-danger">Supprimer le compte
+                        </a>
                     </div>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0x">
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-3">
                             <table class="table table-striped mb-0">
                                 <tbody>
                                 <tr>
@@ -78,23 +88,42 @@
                                     <td class=""><strong>Echéance</strong></td>
                                     <td>{{ date("d/m/Y", strtotime($abonnement->echeance)) }}</td>
                                 </tr>
-
-                                <tr>
-                                    <td colspan="2" class="pt-3 pb-3">
-                                        <a form-action="{{route("compte.destroy", $compte)}}"
-                                           form-method="delete"
-                                           confirm-message="Supprimer le compte ?"
-                                           onclick="submitLinkForm(this)"
-                                           href="#"
-                                           class="confirm btn btn-danger">Supprimer le compte
-                                        </a>
-                                    </td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>
 
-                        <div class="col-sm-6">
+                        <div class="col-sm">
+                            <table id="datatable" class="table table-hover table-striped table-bordered" style="margin-top: 0 !important;">
+                                <thead class="">
+                                <th colspan="6">Salons</th>
+                                </thead>
+                                <thead class="bg-heavy-rain">
+                                <th>Nom</th>
+                                <th>Adresse</th>
+                                <th>Téléphone</th>
+                                <th>Créé le</th>
+                                <th>Action</th>
+                                </thead>
+                                <tbody>
+                                @foreach($compte->salons()->orderBy("nom")->get() as $salon)
+                                    <tr>
+                                        <td>{{ $salon->nom }}</td>
+                                        <td>{{ $salon->adresse }}</td>
+                                        <td>{{ $salon->telephone }}</td>
+                                        <td><span hidden>{{ $salon->created_at }}</span> {{ date("d/m/Y", strtotime($salon->created_at)) }}</td>
+                                        <td>
+                                            <button form-action="{{route("salon.destroy", $salon)}}"
+                                                    form-method="delete"
+                                                    confirm-message="Supprimer le salon ?"
+                                                    onclick="submitLinkForm(this)"
+                                                    class="confirm btn btn-link text-danger btn-sm">Supprimer
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+
                             <table id="datatable" class="table table-hover table-striped table-bordered" style="margin-bottom: 0 !important; margin-top: 0 !important;">
                                 <thead class="">
                                 <th colspan="6">Abonnements</th>

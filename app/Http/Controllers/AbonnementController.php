@@ -30,7 +30,8 @@ class AbonnementController extends Controller
         $data["active"] = "compte";
 
         $data["compte"] = $compte;
-        $data["offres"] = Type::orderBy("montant")->get();
+        $data["currentAbonnement"] = $compte->abonnements()->orderBy("id", "desc")->first();
+        $data["types"] = Type::orderBy("montant")->get();
 
         return view("abonnement.create", $data);
     }
@@ -47,14 +48,14 @@ class AbonnementController extends Controller
     {
         $this->validate($request, [
             "montant" => "required|numeric",
-            "offre_id" => "required|exists:types:id",
+            "type_abonnement" => "required|exists:types,id",
         ]);
 
-        $type = Type::find($request->offre_id);
+        $type = Type::find($request->type_abonnement);
 
-        $echeance = Carbon::parse($compte->abonnements()->orderBy("id", "desc")->first()->echeance);
-        $echeance = $echeance->lessThan(Carbon::now()) ?
-            Carbon::now()->addDays($type->validity) : $echeance->addDays($type->validity);
+        $currentEcheance = Carbon::parse($compte->abonnements()->orderBy("id", "desc")->first()->echeance);
+        $echeance = $currentEcheance->lessThan(Carbon::now()) ?
+            Carbon::now()->addDays($type->validity) : $currentEcheance->addDays($type->validity);
 
         Abonnement::create([
             "montant" => $request->montant,
@@ -65,14 +66,14 @@ class AbonnementController extends Controller
 
         $message = "Votre réabonnement a été effectué avec succès!";
         $sms = new stdClass();
-        $sms->to = $compte->users()->first("telephone")->toArray();
+        $sms->to = [$compte->users()->first()->telephone];
         $sms->message = $message;
         Queue::push(new SendSMS($sms));
 
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Réabonnement effectué avec succès!');
 
-        return redirect()->route("compte.index");
+        return redirect()->route("compte.show", $compte);
     }
 
     /**
@@ -84,6 +85,13 @@ class AbonnementController extends Controller
      */
     public function destroy(Abonnement $abonnement)
     {
+        if($abonnement->compte->abonnements()->count() == 1)
+        {
+            session()->flash('type', 'alert-danger');
+            session()->flash('message', 'Vous ne pouvez pas supprimer le seul abonnement de ce compte');
+            return back();
+        }
+
         $abonnement->delete();
 
         session()->flash('type', 'alert-success');

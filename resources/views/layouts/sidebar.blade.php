@@ -58,20 +58,11 @@
                     </li>
                 @endcan
 
-                @can('Utilisateurs')
+                @can('Users')
                     <li>
                         <a href="{{route("user.index")}}" class="{{$active == "user" ? "mm-active" : ""}}">
                             <i class="metismenu-icon fa fa-users"></i>
                             Utilisateurs
-                        </a>
-                    </li>
-                @endcan
-
-                @can('Offres')
-                    <li>
-                        <a href="" class="{{$active == "offre" ? "mm-active" : ""}}">
-                            <i class="metismenu-icon fa fa-gift"></i>
-                            Offre abonnement
                         </a>
                     </li>
                 @endcan

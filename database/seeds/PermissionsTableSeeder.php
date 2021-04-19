@@ -14,10 +14,12 @@ class PermissionsTableSeeder extends Seeder
     {
         $permissions = [
             "Salons",
-            "Abonnements",
-            "Transactions",
-            "Offre",
+            "Comptes",
+            "Users",
+            "Types abonnement",
+            "Offres SMS",
             "SMS",
+            "Admins",
         ];
 
         foreach ($permissions as $permission)

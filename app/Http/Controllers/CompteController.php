@@ -10,6 +10,7 @@ use App\Type;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 
 class CompteController extends Controller
@@ -24,6 +25,12 @@ class CompteController extends Controller
 
         $data["comptes"] = Compte::orderBy("id", "desc")->get();
 
+        $query = "
+        SELECT DISTINCT(compte_id)
+        FROM abonnements
+        WHERE DATE (echeance) >= ?";
+        $data["actifs"] = DB::select($query, [Carbon::now()]);
+
         return view("compte.index", $data);
     }
 
@@ -35,7 +42,7 @@ class CompteController extends Controller
         $data["title"] = "Comptes";
         $data["active"] = "compte";
 
-        $data["offres"] = Type::orderBy("montant")->get();
+        $data["types"] = Type::orderBy("montant")->get();
 
         return view("compte.create", $data);
     }
@@ -54,12 +61,12 @@ class CompteController extends Controller
             "adresse" => "required",
             "telephone" => "required|unique:users",
             "montant" => "required|numeric",
-            "offre_id" => "required|exists:types:id",
+            "type_abonnement" => "required|exists:types,id",
         ]);
 
         $compte = Compte::create([]);
 
-        $type = Type::find($request->offre_id);
+        $type = Type::find($request->type_abonnement);
         Abonnement::create([
             "montant" => $request->montant,
             "echeance" => Carbon::now()->addDays($type->validity),
@@ -74,39 +81,25 @@ class CompteController extends Controller
             "compte_id" => $compte->id,
         ]);
 
-        $user = User::where("telephone", $request->telephone)->first();
+        $password = User::generatePassword($request->telephone);
 
-        if($user == null)
-        {
-            $password = User::generatePassword($request->telephone);
+        $user = User::create([
+            "name" => $request->name,
+            "telephone" => $request->telephone,
+            "email" => $request->email,
+            "compte_id" => $compte->id,
+            "password" => bcrypt($password),
+        ]);
 
-            $user = User::create([
-                "name" => $request->name,
-                "telephone" => $request->telephone,
-                "email" => $request->email,
-                "compte_id" => null,
-                "password" => bcrypt($password),
-            ]);
-
-            //Envoi du mot de passe par SMS
-            $message =
-                "Votre mot de passe est: $password" .
-                "\nTéléchargez l'application " . config("app.name") . " sur playstore" .
-                "\n" . config("app.playstore");
-            $sms = new \stdClass();
-            $sms->to = [$request->telephone];
-            $sms->message = $message;
-            Queue::push(new SendSMS($sms));
-        }
-        else // si le user existe
-        {
-            //Envoi d'une notification par SMS
-            $message = "$salon->nom a été ajouté à votre compte " . config('app.name');
-            $sms = new \stdClass();
-            $sms->to = [$user->telephone];
-            $sms->message = $message;
-            Queue::push(new SendSMS($sms));
-        }
+        //Envoi du mot de passe par SMS
+        $message =
+            "Votre mot de passe est: $password" .
+            "\nTéléchargez l'application " . config("app.name") . " sur playstore" .
+            "\n" . config("app.playstore");
+        $sms = new \stdClass();
+        $sms->to = [$request->telephone];
+        $sms->message = $message;
+        Queue::push(new SendSMS($sms));
 
         $user->salons()->sync([$salon->id], false);
 
@@ -130,29 +123,6 @@ class CompteController extends Controller
         $data["compte"] = $compte;
 
         return view("compte.show", $data);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Compte  $compte
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Compte $compte)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Compte  $compte
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Compte $compte)
-    {
-        //
     }
 
     /**

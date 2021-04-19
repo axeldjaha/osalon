@@ -30,26 +30,36 @@ Route::middleware("auth")->group(function ()
     /**
      * SALON
      */
-    Route::group(['middleware' => ['permission:Salon']], function ()
+    Route::group(['middleware' => ['permission:Salons']], function ()
     {
         Route::get("salon", "SalonController@index")->name("salon.index");
         Route::get("salon/{salon}", "SalonController@show")
             ->where("salon", "[0-9]+")->name("salon.show");
-        Route::delete("salon/{salon}", "SalonController@destroy")->name("salon.delete");
+        Route::delete("salon/{salon}", "SalonController@destroy")->name("salon.destroy");
     });
 
     /**
      * COMPTES
      */
-    Route::group(['middleware' => ['permission:Compte']], function () {
+    Route::group(['middleware' => ['permission:Comptes']], function () {
         Route::resource("compte", "CompteController");
     });
 
     /**
      * ABONNEMENT
      */
-    Route::group(['middleware' => ['permission:Abonnement']], function () {
-        Route::resource("abonnement", "AbonnementController")->only(["create", "store", "destroy"]);
+    Route::group(['middleware' => ['permission:Comptes']], function () {
+        Route::get("abonnement/{compte}/create", "AbonnementController@create")->name("abonnement.create");
+        Route::post("abonnement/{compte}/create", "AbonnementController@store")->name("abonnement.store");
+        Route::delete("abonnement/{abonnement}", "AbonnementController@destroy")->name("abonnement.destroy");
+    });
+
+    /**
+     * RECHARGE SMS
+     */
+    Route::group(['middleware' => ['permission:Comptes']], function () {
+        Route::get("recharge/{compte}/create", "RechareSMSController@create")->name("recharge.create");
+        Route::post("recharge/{compte}/create", "RechareSMSController@store")->name("recharge.store");
     });
 
     /**
@@ -63,7 +73,7 @@ Route::middleware("auth")->group(function ()
     /**
      * OFFRES
      */
-    Route::group(['middleware' => ['permission:Offres']], function () {
+    Route::group(['middleware' => ['permission:Types abonnement']], function () {
         Route::resource("offre", "OffreController")->only(["index", "edit", "update"]);
     });
 
@@ -82,7 +92,7 @@ Route::middleware("auth")->group(function ()
     /**
      * SMS
      */
-    Route::group(['middleware' => ['can:Envoi SMS']], function () {
+    Route::group(['middleware' => ['can:SMS']], function () {
         Route::get("/sms", "SMSController@index")->name("sms.index");
         Route::get("/sms/envoi", "SMSController@create")->name("sms.create");
         Route::post("/sms/envoi", "SMSController@store")->name("sms.envoi");
@@ -95,7 +105,6 @@ Route::middleware("auth")->group(function ()
         Route::post("sms/contact/store", "SmsGroupeController@storeContact")->name("sms.contact.store");
         Route::delete("sms/contact/{contact}", "SmsGroupeController@destroyContact")->name("sms.contact.destroy");
     });
-
 
     /**
      * DASHBOARD
@@ -117,5 +126,3 @@ Route::middleware("auth")->group(function ()
     Route::get("profile/infos", "Admin\AccountController@infos")->name("account.infos");
     Route::put("profile/infos", "Admin\AccountController@updateInfos")->name("account.infos.update");
 });
-
-Route::get("img/{url}", "ImageController@show");

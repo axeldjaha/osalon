@@ -21,11 +21,6 @@ class SalonController extends Controller
         $data["active"] = "salon";
 
         $data["salons"] = Salon::orderBy("nom", 'asc')->get();
-        $query = "
-        SELECT DISTINCT(compte_id)
-        FROM abonnements
-        WHERE DATE (echeance) >= ?";
-        $data["actifs"] = DB::select($query, [Carbon::now()]);
 
         return view("salon.index", $data);
     }
@@ -55,6 +50,13 @@ class SalonController extends Controller
      */
     public function destroy(Salon $salon)
     {
+        if($salon->compte->salons()->count() == 1)
+        {
+            session()->flash('type', 'alert-danger');
+            session()->flash('message', 'Vous ne pouvez pas supprimer le seul salon de ce compte');
+            return back();
+        }
+
         $salon->users()->each(function ($user)
         {
             if($user->salons()->count() == 1)
