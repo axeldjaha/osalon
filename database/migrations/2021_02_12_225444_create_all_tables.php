@@ -59,8 +59,6 @@ class CreateAllTables extends Migration
             $table->string('nom');
             $table->string('adresse')->nullable();
             $table->string('telephone');
-            $table->integer('pid')->nullable();
-            $table->bigInteger('sms')->default(0);
             $table->unsignedBigInteger('compte_id');
             $table->timestamps();
         });
