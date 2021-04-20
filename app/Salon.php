@@ -30,6 +30,16 @@ class Salon extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function paniers()
+    {
+        return $this->hasMany(Panier::class);
+    }
+
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
+
     public function services()
     {
         return $this->hasMany(Service::class);

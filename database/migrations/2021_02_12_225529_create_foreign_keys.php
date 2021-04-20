@@ -19,6 +19,10 @@ class CreateForeignKeys extends Migration
             $table->foreign('compte_id')->references('id')->on('comptes')->onDelete('cascade');
         });
 
+        Schema::table('articles', function (Blueprint $table) {
+            $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
+        });
+
         Schema::table('clients', function (Blueprint $table) {
             $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
         });
@@ -27,50 +31,33 @@ class CreateForeignKeys extends Migration
             $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
         });
 
-        Schema::table('prestations', function (Blueprint $table) {
+        Schema::table('paniers', function (Blueprint $table) {
             $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
         });
 
-        Schema::create('prestation_service', function (Blueprint $table) {
-            $table->unsignedBigInteger('prestation_id')->index();
-            $table->foreign('prestation_id')->references('id')->on('prestations')->onDelete('cascade');
-            $table->unsignedBigInteger('service_id')->index();
-            $table->foreign('service_id')->references('id')->on('services')->onDelete('cascade');
-        });
-
-        Schema::create('salon_user', function (Blueprint $table) {
-            $table->unsignedBigInteger('salon_id')->index();
-            $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
-            $table->unsignedBigInteger('user_id')->index();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-        });
-
-        Schema::table('services', function (Blueprint $table) {
-            $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
-        });
-
-        Schema::table('sms', function (Blueprint $table) {
-            $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
+        Schema::table('article_panier', function (Blueprint $table) {
+            $table->foreign('article_id')->references('id')->on('articles')->onDelete('cascade');
+            $table->foreign('panier_id')->references('id')->on('paniers')->onDelete('cascade');
         });
 
         Schema::table('salons', function (Blueprint $table) {
             $table->foreign('compte_id')->references('id')->on('comptes')->onDelete('cascade');
         });
 
+        Schema::table('salon_user', function (Blueprint $table) {
+            $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+        });
+
+
+        Schema::table('sms', function (Blueprint $table) {
+            $table->foreign('salon_id')->references('id')->on('salons')->onDelete('cascade');
+        });
+
         Schema::table('users', function (Blueprint $table) {
             $table->foreign('compte_id')->references('id')->on('comptes')->onDelete('cascade');
         });
 
-
-        /**
-         * **************************************************
-         * ADMINISTRATION
-         * **************************************************
-         */
-
-        Schema::table('contacts', function (Blueprint $table) {
-            $table->foreign('sms_groupe_id')->references('id')->on('sms_groupes')->onDelete('cascade');
-        });
     }
 
     /**

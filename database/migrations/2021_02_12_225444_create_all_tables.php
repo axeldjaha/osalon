@@ -22,6 +22,14 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
+        Schema::create('articles', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('libelle');
+            $table->bigInteger('prix');
+            $table->unsignedBigInteger('salon_id');
+            $table->timestamps();
+        });
+
         Schema::create('clients', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nom')->nullable();
@@ -46,10 +54,26 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('prestations', function (Blueprint $table) {
+        Schema::create('paniers', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('total');
-            $table->date('date')->nullable();
+            $table->date('date');
+            $table->unsignedBigInteger('salon_id');
+            $table->timestamps();
+        });
+
+        Schema::create('article_panier', function (Blueprint $table) {
+            $table->integer('quantite');
+            $table->unsignedBigInteger('article_id');
+            $table->unsignedBigInteger('panier_id');
+        });
+
+        Schema::create('rdvs', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->date("date");
+            $table->time("heure")->nullable();
+            $table->string("client")->nullable();
+            $table->string("telephone")->nullable();
             $table->unsignedBigInteger('salon_id');
             $table->timestamps();
         });
@@ -63,12 +87,9 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('services', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('nom');
-            $table->bigInteger('tarif');
-            $table->unsignedBigInteger('salon_id');
-            $table->timestamps();
+        Schema::create('salon_user', function (Blueprint $table) {
+            $table->unsignedBigInteger('salon_id')->index();
+            $table->unsignedBigInteger('user_id')->index();
         });
 
         Schema::create('sms', function (Blueprint $table) {
@@ -89,46 +110,6 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
-
-        /**
-         * **************************************************
-         * ADMINISTRATION
-         * **************************************************
-         */
-        Schema::create('offre_sms', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->bigInteger('quantite');
-            $table->bigInteger('prix');
-            $table->timestamps();
-        });
-
-        Schema::create('fakedatas', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->text('data');
-            $table->timestamps();
-        });
-
-        Schema::create('contacts', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('nom')->nullable();
-            $table->string('telephone');
-            $table->unsignedBigInteger('sms_groupe_id')->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('backsms', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('to');
-            $table->text('message');
-            $table->string('user');
-            $table->timestamps();
-        });
-
-        Schema::create('sms_groupes', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('intitule');
-            $table->timestamps();
-        });
     }
 
     /**
