@@ -49,6 +49,7 @@ class CreateAllTables extends Migration
         Schema::create('prestations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('total');
+            $table->date('date')->nullable();
             $table->unsignedBigInteger('salon_id');
             $table->timestamps();
         });

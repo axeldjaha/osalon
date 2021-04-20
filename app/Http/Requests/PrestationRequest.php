@@ -28,6 +28,7 @@ class PrestationRequest extends FormRequest
     {
         return [
             "total" => "required",
+            "date" => "required|date",
             "services" => "required",
         ];
     }
@@ -40,6 +41,13 @@ class PrestationRequest extends FormRequest
         {
             $response = [
                 "message" => $exception->validator->errors()->get("total")[0],
+            ];
+            throw new HttpResponseException(response()->json($response, 422));
+        }
+        elseif($exception->validator->errors()->has("date"))
+        {
+            $response = [
+                "message" => $exception->validator->errors()->get("date")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }

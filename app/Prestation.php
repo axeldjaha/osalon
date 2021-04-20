@@ -8,6 +8,7 @@ class Prestation extends Model
 {
     public $fillable = [
         "total",
+        "date",
         "salon_id",
     ];
 

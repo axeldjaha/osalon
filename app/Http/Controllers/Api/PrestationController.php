@@ -29,8 +29,8 @@ class PrestationController extends ApiController
         foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
         {
             $prestations = $salon->prestations()
-                ->whereDate('created_at', $request->date ?? Carbon::now())
-                ->orderBy("created_at", "desc")
+                ->whereDate('date', $request->date ?? Carbon::now())
+                ->orderBy("date", "desc")
                 ->get();
 
             $salons[] = [
@@ -63,8 +63,8 @@ class PrestationController extends ApiController
         }
 
         $depenses = $salon->prestations()
-            ->whereDate('created_at', $request->date ?? Carbon::now())
-            ->orderBy("created_at", "desc")
+            ->whereDate('date', $request->date ?? Carbon::now())
+            ->orderBy("date", "desc")
             ->get();
 
         return response()->json(PrestationResource::collection($depenses));
@@ -80,6 +80,7 @@ class PrestationController extends ApiController
     {
         $prestation = Prestation::create([
             "total" => $request->total,
+            "date" => $request->date,
             "salon_id" => $this->salon->id,
         ]);
 
