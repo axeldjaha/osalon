@@ -20,20 +20,20 @@ class RecetteController extends ApiController
 
         $queryRecetteMois = "
         SELECT (SUM(total)) as recette,
-               MONTH(paniers.created_at) AS index_mois,
+               MONTH(paniers.date) AS index_mois,
                CASE
-                   WHEN MONTH(paniers.created_at) = 1 THEN 'Janvier'
-                   WHEN MONTH(paniers.created_at) = 2 THEN 'Février'
-                   WHEN MONTH(paniers.created_at) = 3 THEN 'Mars'
-                   WHEN MONTH(paniers.created_at) = 4 THEN 'Avril'
-                   WHEN MONTH(paniers.created_at) = 5 THEN 'Mai'
-                   WHEN MONTH(paniers.created_at) = 6 THEN 'Juin'
-                   WHEN MONTH(paniers.created_at) = 7 THEN 'Juillet'
-                   WHEN MONTH(paniers.created_at) = 8 THEN 'Août'
-                   WHEN MONTH(paniers.created_at) = 9 THEN 'Septembre'
-                   WHEN MONTH(paniers.created_at) = 10 THEN 'Octobre'
-                   WHEN MONTH(paniers.created_at) = 11 THEN 'Novembre'
-                   WHEN MONTH(paniers.created_at) = 12 THEN 'Décembre'
+                   WHEN MONTH(paniers.date) = 1 THEN 'Janvier'
+                   WHEN MONTH(paniers.date) = 2 THEN 'Février'
+                   WHEN MONTH(paniers.date) = 3 THEN 'Mars'
+                   WHEN MONTH(paniers.date) = 4 THEN 'Avril'
+                   WHEN MONTH(paniers.date) = 5 THEN 'Mai'
+                   WHEN MONTH(paniers.date) = 6 THEN 'Juin'
+                   WHEN MONTH(paniers.date) = 7 THEN 'Juillet'
+                   WHEN MONTH(paniers.date) = 8 THEN 'Août'
+                   WHEN MONTH(paniers.date) = 9 THEN 'Septembre'
+                   WHEN MONTH(paniers.date) = 10 THEN 'Octobre'
+                   WHEN MONTH(paniers.date) = 11 THEN 'Novembre'
+                   WHEN MONTH(paniers.date) = 12 THEN 'Décembre'
                    ELSE NULL
                END AS mois
         FROM paniers
@@ -82,20 +82,20 @@ class RecetteController extends ApiController
 
         $queryRecetteMois = "
         SELECT (SUM(total)) as recette,
-               MONTH(paniers.created_at) AS index_mois,
+               MONTH(paniers.date) AS index_mois,
                CASE
-                   WHEN MONTH(paniers.created_at) = 1 THEN 'Janvier'
-                   WHEN MONTH(paniers.created_at) = 2 THEN 'Février'
-                   WHEN MONTH(paniers.created_at) = 3 THEN 'Mars'
-                   WHEN MONTH(paniers.created_at) = 4 THEN 'Avril'
-                   WHEN MONTH(paniers.created_at) = 5 THEN 'Mai'
-                   WHEN MONTH(paniers.created_at) = 6 THEN 'Juin'
-                   WHEN MONTH(paniers.created_at) = 7 THEN 'Juillet'
-                   WHEN MONTH(paniers.created_at) = 8 THEN 'Août'
-                   WHEN MONTH(paniers.created_at) = 9 THEN 'Septembre'
-                   WHEN MONTH(paniers.created_at) = 10 THEN 'Octobre'
-                   WHEN MONTH(paniers.created_at) = 11 THEN 'Novembre'
-                   WHEN MONTH(paniers.created_at) = 12 THEN 'Décembre'
+                   WHEN MONTH(paniers.date) = 1 THEN 'Janvier'
+                   WHEN MONTH(paniers.date) = 2 THEN 'Février'
+                   WHEN MONTH(paniers.date) = 3 THEN 'Mars'
+                   WHEN MONTH(paniers.date) = 4 THEN 'Avril'
+                   WHEN MONTH(paniers.date) = 5 THEN 'Mai'
+                   WHEN MONTH(paniers.date) = 6 THEN 'Juin'
+                   WHEN MONTH(paniers.date) = 7 THEN 'Juillet'
+                   WHEN MONTH(paniers.date) = 8 THEN 'Août'
+                   WHEN MONTH(paniers.date) = 9 THEN 'Septembre'
+                   WHEN MONTH(paniers.date) = 10 THEN 'Octobre'
+                   WHEN MONTH(paniers.date) = 11 THEN 'Novembre'
+                   WHEN MONTH(paniers.date) = 12 THEN 'Décembre'
                    ELSE NULL
                END AS mois
         FROM paniers
