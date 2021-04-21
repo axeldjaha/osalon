@@ -20,6 +20,6 @@ class Article extends Model
 
     public function paniers()
     {
-        return $this->belongsToMany(Article::class)->withPivot("quantite");
+        return $this->belongsToMany(Panier::class)->withPivot("quantite");
     }
 }

@@ -2,18 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Abonnement;
-use App\Fakedata;
 use App\Http\Requests\SalonRequest;
-use App\Http\Resources\LavageDataResource;
 use App\Http\Resources\SalonResource;
 use App\Jobs\SendSMS;
-use App\Offre;
 use App\Salon;
-use App\Service;
 use App\User;
 use Illuminate\Http\Response;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 
@@ -23,7 +17,7 @@ class SalonController extends ApiController
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -148,7 +142,7 @@ class SalonController extends ApiController
     /**
      * Remove the specified resource from storage.
      *
-     * @param Service $salon
+     * @param Salon $salon
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Salon $salon)

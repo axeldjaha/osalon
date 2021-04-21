@@ -4,19 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Fakedata;
 use App\Http\Requests\IndexPrestationRequest;
-use App\Http\Requests\PrestationRequest;
+use App\Http\Requests\PanierRequest;
 use App\Http\Resources\DepenseResource;
-use App\Http\Resources\PrestationResource;
+use App\Http\Resources\PanierResource;
 use App\Http\Resources\SalonResource;
-use App\Prestation;
-use App\Recette;
+use App\Panier;
 use App\Salon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
-class PrestationController extends ApiController
+class PanierController extends ApiController
 {
     /**
      * Liste des prestations selon date
@@ -28,8 +25,8 @@ class PrestationController extends ApiController
         $salons = [];
         foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
         {
-            $prestations = $salon->prestations()
-                ->whereDate('date', $request->date ?? Carbon::now())
+            $paniers = $salon->paniers()
+                ->whereDate('date', $request->date ?? Carbon::today())
                 ->orderBy("date", "desc")
                 ->get();
 
@@ -37,7 +34,7 @@ class PrestationController extends ApiController
                 "id" => $salon->id,
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
-                "encaissements" => PrestationResource::collection($prestations),
+                "paniers" => PanierResource::collection($paniers),
             ];
         }
 
@@ -62,53 +59,53 @@ class PrestationController extends ApiController
             return \response()->json(new SalonResource(new Salon()), 204);
         }
 
-        $depenses = $salon->prestations()
-            ->whereDate('date', $request->date ?? Carbon::now())
+        $depenses = $salon->paniers()
+            ->whereDate('date', $request->date ?? Carbon::today())
             ->orderBy("date", "desc")
             ->get();
 
-        return response()->json(PrestationResource::collection($depenses));
+        return response()->json(PanierResource::collection($depenses));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param PrestationRequest $request
+     * @param PanierRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(PrestationRequest $request)
+    public function store(PanierRequest $request)
     {
-        $prestation = Prestation::create([
+        $panier = Panier::create([
             "total" => $request->total,
-            "date" => $request->date,
+            "date" => $request->date ?? Carbon::today(),
             "salon_id" => $this->salon->id,
         ]);
 
-        foreach ($request->services as $service)
+        foreach ($request->articles as $article)
         {
-            $prestation->services()->sync([$service["id"]], false);
+            $articleId = $article["article"]["id"];
+            $quantite = $article["quantite"];
+            $panier->articles()->sync([$articleId => ["quantite" => $quantite]], false);
         }
 
-        //sleep(10);
-
-        return response()->json(new DepenseResource(new Prestation()));
+        return response()->json(new PanierResource(new Panier()));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param Prestation $prestation
-     * @return \Illuminate\Http\Response
+     * @param Panier $panier
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Prestation $prestation)
+    public function destroy(Panier $panier)
     {
         /**
          * Check if the resource exists and prevent access to another user's resource
          */
-        if(!$this->salon->prestations()->where("id", $prestation->id)->delete())
+        if(!$this->salon->paniers()->where("id", $panier->id)->delete())
         {
             return response()->json([
-                "message" => "La prestation n'existe pas ou a été supprimée."
+                "message" => "La ressource n'existe pas ou a été supprimée."
             ], 404);
         }
 

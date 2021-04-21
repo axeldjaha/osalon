@@ -9,7 +9,7 @@ class Rdv extends Model
     protected $fillable = [
         "date",
         "heure",
-        "nom",
+        "client",
         "telephone",
         "salon_id",
     ];

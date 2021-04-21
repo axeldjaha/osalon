@@ -15,7 +15,6 @@ use App\Salon;
 use App\Sms;
 use App\SMSCounter;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
@@ -54,7 +53,7 @@ class RdvController extends ApiController
 
             $salons[] = [
                 "id" => $salon->id,
-                "nom" => $salon->nom,
+                "nom" => $salon->client,
                 "adresse" => $salon->adresse,
                 "telephone" => $salon->telephone,
                 "rdvs" => $rdvData,
@@ -127,7 +126,7 @@ class RdvController extends ApiController
         $rdv = Rdv::create([
             "date" => $request->date,
             "heure" => $request->heure,
-            "nom" => $request->nom,
+            "client" => $request->client,
             "telephone" => $request->telephone,
             "salon_id" => $request->salon,
         ]);
@@ -150,7 +149,7 @@ class RdvController extends ApiController
         if(!$this->salon->rdvs()->where("id", $rdv->id)->update([
             "date" => $request->date,
             "heure" => $request->heure,
-            "nom" => $request->nom,
+            "client" => $request->client,
             "telephone" => $request->telephone,
         ]))
         {
@@ -203,7 +202,7 @@ class RdvController extends ApiController
             {
                 $rdv = Rdv::find($id);
                 $date = ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('dddd DD MMMM'));
-                $message = str_replace(["#Nom", "#Date", "#Heure"], [$rdv->nom, $date, date("H:i", strtotime($rdv->heure))], $request->message);
+                $message = str_replace(["#Nom", "#Date", "#Heure"], [$rdv->client, $date, date("H:i", strtotime($rdv->heure))], $request->message);
                 Sms::create([
                     "message" => $message,
                     "recipient" => 1,
@@ -215,7 +214,7 @@ class RdvController extends ApiController
                 if(!$this->salon->clients()->where("telephone", $rdv->telephone)->exists())
                 {
                     $newClients[] = [
-                        $rdv->nom,
+                        $rdv->client,
                         $rdv->telephone,
                         $this->salon->id,
                         $createdAt,
@@ -233,7 +232,7 @@ class RdvController extends ApiController
             if(count($newClients) > 0)
             {
                 $columns = [
-                    "nom",
+                    "client",
                     "telephone",
                     "salon_id",
                     "created_at",

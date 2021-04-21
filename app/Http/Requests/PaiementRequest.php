@@ -28,7 +28,7 @@ class PaiementRequest extends FormRequest
     {
         return [
             "engin" => "nullable",
-            "services" => "nullable",
+            "articles" => "nullable",
             "laveurs" => "nullable",
             "immatriculation" => "nullable",
             "cout" => "required",
@@ -46,10 +46,10 @@ class PaiementRequest extends FormRequest
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }
-        elseif($exception->validator->errors()->has("services"))
+        elseif($exception->validator->errors()->has("articles"))
         {
             $response = [
-                "message" => $exception->validator->errors()->get("services")[0],
+                "message" => $exception->validator->errors()->get("articles")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }

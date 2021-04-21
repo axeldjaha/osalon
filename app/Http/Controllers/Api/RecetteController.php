@@ -13,33 +13,33 @@ class RecetteController extends ApiController
     {
         $queryRecetteJournaliere = "
         SELECT (SUM(total)) as recette
-        FROM prestations
-        INNER JOIN salons ON salons.id = prestations.salon_id
+        FROM paniers
+        INNER JOIN salons ON salons.id = paniers.salon_id
         WHERE salons.id = ? AND
-              DATE(prestations.created_at) = ?";
+              DATE(paniers.date) = ?";
 
         $queryRecetteMois = "
         SELECT (SUM(total)) as recette,
-               MONTH(prestations.created_at) AS index_mois,
+               MONTH(paniers.created_at) AS index_mois,
                CASE
-                   WHEN MONTH(prestations.created_at) = 1 THEN 'Janvier'
-                   WHEN MONTH(prestations.created_at) = 2 THEN 'Février'
-                   WHEN MONTH(prestations.created_at) = 3 THEN 'Mars'
-                   WHEN MONTH(prestations.created_at) = 4 THEN 'Avril'
-                   WHEN MONTH(prestations.created_at) = 5 THEN 'Mai'
-                   WHEN MONTH(prestations.created_at) = 6 THEN 'Juin'
-                   WHEN MONTH(prestations.created_at) = 7 THEN 'Juillet'
-                   WHEN MONTH(prestations.created_at) = 8 THEN 'Août'
-                   WHEN MONTH(prestations.created_at) = 9 THEN 'Septembre'
-                   WHEN MONTH(prestations.created_at) = 10 THEN 'Octobre'
-                   WHEN MONTH(prestations.created_at) = 11 THEN 'Novembre'
-                   WHEN MONTH(prestations.created_at) = 12 THEN 'Décembre'
+                   WHEN MONTH(paniers.created_at) = 1 THEN 'Janvier'
+                   WHEN MONTH(paniers.created_at) = 2 THEN 'Février'
+                   WHEN MONTH(paniers.created_at) = 3 THEN 'Mars'
+                   WHEN MONTH(paniers.created_at) = 4 THEN 'Avril'
+                   WHEN MONTH(paniers.created_at) = 5 THEN 'Mai'
+                   WHEN MONTH(paniers.created_at) = 6 THEN 'Juin'
+                   WHEN MONTH(paniers.created_at) = 7 THEN 'Juillet'
+                   WHEN MONTH(paniers.created_at) = 8 THEN 'Août'
+                   WHEN MONTH(paniers.created_at) = 9 THEN 'Septembre'
+                   WHEN MONTH(paniers.created_at) = 10 THEN 'Octobre'
+                   WHEN MONTH(paniers.created_at) = 11 THEN 'Novembre'
+                   WHEN MONTH(paniers.created_at) = 12 THEN 'Décembre'
                    ELSE NULL
                END AS mois
-        FROM prestations
-        INNER JOIN salons ON salons.id = prestations.salon_id
+        FROM paniers
+        INNER JOIN salons ON salons.id = paniers.salon_id
         WHERE salons.id = ? AND
-            YEAR(prestations.created_at) = ?
+            YEAR(paniers.date) = ?
         GROUP BY index_mois, mois
         ORDER BY index_mois DESC";
 
@@ -75,33 +75,33 @@ class RecetteController extends ApiController
 
         $queryRecetteJournaliere = "
         SELECT (SUM(total)) as recette
-        FROM prestations
-        INNER JOIN salons ON salons.id = prestations.salon_id
+        FROM paniers
+        INNER JOIN salons ON salons.id = paniers.salon_id
         WHERE salons.id = ? AND
-              DATE(prestations.created_at) = ?";
+              DATE(paniers.date) = ?";
 
         $queryRecetteMois = "
         SELECT (SUM(total)) as recette,
-               MONTH(prestations.created_at) AS index_mois,
+               MONTH(paniers.created_at) AS index_mois,
                CASE
-                   WHEN MONTH(prestations.created_at) = 1 THEN 'Janvier'
-                   WHEN MONTH(prestations.created_at) = 2 THEN 'Février'
-                   WHEN MONTH(prestations.created_at) = 3 THEN 'Mars'
-                   WHEN MONTH(prestations.created_at) = 4 THEN 'Avril'
-                   WHEN MONTH(prestations.created_at) = 5 THEN 'Mai'
-                   WHEN MONTH(prestations.created_at) = 6 THEN 'Juin'
-                   WHEN MONTH(prestations.created_at) = 7 THEN 'Juillet'
-                   WHEN MONTH(prestations.created_at) = 8 THEN 'Août'
-                   WHEN MONTH(prestations.created_at) = 9 THEN 'Septembre'
-                   WHEN MONTH(prestations.created_at) = 10 THEN 'Octobre'
-                   WHEN MONTH(prestations.created_at) = 11 THEN 'Novembre'
-                   WHEN MONTH(prestations.created_at) = 12 THEN 'Décembre'
+                   WHEN MONTH(paniers.created_at) = 1 THEN 'Janvier'
+                   WHEN MONTH(paniers.created_at) = 2 THEN 'Février'
+                   WHEN MONTH(paniers.created_at) = 3 THEN 'Mars'
+                   WHEN MONTH(paniers.created_at) = 4 THEN 'Avril'
+                   WHEN MONTH(paniers.created_at) = 5 THEN 'Mai'
+                   WHEN MONTH(paniers.created_at) = 6 THEN 'Juin'
+                   WHEN MONTH(paniers.created_at) = 7 THEN 'Juillet'
+                   WHEN MONTH(paniers.created_at) = 8 THEN 'Août'
+                   WHEN MONTH(paniers.created_at) = 9 THEN 'Septembre'
+                   WHEN MONTH(paniers.created_at) = 10 THEN 'Octobre'
+                   WHEN MONTH(paniers.created_at) = 11 THEN 'Novembre'
+                   WHEN MONTH(paniers.created_at) = 12 THEN 'Décembre'
                    ELSE NULL
                END AS mois
-        FROM prestations
-        INNER JOIN salons ON salons.id = prestations.salon_id
+        FROM paniers
+        INNER JOIN salons ON salons.id = paniers.salon_id
         WHERE salons.id = ? AND
-            YEAR(prestations.created_at) = ?
+            YEAR(paniers.date) = ?
         GROUP BY index_mois, mois
         ORDER BY index_mois DESC";
 

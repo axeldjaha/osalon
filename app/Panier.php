@@ -21,4 +21,5 @@ class Panier extends Model
     {
         return $this->belongsToMany(Article::class)->withPivot("quantite");
     }
+
 }

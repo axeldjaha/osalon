@@ -2,17 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Abonnement;
-use App\Paiement;
-use App\Salon;
-use App\Operateur;
-use App\Prestation;
-use App\Recette;
-use App\Sms;
-use App\Transaction;
-use App\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
 class HomeController extends Controller
 {

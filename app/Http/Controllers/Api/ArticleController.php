@@ -2,29 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Fakedata;
-use App\Http\Requests\ServiceRequest;
-use App\Http\Requests\UpdateServiceRequest;
-use App\Http\Resources\DepenseResource;
-use App\Http\Resources\DepenseSalonResource;
-use App\Http\Resources\PrestationServiceResource;
+use App\Article;
+use App\Http\Requests\ArticleRequest;
 use App\Http\Resources\SalonResource;
-use App\Http\Resources\ServiceResource;
+use App\Http\Resources\ArticleResource;
 use App\Salon;
-use App\Service;
-use App\Tarification;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
-class ServiceController extends ApiController
+class ArticleController extends ApiController
 {
 
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -35,7 +26,7 @@ class ServiceController extends ApiController
                 "id" => $salon->id,
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
-                "services" => ServiceResource::collection($salon->services()->orderBy("nom")->get()),
+                "articles" => ArticleResource::collection($salon->articles()->orderBy("libelle")->get()),
             ];
         }
 
@@ -60,68 +51,68 @@ class ServiceController extends ApiController
             return \response()->json(new SalonResource(new Salon()), 204);
         }
 
-        return response()->json(ServiceResource::collection($salon->services()->orderBy("nom")->get()));
+        return response()->json(ArticleResource::collection($salon->articles()->orderBy("libelle")->get()));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param ServiceRequest $request
-     * @return Response
+     * @param ArticleRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(ServiceRequest $request)
+    public function store(ArticleRequest $request)
     {
-        $service = Service::create([
-            "nom" => $request->nom,
-            "tarif" => $request->tarif,
-            "salon_id" => $request->salon,
+        $service = Article::create([
+            "libelle" => $request->libelle,
+            "prix" => $request->prix,
+            "salon_id" => $this->salon-id,
         ]);
 
-        return response()->json(new ServiceResource($service));
+        return response()->json(new ArticleResource($service));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param Service $service
-     * @return Response
+     * @param ArticleRequest $request
+     * @param Article $article
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(ServiceRequest $request, Service $service)
+    public function update(ArticleRequest $request, Article $article)
     {
         /**
          * Check if the resource exists and prevent access to another user's resource
          */
-        if(!$this->salon->services()->where("id", $service->id)->update([
-            "nom" => $request->nom,
-            "tarif" => $request->tarif
+        if(!$this->salon->articles()->where("id", $article->id)->update([
+            "libelle" => $request->libelle,
+            "prix" => $request->prix
         ]))
         {
             return response()->json([
-                "message" => "Le prestation n'existe pas ou a été supprimée"
+                "message" => "Le ressource n'existe pas ou a été supprimée"
             ], 404);
         }
 
-        $service = $service->fresh();
+        $article = $article->fresh();
 
-        return response()->json(new ServiceResource($service));
+        return response()->json(new ArticleResource($article));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param Service $service
-     * @return Response
+     * @param Article $article
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Service $service)
+    public function destroy(Article $article)
     {
         /**
          * Check if the resource exists and prevent access to another user's resource
          */
-        if(!$this->salon->services()->where("id", $service->id)->delete())
+        if(!$this->salon->articles()->where("id", $article->id)->delete())
         {
             return response()->json([
-                "message" => "La prestation n'existe pas ou a été supprimée"
+                "message" => "La ressource n'existe pas ou a été supprimée"
             ], 404);
         }
 

@@ -7,12 +7,15 @@ use App\Client;
 use App\Compte;
 use App\Contact;
 use App\Http\Resources\OffreSMSResource;
+use App\Http\Resources\PanierResource;
 use App\Http\Resources\RdvResource;
 use App\Jobs\SendSMS;
 use App\OffreSms;
+use App\Panier;
 use App\Salon;
 use App\SKien\VCard\VCard;
 use App\Type;
+use App\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -40,6 +43,8 @@ class TestController extends Controller
     {
         $salon = Salon::first();
         $compte = Compte::find(6);
+        $panier = Panier::first();
+
 
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);

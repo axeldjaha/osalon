@@ -40,16 +40,6 @@ class Salon extends Model
         return $this->hasMany(Article::class);
     }
 
-    public function services()
-    {
-        return $this->hasMany(Service::class);
-    }
-
-    public function prestations()
-    {
-        return $this->hasMany(Prestation::class);
-    }
-
     public function clients()
     {
         return $this->hasMany(Client::class);

@@ -4,17 +4,12 @@ namespace App\Http\Controllers\Api;
 
 use App\Depense;
 use App\Http\Requests\DepenseRequest;
-use App\Http\Requests\ServiceRequest;
 use App\Http\Resources\DepenseResource;
-use App\Http\Resources\DepenseSalonResource;
 use App\Http\Resources\SalonResource;
-use App\Http\Resources\ServiceResource;
 use App\Salon;
-use App\Service;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class DepenseController extends ApiController
 {
@@ -22,7 +17,7 @@ class DepenseController extends ApiController
     /**
      * Liste des dépenses selon mois
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
@@ -77,7 +72,7 @@ class DepenseController extends ApiController
      * Store a newly created resource in storage.
      *
      * @param DepenseRequest $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(DepenseRequest $request)
     {
@@ -96,7 +91,7 @@ class DepenseController extends ApiController
      *
      * @param Request $request
      * @param Depense $depense
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(DepenseRequest $request, Depense $depense)
     {
@@ -123,7 +118,7 @@ class DepenseController extends ApiController
      * Remove the specified resource from storage.
      *
      * @param  \App\Depense  $depense
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(Depense $depense)
     {

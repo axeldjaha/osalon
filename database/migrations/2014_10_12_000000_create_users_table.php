@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('telephone')->unique();
             $table->string('email')->unique()->nullable();
             $table->boolean('activated')->default(false);
-            $table->unsignedBigInteger('compte_id')->nullable();
+            $table->unsignedBigInteger('compte_id');
             $table->string('password');
             $table->timestamps();
         });

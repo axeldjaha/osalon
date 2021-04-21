@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\ValidationException;
 
-class ServiceRequest extends FormRequest
+class PanierRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,25 +27,34 @@ class ServiceRequest extends FormRequest
     public function rules()
     {
         return [
-            "nom" => "required",
-            "tarif" => "required",
+            "total" => "required",
+            "date" => "nullable",
+            "articles" => "required",
         ];
     }
 
     protected function failedValidation(Validator $validator)
     {
         $exception = new ValidationException($validator);
-        if($exception->validator->errors()->has("nom"))
+
+        if($exception->validator->errors()->has("total"))
         {
             $response = [
-                "message" => $exception->validator->errors()->get("nom")[0],
+                "message" => $exception->validator->errors()->get("total")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }
-        elseif($exception->validator->errors()->has("tarif"))
+        elseif($exception->validator->errors()->has("date"))
         {
             $response = [
-                "message" => $exception->validator->errors()->get("tarif")[0],
+                "message" => $exception->validator->errors()->get("date")[0],
+            ];
+            throw new HttpResponseException(response()->json($response, 422));
+        }
+        elseif($exception->validator->errors()->has("articles"))
+        {
+            $response = [
+                "message" => $exception->validator->errors()->get("articles")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }

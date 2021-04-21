@@ -3,9 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Carbon;
 
-class PrestationResource extends JsonResource
+class ArticleResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +16,8 @@ class PrestationResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "total" => intval($this->total),
-            "date" => date("d/m/Y à H:i", strtotime($this->created_at)),
-            "services" => ServiceResource::collection($this->services()->orderBy("nom")->get()),
+            "libelle" => $this->libelle,
+            "prix" => $this->prix,
             "salon_id" => $this->salon_id,
         ];
     }

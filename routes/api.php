@@ -44,7 +44,7 @@ Route::middleware(["auth:api", "salon", "abonnement"])->group(function ()
 
     Route::apiResource('depense','Api\DepenseController')->except(["index", "show"]);
 
-    Route::apiResource('prestation','Api\PrestationController')->except(["index", "show"]);
+    Route::apiResource('panier','Api\PanierController')->except(["index", "show"]);
 
     Route::apiResource('salon','Api\SalonController')->except(["index"]);
 
@@ -85,8 +85,8 @@ Route::middleware(["auth:api"])->group(function ()
     Route::get('recette','Api\RecetteController@index');
     Route::get('recette/salon/{salon}','Api\RecetteController@show');
 
-    Route::get('prestation','Api\PrestationController@index');
-    Route::get('prestation/salon/{salon}','Api\PrestationController@show');
+    Route::get('panier','Api\PanierController@index');
+    Route::get('panier/salon/{salon}','Api\PanierController@show');
 
     Route::get('sms','Api\SmsController@index');
     Route::get('sms/salon/{salon}','Api\SmsController@show');
