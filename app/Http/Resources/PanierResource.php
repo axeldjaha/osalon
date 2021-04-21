@@ -19,7 +19,7 @@ class PanierResource extends JsonResource
             "id" => $this->id,
             "total" => $this->total,
             "date" => date("d/m/Y à H:i", strtotime($this->date)),
-            "article_panier" => ArticlePanierResource::collection($this->articles),
+            "article_paniers" => ArticlePanierResource::collection($this->articles),
             "salon_id" => $this->salon_id,
         ];
     }

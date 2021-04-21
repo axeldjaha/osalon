@@ -29,7 +29,7 @@ class PanierRequest extends FormRequest
         return [
             "total" => "required",
             "date" => "nullable",
-            "articles" => "required",
+            "article_paniers" => "required",
         ];
     }
 

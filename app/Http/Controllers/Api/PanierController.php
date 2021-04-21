@@ -83,8 +83,8 @@ class PanierController extends ApiController
 
         foreach ($request->articles as $article)
         {
-            $articleId = $article["article"]["id"];
-            $quantite = $article["quantite"];
+            $articleId = $article["article_panier"]["id"];
+            $quantite = $article["article_panier"]["quantite"];
             $panier->articles()->sync([$articleId => ["quantite" => $quantite]], false);
         }
 

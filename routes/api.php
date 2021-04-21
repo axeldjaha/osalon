@@ -35,7 +35,7 @@ Route::get('user/sync','Api\AuthController@sync');
  */
 Route::middleware(["auth:api", "salon", "abonnement"])->group(function ()
 {
-    Route::apiResource('service','Api\ServiceController')->except(["index", "show"]);
+    Route::apiResource('article','Api\ArticleController')->except(["index", "show"]);
 
     Route::apiResource('client','Api\ClientController')->except(["index", "show"]);
     Route::post('client/import','Api\ClientController@import');
@@ -76,8 +76,8 @@ Route::middleware(["auth:api"])->group(function ()
     Route::get('client','Api\ClientController@index');
     Route::get('client/salon/{salon}','Api\ClientController@show');
 
-    Route::get('service','Api\ServiceController@index');
-    Route::get('service/salon/{salon}','Api\ServiceController@show');
+    Route::get('article','Api\ArticleController@index');
+    Route::get('service/salon/{salon}','Api\ArticleController@show');
 
     Route::get('depense','Api\DepenseController@index');
     Route::get('depense/salon/{salon}','Api\DepenseController@show');
