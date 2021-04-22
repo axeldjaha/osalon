@@ -60,48 +60,53 @@ class CompteController extends Controller
             "salon" => "required",
             "adresse" => "required",
             "telephone" => "required|unique:users",
+            "email" => "required|unique:users",
             "montant" => "required|numeric",
             "type_abonnement" => "required|exists:types,id",
         ]);
 
-        $compte = Compte::create([]);
+        DB::transaction(function () use($request)
+        {
+            $compte = Compte::create([]);
 
-        $type = Type::find($request->type_abonnement);
-        Abonnement::create([
-            "montant" => $request->montant,
-            "echeance" => Carbon::now()->addDays($type->validity),
-            "type_id" => $type->id,
-            "compte_id" => $compte->id,
-        ]);
+            $type = Type::find($request->type_abonnement);
+            Abonnement::create([
+                "montant" => $request->montant,
+                "echeance" => Carbon::now()->addDays($type->validity),
+                "type_id" => $type->id,
+                "compte_id" => $compte->id,
+            ]);
 
-        $salon = Salon::create([
-            "nom" => $request->salon,
-            "adresse" => $request->adresse,
-            "telephone" => $request->telephone,
-            "compte_id" => $compte->id,
-        ]);
+            $salon = Salon::create([
+                "nom" => $request->salon,
+                "adresse" => $request->adresse,
+                "telephone" => $request->telephone,
+                "compte_id" => $compte->id,
+            ]);
 
-        $password = User::generatePassword($request->telephone);
+            $password = User::generatePassword($request->telephone);
 
-        $user = User::create([
-            "name" => $request->name,
-            "telephone" => $request->telephone,
-            "email" => $request->email,
-            "compte_id" => $compte->id,
-            "password" => bcrypt($password),
-        ]);
+            $user = User::create([
+                "name" => $request->name,
+                "telephone" => $request->telephone,
+                "email" => $request->email,
+                "compte_id" => $compte->id,
+                "password" => bcrypt($password),
+            ]);
 
-        //Envoi du mot de passe par SMS
-        $message =
-            "Votre mot de passe est: $password" .
-            "\nTéléchargez l'application " . config("app.name") . " sur playstore" .
-            "\n" . config("app.playstore");
-        $sms = new \stdClass();
-        $sms->to = [$request->telephone];
-        $sms->message = $message;
-        Queue::push(new SendSMS($sms));
+            //Envoi du mot de passe par SMS
+            $message =
+                "Votre mot de passe est: $password" .
+                "\nTéléchargez l'application " . config("app.name") . " sur playstore" .
+                "\n" . config("app.playstore");
+            $sms = new \stdClass();
+            $sms->to = [$request->telephone];
+            $sms->message = $message;
+            Queue::push(new SendSMS($sms));
 
-        $user->salons()->sync([$salon->id], false);
+            $user->salons()->sync([$salon->id], false);
+
+        }, 1);
 
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Compte créé avec succès!');

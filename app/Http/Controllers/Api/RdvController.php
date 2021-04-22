@@ -132,6 +132,16 @@ class RdvController extends ApiController
             "salon_id" => $request->salon,
         ]);
 
+        if(!$this->salon->clients()->where("telephone", $request->telephone)->exists())
+        {
+            $client = Client::create([
+                "nom" => $request->client,
+                "telephone" => $request->telephone,
+                "anniversaire" => $request->anniversaire, //1970-04-24
+                "salon_id" => $request->salon,
+            ]);
+        }
+
         return response()->json(new RdvResource($rdv));
     }
 

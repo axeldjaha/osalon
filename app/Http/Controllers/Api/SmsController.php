@@ -73,10 +73,6 @@ class SmsController extends ApiController
      */
     public function store(Request $request)
     {
-        /*$data = json_encode($request->all());
-        Fakedata::create(["data" => $data]);
-        return response()->json(["message" => "super!"], 400);*/
-
         $to = $this->salon->clients()
             ->whereIn("telephone", $request->to)
             ->pluck("telephone")
