@@ -46,7 +46,6 @@ class TestController extends Controller
         $panier = Panier::first();
 
 
-
         //DB::table("users")->update(["password" => bcrypt("2909")]);
 
         /*Client::each(function ($client){

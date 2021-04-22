@@ -28,7 +28,7 @@ class PanierRequest extends FormRequest
     {
         return [
             "total" => "required",
-            "date" => "nullable",
+            "date" => "nullable|date",
             "article_paniers" => "required",
         ];
     }

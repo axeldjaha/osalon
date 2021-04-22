@@ -45,6 +45,7 @@ Route::middleware(["auth:api", "salon", "abonnement"])->group(function ()
     Route::apiResource('depense','Api\DepenseController')->except(["index", "show"]);
 
     Route::apiResource('panier','Api\PanierController')->except(["index", "show"]);
+    Route::delete('panier/{panier}/article/{article}','Api\PanierController@deleteArticle');
 
     Route::apiResource('salon','Api\SalonController')->except(["index"]);
 

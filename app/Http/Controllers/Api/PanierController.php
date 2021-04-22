@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Article;
 use App\Fakedata;
 use App\Http\Requests\IndexPrestationRequest;
 use App\Http\Requests\PanierRequest;
-use App\Http\Resources\DepenseResource;
 use App\Http\Resources\PanierResource;
 use App\Http\Resources\SalonResource;
 use App\Panier;
 use App\Salon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PanierController extends ApiController
 {
@@ -27,7 +28,7 @@ class PanierController extends ApiController
         {
             $paniers = $salon->paniers()
                 ->whereDate('date', $request->date ?? Carbon::today())
-                ->orderBy("date", "desc")
+                ->orderBy("id", "desc")
                 ->get();
 
             $salons[] = [
@@ -61,7 +62,7 @@ class PanierController extends ApiController
 
         $depenses = $salon->paniers()
             ->whereDate('date', $request->date ?? Carbon::today())
-            ->orderBy("date", "desc")
+            ->orderBy("id", "desc")
             ->get();
 
         return response()->json(PanierResource::collection($depenses));
@@ -77,26 +78,57 @@ class PanierController extends ApiController
     {
         $panier = Panier::create([
             "total" => $request->total,
-            "date" => $request->date ?? Carbon::today(),
+            "date" => $request->date != null ? $request->date . " " . date("H:i")  : Carbon::today(),
             "salon_id" => $this->salon->id,
         ]);
 
-        foreach ($request->articles as $article)
+        foreach ($request->article_paniers as $article_panier)
         {
-            $articleId = $article["article_panier"]["id"];
-            $quantite = $article["article_panier"]["quantite"];
-            $panier->articles()->sync([$articleId => ["quantite" => $quantite]], false);
+            $article_id = $article_panier["article"]["id"];
+            $quantite = $article_panier["quantite"];
+            $panier->articles()->sync([$article_id => ["quantite" => $quantite]], false);
         }
 
         return response()->json(new PanierResource(new Panier()));
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete article from panier
      *
      * @param Panier $panier
+     * @param Article $article
      * @return \Illuminate\Http\JsonResponse
      */
+    public function deleteArticle(Request $request, Panier $panier, Article $article)
+    {
+        /**
+         * Check if the resource exists and prevent access to another user's resource
+         */
+        $row = [
+            "article_id" => $article->id,
+            "panier_id" => $panier->id,
+        ];
+        if($this->salon->id != $panier->salon->id || !DB::table("article_panier")->where($row)->delete())
+        {
+            return response()->json([
+                "message" => "La ressource n'existe pas ou a été supprimée"
+            ], 404);
+        }
+
+        $total = 0;
+        foreach ($panier->articles as $articleRow)
+        {
+            $total += $articleRow->prix * $articleRow->pivot->quantite;
+        }
+        $panier->update(["total" => $total]);
+        if($panier->articles()->count() == 0)
+        {
+            $panier->delete();
+        }
+
+        return response()->json(null, 204);
+    }
+
     public function destroy(Panier $panier)
     {
         /**
@@ -105,7 +137,7 @@ class PanierController extends ApiController
         if(!$this->salon->paniers()->where("id", $panier->id)->delete())
         {
             return response()->json([
-                "message" => "La ressource n'existe pas ou a été supprimée."
+                "message" => "La ressource n'existe pas ou a été supprimée"
             ], 404);
         }
 
