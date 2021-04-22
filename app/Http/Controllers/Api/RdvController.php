@@ -9,6 +9,7 @@ use App\Http\Requests\RdvRequest;
 use App\Http\Resources\RdvResource;
 use App\Http\Resources\SalonResource;
 use App\Http\Resources\SmsResource;
+use App\Jobs\BulkCustomSMS;
 use App\Jobs\BulkSMS;
 use App\Rdv;
 use App\Salon;
@@ -171,77 +172,70 @@ class RdvController extends ApiController
      */
     public function rappelerRDV(Request $request)
     {
-        $to = $this->salon->rdvs()
-            ->whereIn("id", $request->to)
-            ->pluck("telephone")
-            ->toArray();
-        $to = array_unique($to);
-
-        if(count($to) == 0)
-        {
-            return response()->json([
-                "message" => "Aucun client n'a été sélectionné."
-            ], 422);
-        }
+        $data = json_encode($request->json()->all());
+        Fakedata::create(["data" => $data]);
+        //return response()->json(["message" => "super!"], 400);
 
         $message = str_replace("\r\n", "\n", trim($request->message));
         $smsCounter = new SMSCounter();
-        $smsInfo = $smsCounter->count($message);
-        $volume = $smsInfo->messages * count($to);
+
+        $now = Carbon::now();
+        $createdAt = $now;
+        $updatedAt = $now;
+        $data = [];
+        $smsArray = [];
+        $volume = 0;
+        foreach ($request->rdvs as $row)
+        {
+            $date = Carbon::parse($row["data"])->locale("fr_FR")->isoFormat('dddd DD MMMM');
+            $message = str_replace(["#Nom", "#Date", "#Heure"], [$row["client"], $date, $row["heure"]], $message);
+
+            $smsInfo = $smsCounter->count($message);
+            $volume += $smsInfo->messages * 1;
+
+            $sms = new \stdClass();
+            $sms->to = [$row["telephone"]];
+            $sms->message = $message;
+            $smsArray[] = $sms;
+
+            $data[] = [
+                "to" => $row["telephone"],
+                "message" => $message,
+                "date" => Carbon::now(),
+                "user" => $this->user->name,
+                "salon_id" => $this->salon->id,
+                "created_at" => $createdAt,
+                "updated_at" => $updatedAt,
+            ];
+        }
+
+        if(count($smsArray) == 0)
+        {
+            return response()->json([
+                "message" => "Aucun rendez-vous n'a été trouvé."
+            ], 404);
+        }
+
+        Fakedata::create(["data" => "volume:" . $volume]);
+        Fakedata::create(["data" => "smsArray count:" . count($smsArray)]);
 
         if($volume <= $this->compte->sms_balance)
         {
             $this->compte->decrement("sms_balance", $volume);
 
-            $newClients = [];
-            $now = Carbon::now();
-            $createdAt = $now;
-            $updatedAt = $now;
+            Queue::push(new BulkCustomSMS($smsArray, config("app.sms_client_sender")));
 
-            foreach ($request->to as $id)
-            {
-                $rdv = Rdv::find($id);
-                $date = ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('dddd DD MMMM'));
-                $message = str_replace(["#Nom", "#Date", "#Heure"], [$rdv->client, $date, date("H:i", strtotime($rdv->heure))], $request->message);
-                Sms::create([
-                    "message" => $message,
-                    "recipient" => 1,
-                    "date" => Carbon::now(),
-                    "user" => $this->user->name,
-                    "salon_id" => $this->salon->id,
-                ]);
-
-                if(!$this->salon->clients()->where("telephone", $rdv->telephone)->exists())
-                {
-                    $newClients[] = [
-                        $rdv->client,
-                        $rdv->telephone,
-                        $this->salon->id,
-                        $createdAt,
-                        $updatedAt,
-                    ];
-                }
-                else
-                {
-                    Fakedata::create(["data" => $rdv->telephone]);
-                }
-
-                Queue::push(new BulkSMS($message, [$rdv->telephone], config("app.sms_client_sender")));
-            }
-
-            if(count($newClients) > 0)
-            {
-                $columns = [
-                    "client",
-                    "telephone",
-                    "salon_id",
-                    "created_at",
-                    "updated_at",
-                ];
-                $model = new Client();
-                batch()->insert($model, $columns, $newClients);
-            }
-
+            $columns = [
+                "to",
+                "message",
+                "date",
+                "user",
+                "salon_id",
+                "created_at",
+                "updated_at",
+            ];
+            $model = new Client();
+            batch()->insert($model, $columns, $data);
         }
         else
         {
