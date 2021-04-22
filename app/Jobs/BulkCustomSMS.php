@@ -60,13 +60,9 @@ class BulkCustomSMS implements ShouldQueue
      */
     public function handle()
     {
-        $customSMSArray = array_chunk($this->smsArray->to, self::$BATCH);
-        if(count($customSMSArray) > 0)
+        foreach($this->smsArray as $sms)
         {
-            foreach($customSMSArray as $sms)
-            {
-                Queue::push(new SendSMS($sms, $this->sender));
-            }
+            Queue::push(new SendSMS($sms, $this->sender));
         }
     }
 

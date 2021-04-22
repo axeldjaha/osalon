@@ -172,11 +172,10 @@ class RdvController extends ApiController
      */
     public function rappelerRDV(Request $request)
     {
-        $data = json_encode($request->json()->all());
-        Fakedata::create(["data" => $data]);
+        //$data = json_encode($request->json()->all());
+        //Fakedata::create(["data" => $data]);
         //return response()->json(["message" => "super!"], 400);
 
-        $message = str_replace("\r\n", "\n", trim($request->message));
         $smsCounter = new SMSCounter();
 
         $now = Carbon::now();
@@ -187,8 +186,8 @@ class RdvController extends ApiController
         $volume = 0;
         foreach ($request->rdvs as $row)
         {
-            $date = Carbon::parse($row["data"])->locale("fr_FR")->isoFormat('dddd DD MMMM');
-            $message = str_replace(["#Nom", "#Date", "#Heure"], [$row["client"], $date, $row["heure"]], $message);
+            $date = lcfirst($row["date_iso_format"]);
+            $message = str_replace(["#Nom", "#Date", "#Heure"], [$row["client"], $date, $row["heure"]], trim($request->message));
 
             $smsInfo = $smsCounter->count($message);
             $volume += $smsInfo->messages * 1;
@@ -216,9 +215,6 @@ class RdvController extends ApiController
             ], 404);
         }
 
-        Fakedata::create(["data" => "volume:" . $volume]);
-        Fakedata::create(["data" => "smsArray count:" . count($smsArray)]);
-
         if($volume <= $this->compte->sms_balance)
         {
             $this->compte->decrement("sms_balance", $volume);
@@ -234,7 +230,7 @@ class RdvController extends ApiController
                 "created_at",
                 "updated_at",
             ];
-            $model = new Client();
+            $model = new Sms();
             batch()->insert($model, $columns, $data);
         }
         else
