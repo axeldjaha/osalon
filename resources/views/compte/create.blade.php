@@ -62,6 +62,13 @@
                                         @error("telephone") <div class="invalid-feedback">{{$message}}</div> @enderror
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td><label for="email" class="col-form-label">Email</label></td>
+                                    <td>
+                                        <input type="text" id="email" name="email" class="form-control @error("email") is-invalid @enderror" value="{{ old("email") }}">
+                                        @error("email") <div class="invalid-feedback">{{$message}}</div> @enderror
+                                    </td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
