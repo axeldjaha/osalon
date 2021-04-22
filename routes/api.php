@@ -78,7 +78,7 @@ Route::middleware(["auth:api"])->group(function ()
     Route::get('client/salon/{salon}','Api\ClientController@show');
 
     Route::get('article','Api\ArticleController@index');
-    Route::get('service/salon/{salon}','Api\ArticleController@show');
+    Route::get('article/salon/{salon}','Api\ArticleController@show');
 
     Route::get('depense','Api\DepenseController@index');
     Route::get('depense/salon/{salon}','Api\DepenseController@show');

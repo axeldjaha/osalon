@@ -79,7 +79,7 @@ class RdvController extends ApiController
          */
         if($request->date == null && $this->user->salons()->count() == 1)
         {
-            return \response()->json(new SalonResource(new Salon()), 204);
+            return \response()->json(new Salon(), 204);
         }
 
         if($request->date != null)
@@ -172,10 +172,6 @@ class RdvController extends ApiController
      */
     public function rappelerRDV(Request $request)
     {
-        //$data = json_encode($request->json()->all());
-        //Fakedata::create(["data" => $data]);
-        //return response()->json(["message" => "super!"], 400);
-
         $smsCounter = new SMSCounter();
 
         $now = Carbon::now();

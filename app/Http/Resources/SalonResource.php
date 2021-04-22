@@ -22,7 +22,6 @@ class SalonResource extends JsonResource
             "adresse" => $this->adresse,
             "telephone" => $this->telephone,
             "created_at" => date("d/m/Y", strtotime($this->created_at)),
-            "abonnement" => new AbonnementResource($this->compte->abonnements()->orderBy("id", "desc")->first()),
             "articles" => ArticleResource::collection($this->articles()->orderBy("libelle")->get()),
             "clients" => ClientResource::collection($this->clients()->orderBy("nom")->get()),
             "users" => UserResource::collection($this->users()->orderBy("name")->get()),

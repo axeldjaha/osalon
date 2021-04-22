@@ -57,7 +57,7 @@ class PanierController extends ApiController
          */
         if($this->user->salons()->count() == 1)
         {
-            return \response()->json(new SalonResource(new Salon()), 204);
+            return \response()->json(new Salon(), 204);
         }
 
         $depenses = $salon->paniers()
