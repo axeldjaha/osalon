@@ -65,7 +65,7 @@ class ArticleController extends ApiController
         $service = Article::create([
             "libelle" => $request->libelle,
             "prix" => $request->prix,
-            "salon_id" => $this->salon-id,
+            "salon_id" => $this->salon->id,
         ]);
 
         return response()->json(new ArticleResource($service));

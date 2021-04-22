@@ -53,7 +53,7 @@ class RdvController extends ApiController
 
             $salons[] = [
                 "id" => $salon->id,
-                "nom" => $salon->client,
+                "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
                 "telephone" => $salon->telephone,
                 "rdvs" => $rdvData,
