@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\AbonnementMiddleware;
 use App\Http\Middleware\AuthJWT;
+use App\Http\Middleware\LogMiddleware;
 use App\Http\Middleware\SalonMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -70,6 +71,7 @@ class Kernel extends HttpKernel
 
         'abonnement' => AbonnementMiddleware::class,
         'salon' => SalonMiddleware::class,
+        'log' => LogMiddleware::class,
 
     ];
 
