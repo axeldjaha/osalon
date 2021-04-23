@@ -31,7 +31,7 @@ Route::put('/user/password', 'Api\AuthController@updatePassword');
 Route::get('user/sync','Api\AuthController@sync');
 
 /**
- * Main routes
+ * Main routes.
  */
 Route::middleware(["auth:api", "salon", "abonnement"])->group(function ()
 {
