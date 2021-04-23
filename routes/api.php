@@ -83,7 +83,7 @@ Route::middleware(["auth:api"])->group(function ()
     Route::get('depense','Api\DepenseController@index');
     Route::get('depense/salon/{salon}','Api\DepenseController@show');
 
-    Route::get('recette','Api\RecetteController@index')->middleware("activity");
+    Route::get('recette','Api\RecetteController@index');
     Route::get('recette/salon/{salon}','Api\RecetteController@show');
 
     Route::get('panier','Api\PanierController@index');
