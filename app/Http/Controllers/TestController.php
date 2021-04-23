@@ -45,6 +45,8 @@ class TestController extends Controller
         $compte = Compte::find(6);
         $panier = Panier::first();
 
+        $user = User::find(2);
+        dd($user->logs()->orderBy("id", "desc")->first());
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);
 

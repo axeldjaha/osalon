@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use jeremykenedy\LaravelLogger\App\Models\Activity;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -39,6 +40,11 @@ class User extends Authenticatable implements JWTSubject
     public function salons()
     {
         return $this->belongsToMany(Salon::class);
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(Activity::class, "userId");
     }
 
     /**

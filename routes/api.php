@@ -33,7 +33,7 @@ Route::get('user/sync','Api\AuthController@sync');
 /**
  * Main routes
  */
-Route::middleware(["auth:api", "salon", "abonnement"])->group(function ()
+Route::middleware(["auth:api", "activity", "salon", "abonnement"])->group(function ()
 {
     Route::apiResource('article','Api\ArticleController')->except(["index", "show"]);
 
@@ -67,7 +67,7 @@ Route::middleware(["auth:api", "abonnement"])->group(function ()
  * Since resources must be created/updated before we can access them,
  * it's not necessary to add abonnement middleware for the routes below
  */
-Route::middleware(["auth:api"])->group(function ()
+Route::middleware(["auth:api", "activity"])->group(function ()
 {
     Route::get('salon','Api\SalonController@index');
 
@@ -83,7 +83,7 @@ Route::middleware(["auth:api"])->group(function ()
     Route::get('depense','Api\DepenseController@index');
     Route::get('depense/salon/{salon}','Api\DepenseController@show');
 
-    Route::get('recette','Api\RecetteController@index');
+    Route::get('recette','Api\RecetteController@index')->middleware("activity");
     Route::get('recette/salon/{salon}','Api\RecetteController@show');
 
     Route::get('panier','Api\PanierController@index');

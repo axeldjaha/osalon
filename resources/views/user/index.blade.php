@@ -46,7 +46,8 @@
                             <th>Téléphone</th>
                             <th>Email</th>
                             <th>Créé le</th>
-                            <th>Statut</th>
+                            <th>Activity</th>
+                            <th>Used</th>
                             <th>Compte</th>
                             <th>Actions</th>
                         </tr>
@@ -58,11 +59,13 @@
                                 <td>{{$user->telephone}}</td>
                                 <td>{{$user->email}}</td>
                                 <td><span hidden>{{ $user->created_at }}</span>{{ date("d/m/Y", strtotime($user->created_at)) }}</td>
+                                @php($log = $user->logs()->orderBy("id", "desc")->first())
+                                <td><span hidden>{{ $log->created_at ?? null }}</span>@if($log != null) {{ date("d/m/Y à H:i", strtotime($log->created_at)) }} @endif</td>
                                 <td>
                                     @if($user->activated)
-                                        <span class="badge badge-success badge-pill">Activé</span>
+                                        <span class="badge badge-success badge-pill">Yes</span>
                                     @else
-                                        <span class="badge badge-warning badge-pill">Attente<span>
+                                        <span class="badge badge-warning badge-pill">No<span>
                                     @endif
                                 </td>
                                 <td>
