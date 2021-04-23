@@ -9,7 +9,7 @@ use App\Http\Requests\RdvRequest;
 use App\Http\Resources\RdvResource;
 use App\Http\Resources\SalonResource;
 use App\Http\Resources\SmsResource;
-use App\Jobs\BulkCustomSMS;
+use App\Jobs\MultiSMS;
 use App\Jobs\BulkSMS;
 use App\Rdv;
 use App\Salon;
@@ -225,7 +225,7 @@ class RdvController extends ApiController
         {
             $this->compte->decrement("sms_balance", $volume);
 
-            Queue::push(new BulkCustomSMS($smsArray, config("app.sms_client_sender")));
+            Queue::push(new MultiSMS($smsArray, config("app.sms_client_sender")));
 
             $columns = [
                 "to",

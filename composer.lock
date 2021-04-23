@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "876e974bcc5fbba05d7503041b999711",
+    "content-hash": "5bacd1f5bf436e8e4cbf63e42f29d7cd",
     "packages": [
         {
             "name": "barryvdh/laravel-async-queue",
@@ -2653,6 +2653,56 @@
                 "source": "https://github.com/mavinoo/laravelBatch/tree/v2.2.6"
             },
             "time": "2021-04-07T06:07:19+00:00"
+        },
+        {
+            "name": "mediumart/orange-sms",
+            "version": "1.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mediumart/orange-sms.git",
+                "reference": "62aff9d24c326663fa8b9e742fa3f15c9df20945"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mediumart/orange-sms/zipball/62aff9d24c326663fa8b9e742fa3f15c9df20945",
+                "reference": "62aff9d24c326663fa8b9e742fa3f15c9df20945",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "~6.0",
+                "php": ">= 5.6"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "~5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mediumart\\Orange\\SMS\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Isaac Esso",
+                    "email": "daprod2009@gmail.com"
+                }
+            ],
+            "description": "A php library to interact with the orange sms api for MiddleEast and Africa.",
+            "keywords": [
+                "orange",
+                "orange-api",
+                "sms"
+            ],
+            "support": {
+                "issues": "https://github.com/mediumart/orange-sms/issues",
+                "source": "https://github.com/mediumart/orange-sms/tree/1.1.3"
+            },
+            "time": "2017-08-30T11:47:05+00:00"
         },
         {
             "name": "monolog/monolog",
