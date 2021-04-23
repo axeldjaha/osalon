@@ -192,8 +192,6 @@ return [
 
         Barryvdh\DomPDF\ServiceProvider::class,
 
-        jeremykenedy\LaravelLogger\LaravelLoggerServiceProvider::class,
-
     ],
 
     /*
