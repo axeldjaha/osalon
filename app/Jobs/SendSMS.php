@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Fakedata;
 use App\SMSCounter;
+use App\Token;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Bus\Queueable;
@@ -10,7 +12,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Mediumart\Orange\SMS\Http\SMSClient;
+use Mediumart\Orange\SMS\SMS;
 
 class SendSMS implements ShouldQueue
 {
@@ -38,14 +44,13 @@ class SendSMS implements ShouldQueue
      * Prefix des numéros
      * @var string
      */
-    private $prefix = '225';
+    private $prefix = '+225';
 
     private $api;
 
     private $sender;
 
-    //todo To remove when Moov SMS API is implemented
-    private $smsCounter;
+    private $token;
 
     /**
      * Create a new job instance.
@@ -58,10 +63,6 @@ class SendSMS implements ShouldQueue
     {
         $this->sms = $sms;
         $this->sender = $sender;
-
-        //todo To remove when Moov SMS API is implemented
-        $this->smsCounter = new SMSCounter();
-        $this->smsCounter->smsInfo = $this->smsCounter->count($sms->message);
     }
 
     /**
@@ -80,7 +81,31 @@ class SendSMS implements ShouldQueue
 
         $this->sms->to = $to;
 
-        $this->letexto();
+        $this->callOrangeAPI();
+    }
+
+    public function callOrangeAPI()
+    {
+        $token = Token::first();
+        if (Carbon::parse($token->valid_until)->lessThan(Carbon::now()))
+        {
+            $response = SMSClient::authorize(config("app.sms_client_id"), config("app.sms_client_secret"));
+            DB::table("tokens")->truncate();
+            $token = Token::create([
+                "access_token" => $response["access_token"],
+                "expires_in" => $response["expires_in"],
+                "valid_until" => Carbon::now()->addSeconds($response["expires_in"]),
+            ]);
+        }
+
+        //\Mediumart\Orange\SMS\Http\SMSClientRequest::verify(false);
+
+        $client = SMSClient::getInstance($token->access_token);
+        $sms = new SMS($client);
+        $sms->message($this->sms->message)
+            ->from('+2250758572785', $this->sender ?? config("app.sms_sender"))
+            ->to($this->sms->to)
+            ->send();
     }
 
     /**
@@ -116,41 +141,5 @@ class SendSMS implements ShouldQueue
             ]
         ]);
     }
-
-    /**
-     * API: 1s2u.com
-     *
-     * @param \stdClass $smsObject
-     * @throws GuzzleException
-     */
-    public function sendWith1s2u()
-    {
-        $sender = $this->sender ?? config("app.sms_sender");
-
-        $this->sms->type = Str::is($this->smsCounter->smsInfo->encoding, 'UTF16') ? 1 : 0;
-
-        $baseUrl = 'https://api.1s2u.io/bulksms';
-        $userName = 'axeldjaha';
-        $password = '1s2uzn6';
-        $from = $sender;
-        $to = $this->sms->to;
-        $text = $this->sms->message;
-        $type = $this->sms->type;
-        $fl = 0;
-
-        $client = new Client();
-        $status = $client->request('GET', $baseUrl, [
-            'query' => [
-                'username' => $userName,
-                'password' => $password,
-                'mt' => $type,
-                'fl' => $fl,
-                'Sid' => $from,
-                'mno' => $to,
-                'msg' => $text,
-            ]
-        ]);
-    }
-
 
 }

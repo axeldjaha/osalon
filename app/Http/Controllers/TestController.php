@@ -14,6 +14,7 @@ use App\OffreSms;
 use App\Panier;
 use App\Salon;
 use App\SKien\VCard\VCard;
+use App\Token;
 use App\Type;
 use App\User;
 use Illuminate\Database\Schema\Blueprint;
@@ -46,26 +47,6 @@ class TestController extends Controller
         $salon = Salon::first();
         $compte = Compte::find(6);
         $panier = Panier::first();
-
-        /**
-         * if you already have a valid access token
-         * */
-        //$client = SMSClient::getInstance('ahZQKaZAcD74NOXQ6nAu2mSK0Xac');
-
-        $client = SMSClient::getInstance('C0gqKzmECouAf1VMFeg3fkfPruxi5wnV', 'fZJtzYAMZTDs9vLm');
-
-        /*$sms = new SMS($client);
-        $response = $sms->message("Api test é è")
-            ->from('+2250758572785', "O'SALON")
-            ->to('+2250758572785')
-            ->send();*/
-
-        //$token = $client->getToken();
-
-        // get the token lifetime in seconds
-        $tokenExpiresIn = $client->getTokenExpiresIn();
-
-        dd($tokenExpiresIn);
 
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);

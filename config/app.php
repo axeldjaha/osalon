@@ -25,6 +25,9 @@ return [
 
     'sms_client_sender' => env('SMS_CLIENT_SENDER', "MONSALON"),
 
+    'sms_client_id' => env('SMS_CLIENT_ID', "C0gqKzmECouAf1VMFeg3fkfPruxi5wnV"),
+    'sms_client_secret' => env('SMS_CLIENT_SECRET', "fZJtzYAMZTDs9vLm"),
+
 
     /*
     |--------------------------------------------------------------------------
