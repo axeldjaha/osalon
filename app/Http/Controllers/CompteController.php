@@ -60,7 +60,7 @@ class CompteController extends Controller
             "salon" => "required",
             "adresse" => "required",
             "telephone" => "required|unique:users",
-            "email" => "required|unique:users",
+            "email" => "nullable|unique:users",
             "montant" => "required|numeric",
             "type_abonnement" => "required|exists:types,id",
         ]);
