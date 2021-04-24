@@ -98,7 +98,7 @@ class SendSMS implements ShouldQueue
             ]);
         }
 
-        //\Mediumart\Orange\SMS\Http\SMSClientRequest::verify(false);
+        \Mediumart\Orange\SMS\Http\SMSClientRequest::verify(false);
 
         $client = SMSClient::getInstance($token->access_token);
         $sms = new SMS($client);

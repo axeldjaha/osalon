@@ -33,7 +33,7 @@ Route::get('user/sync','Api\AuthController@sync');
 /**
  * Main routes.
  */
-Route::middleware(["auth:api", "salon", "abonnement", "log"])->group(function ()
+Route::middleware(["auth:api", "salon", "abonnement", "activity"])->group(function ()
 {
     Route::apiResource('article','Api\ArticleController')->except(["index", "show"]);
 
@@ -56,7 +56,7 @@ Route::middleware(["auth:api", "salon", "abonnement", "log"])->group(function ()
     Route::delete('sms/all/destroy','Api\SmsController@destroyAll');
 });
 
-Route::middleware(["auth:api", "abonnement", "log"])->group(function ()
+Route::middleware(["auth:api", "abonnement", "activity"])->group(function ()
 {
     Route::apiResource('salon','Api\SalonController')->except(["index"]);
 });
@@ -65,7 +65,7 @@ Route::middleware(["auth:api", "abonnement", "log"])->group(function ()
  * Since resources must be created/updated before we can access them,
  * it's not necessary to add abonnement middleware for the routes below
  */
-Route::middleware(["auth:api", "log"])->group(function ()
+Route::middleware(["auth:api", "activity"])->group(function ()
 {
     Route::get('salon','Api\SalonController@index');
 
