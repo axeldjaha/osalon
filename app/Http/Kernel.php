@@ -71,7 +71,6 @@ class Kernel extends HttpKernel
 
         'abonnement' => AbonnementMiddleware::class,
         'salon' => SalonMiddleware::class,
-        'log' => LogMiddleware::class,
 
     ];
 
