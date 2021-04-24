@@ -44,7 +44,9 @@ class RechareSMSController extends Controller
 
         $compte->increment("sms_balance", $request->sms_balance);
 
-        $message = "Votre compte SMS a été rechargé avec succès!";
+        //$message = "Votre compte SMS a été rechargé avec succès!";
+        $message = "Votre compte SMS a été rechargé avec succès!" .
+            "\nLéquipe de " . config("app.name");
         $sms = new stdClass();
         $sms->to = [$compte->users()->first()->telephone];
         $sms->message = $message;

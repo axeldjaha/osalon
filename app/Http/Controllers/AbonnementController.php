@@ -64,7 +64,9 @@ class AbonnementController extends Controller
             "compte_id" => $compte->id,
         ]);
 
-        $message = "Votre réabonnement a été effectué avec succès!";
+        //$message = "Votre réabonnement a été effectué avec succès!";
+        $message = "Votre réabonnement a été effectué avec succès!" .
+            "\nLéquipe de " . config("app.name");
         $sms = new stdClass();
         $sms->to = [$compte->users()->first()->telephone];
         $sms->message = $message;
