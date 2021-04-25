@@ -30,34 +30,20 @@ class RdvController extends ApiController
      */
     public function index()
     {
-        $query = "
-        SELECT date,
-          COUNT(*) AS total
-        FROM rdvs
-        WHERE salon_id = ? AND date >= ?
-        GROUP BY date
-        ORDER BY date";
         $salons = [];
         foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
         {
-            $rdvData = [];
-            $rdvs = DB::select($query, [$salon->id, Carbon::today()]);
-            foreach ($rdvs as $rdv)
-            {
-                $rdvData[] = [
-                    "date" => $rdv->date,
-                    "date_iso_format" => ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('dddd DD MMMM')),
-                    "total" => $rdv->total,
-                    "salon_id" => $salon->id,
-                ];
-            }
+            $rdvs = $salon->rdvs()
+                ->where("date", ">=", Carbon::today())
+                ->orderBy("date")
+                ->get();
 
             $salons[] = [
                 "id" => $salon->id,
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
                 "telephone" => $salon->telephone,
-                "rdvs" => $rdvData,
+                "rdvs" => RdvResource::collection($rdvs),
             ];
         }
 
@@ -75,43 +61,17 @@ class RdvController extends ApiController
     {
         /**
          * Si au moment de l'affichage, l'utilisateur a maintenant 1 seul salon,
-         * renvoyer 204 pour retouner à Index et auto reactualiser
+         * renvoyer 204 pour retouner à IndexDepense et auto reactualiser
          */
-        if($request->date == null && $this->user->salons()->count() == 1)
+        if($this->user->salons()->count() == 1)
         {
             return \response()->json(new Salon(), 204);
         }
 
-        if($request->date != null)
-        {
-            $rdvs = $salon->rdvs()
-                ->where("date", "=", $request->date)
-                ->orderBy("heure")
-                ->get();
-        }
-        else
-        {
-            $query = "
-            SELECT date,
-              COUNT(*) AS total
-            FROM rdvs
-            WHERE salon_id = ? AND date >= ?
-            GROUP BY date
-            ORDER BY date";
-            $rdvData = [];
-            $rdvs = DB::select($query, [$salon->id, Carbon::today()]);
-            foreach ($rdvs as $rdv)
-            {
-                $rdvData[] = [
-                    "date" => $rdv->date,
-                    "date_iso_format" => ucfirst(Carbon::parse($rdv->date)->locale("fr_FR")->isoFormat('dddd DD MMMM')),
-                    "total" => $rdv->total,
-                    "salon_id" => $salon->id,
-                ];
-            }
-
-            return response()->json($rdvData);
-        }
+        $rdvs = $salon->rdvs()
+            ->where("date", ">=", Carbon::today())
+            ->orderBy("date")
+            ->get();
 
         return response()->json(RdvResource::collection($rdvs));
     }

@@ -18,7 +18,9 @@ class RdvResource extends JsonResource
         return [
             "id" => $this->id,
             "date" => $this->date,
-            "date_iso_format" => ucfirst(Carbon::parse($this->date)->locale("fr_FR")->isoFormat('dddd DD MMMM')),
+            "jour" => date("d", strtotime($this->date)),
+            "mois" => strtoupper(Carbon::parse($this->date)->locale("fr_FR")->isoFormat('MMM')),
+            "date_iso_format" => Carbon::parse($this->date)->locale("fr_FR")->isoFormat('dddd DD MMMM'),
             "heure" => $this->heure != null ? date("H:i", strtotime($this->heure)) : null,
             "client" => $this->client,
             "telephone" => $this->telephone,
