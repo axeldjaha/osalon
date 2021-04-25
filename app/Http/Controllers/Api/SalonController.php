@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Contact;
 use App\Http\Requests\SalonRequest;
 use App\Http\Resources\SalonResource;
 use App\Jobs\SendSMS;
 use App\Salon;
+use App\SmsGroupe;
 use App\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -105,6 +107,16 @@ class SalonController extends ApiController
                 }
 
                 $user->salons()->sync([$salon->id], false);
+
+                $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
+                if($smsGroup != null && !$smsGroup->contacts()->where("telephone", $user->telephone)->exists())
+                {
+                    Contact::create([
+                        "nom" => $user->name,
+                        "telephone" => $user->telephone,
+                        "sms_groupe_id" => $smsGroup->id,
+                    ]);
+                }
             }
         }, 1);
 
@@ -164,11 +176,16 @@ class SalonController extends ApiController
             ], 404);
         }
 
+        $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
         foreach ($salon->users as $user)
         {
             if($user->salons()->count() == 1)
             {
                 $user->delete();
+                if($smsGroup != null)
+                {
+                    $smsGroup->contacts()->where("telephone", $user->telephone)->delete();
+                }
             }
         }
 

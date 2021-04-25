@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Abonnement;
 use App\Compte;
+use App\Contact;
 use App\Http\Requests\CodeRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
@@ -16,6 +17,7 @@ use App\Jobs\SendSMS;
 use App\Offre;
 use App\Salon;
 use App\Mail\RequestCodeEmail;
+use App\SmsGroupe;
 use App\Type;
 use App\User;
 use Illuminate\Http\Request;
@@ -104,6 +106,16 @@ class AuthController extends Controller
             }
 
             $user->salons()->sync([$salon->id], false);
+
+            $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
+            if($smsGroup != null && !$smsGroup->contacts()->where("telephone", $user->telephone)->exists())
+            {
+                Contact::create([
+                    "nom" => $user->name,
+                    "telephone" => $user->telephone,
+                    "sms_groupe_id" => $smsGroup->id,
+                ]);
+            }
 
             $date = Carbon::now();
             $comptesDeLaSemaine = Salon::whereBetween("created_at", [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
