@@ -49,7 +49,7 @@
                                 @foreach($groupes as $groupe)
                                     <tr role="row" class="cursor-pointer">
                                         <td style="color: transparent">{{ $groupe->id }} </td>
-                                        <td style="padding: .55rem">{{ $groupe->intitule }}</td>
+                                        <td style="padding: .55rem">{{ $groupe->intitule }} ({{ $groupe->contacts->count() }})</td>
                                     </tr>
                                 @endforeach
                                 </tbody>

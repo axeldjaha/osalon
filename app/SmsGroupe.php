@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class SmsGroupe extends Model
 {
+    public static $USERS = "USERS";
+
     protected $fillable = [
         "intitule",
     ];
