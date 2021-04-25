@@ -46,6 +46,15 @@ class UserController extends ApiController
      */
     public function show(Request $request, Salon $salon)
     {
+        /**
+         * Si au moment de l'affichage, l'utilisateur a maintenant 1 seul salon,
+         * renvoyer 204 pour retouner à Index et auto reactualiser
+         */
+        if($this->user->salons()->count() == 1)
+        {
+            return \response()->json(new Salon(), 204);
+        }
+
         return response()->json(UserResource::collection($salon->users()->orderBy("name")->get()));
     }
 
