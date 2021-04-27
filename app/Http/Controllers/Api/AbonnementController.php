@@ -8,7 +8,6 @@ class AbonnementController extends ApiController
 {
     public function index()
     {
-
         $abonnement = $this->compte->abonnements()->orderBy("id", "desc")->first();
         return response()->json(new AbonnementResource($abonnement));
     }
