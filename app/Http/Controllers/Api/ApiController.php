@@ -19,7 +19,7 @@ class ApiController extends Controller
     {
         $this->user = auth("api")->user();
 
-        $this->compte = $this->user->compte;
+        $this->compte = $this->user->compte ?? null;
 
         if($this->user != null)
         {
