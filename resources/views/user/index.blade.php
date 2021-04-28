@@ -47,7 +47,6 @@
                             <th>Email</th>
                             <th>Créé le</th>
                             <th>Activity</th>
-                            <th>Used</th>
                             <th>Compte</th>
                             <th>Actions</th>
                         </tr>
@@ -59,20 +58,12 @@
                                 <td>{{$user->telephone}}</td>
                                 <td>{{$user->email}}</td>
                                 <td><span hidden>{{ $user->created_at }}</span>{{ date("d/m/Y", strtotime($user->created_at)) }}</td>
-                                @php($log = $user->logs()->orderBy("id", "desc")->first())
-                                <td><span hidden>{{ $log->created_at ?? null }}</span>@if($log != null) {{ date("d/m/Y à H:i", strtotime($log->created_at)) }} @endif</td>
+                                <td><span hidden>{{ $user->last_activity_at ?? null }}</span>@if($user->last_activity_at != null) {{ date("d/m/Y à H:i", strtotime($user->last_activity_at)) }} @endif</td>
                                 <td>
-                                    @if($user->activated)
-                                        <span class="badge badge-success badge-pill">Yes</span>
-                                    @else
-                                        <span class="badge badge-warning badge-pill">No<span>
-                                    @endif
+                                    <a href="{{ route("compte.show", $user->compte_id) }}" class="btn btn-link">Aller au compte</a>
                                 </td>
                                 <td>
-                                    <a href="{{ route("compte.show", $user->compte) }}" class="btn btn-link">Aller au compte</a>
-                                </td>
-                                <td>
-                                    <button form-action="{{ route("user.password.reset", $user) }}"
+                                    <button form-action="{{ route("user.password.reset", $user->id) }}"
                                        form-method="put"
                                        confirm-message="Réinitialiser mot de passe ?"
                                        onclick="submitLinkForm(this)"

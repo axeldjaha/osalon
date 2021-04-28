@@ -19,7 +19,25 @@ class UserController extends Controller
         $data["title"] = "Users";
         $data["active"] = "user";
 
-        $data["users"] = User::orderBy("id", "desc")->get();
+        $query = "
+        SELECT DISTINCT users.id,
+               users.name,
+               users.telephone,
+               users.email,
+               users.created_at,
+               users.compte_id,
+               t2.last_activity_at
+        FROM users
+        LEFT OUTER JOIN (
+            SELECT userId,
+                   created_at AS last_activity_at
+            FROM laravel_logger_activity
+            GROUP BY userId
+            ORDER BY last_activity_at DESC
+        ) AS t2 ON t2.userId = users.id
+        ORDER BY t2.last_activity_at DESC";
+        $users = DB::select($query);
+        $data["users"] = $users;
 
         return view("user.index", $data);
     }
