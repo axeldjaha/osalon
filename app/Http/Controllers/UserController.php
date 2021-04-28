@@ -30,10 +30,9 @@ class UserController extends Controller
         FROM users
         LEFT OUTER JOIN (
             SELECT userId,
-                   created_at AS last_activity_at
+                   MAX(created_at) AS last_activity_at
             FROM laravel_logger_activity
             GROUP BY userId
-            ORDER BY last_activity_at DESC
         ) AS t2 ON t2.userId = users.id
         ORDER BY t2.last_activity_at DESC";
         $users = DB::select($query);
