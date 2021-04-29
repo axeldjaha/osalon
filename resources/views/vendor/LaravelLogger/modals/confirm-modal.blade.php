@@ -29,9 +29,12 @@
                         <i class="fa fa-fw fa-close" aria-hidden="true"></i>
                         {{ trans('LaravelLogger::laravel-logger.modals.shared.btnCancel') }}
                     </button>
-                    <button type="button" aria-hidden="true" class="btn btn-{{ $modalClass }} pull-right btn-flat" id="confirm">
-                        <i class="fa {{ $actionBtnIcon }}" aria-hidden="true"></i>
-                        {{ $btnSubmitText }}
+
+                    <button form-action="{{route("destroy-activity")}}"
+                            form-method="delete"
+                            confirm-message="Supprimer l'abonnement ?"
+                            onclick="submitLinkForm(this)"
+                            class="btn btn-danger pull-right btn-flat"> Confirmer
                     </button>
                 </div>
             </div>

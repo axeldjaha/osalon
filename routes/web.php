@@ -11,6 +11,7 @@
 |
 */
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 //Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
@@ -122,7 +123,10 @@ Route::group(['prefix' => 'activity', 'namespace' => '\\jeremykenedy\LaravelLogg
 
     // Forms
     Route::delete('/clear-activity', ['uses' => 'LaravelLoggerController@clearActivityLog'])->name('clear-activity');
-    Route::delete('/destroy-activity', ['uses' => 'LaravelLoggerController@destroyActivityLog'])->name('destroy-activity');
+    Route::delete('/destroy-activity', function (){
+        DB::table("laravel_logger_activity")->delete();
+        return redirect('activity')->with('success', trans('LaravelLogger::laravel-logger.messages.logDestroyedSuccessfuly'));
+    })->name('destroy-activity');
     Route::post('/restore-log', ['uses' => 'LaravelLoggerController@restoreClearedActivityLog'])->name('restore-activity');
 });
 
