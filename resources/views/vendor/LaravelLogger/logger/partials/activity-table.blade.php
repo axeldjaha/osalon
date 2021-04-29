@@ -80,7 +80,7 @@ if (Request::is('activity/cleared')) {
                                     break;
 
                                 case 'post':
-                                    $methodClass = 'warning';
+                                    $methodClass = 'success';
                                     break;
 
                                 case 'put':
