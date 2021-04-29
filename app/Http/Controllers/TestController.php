@@ -49,10 +49,6 @@ class TestController extends Controller
         $panier = Panier::first();
 
 
-        $string = "Robot Visité http://127.0.0.1:8083/api/rdv?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODA4M1wvYXBpXC9sb2dpbiIsImlhdCI6MTYxNzMzMDUxMiwibmJmIjoxNjE3MzMwNTEyLCJqdGkiOiJXVXFQQW5uS1pPS0MydHdkIiwic3ViIjoxLCJwcnYiOiI4N2UwYWYxZWY5ZmQxNTgxMmZkZWM5NzE1M2ExNGUwYjA0NzU0NmFhIn0.Ru0jRGOPpDtytijjrmpSZxLuHgV6DMJ_aEZ21p7tZnQ";
-        $substring = substr($string, 0, strpos($string, "?"));
-        dd($substring);
-
         //DB::table("users")->update(["password" => bcrypt("2909")]);
 
         /*Client::each(function ($client){
