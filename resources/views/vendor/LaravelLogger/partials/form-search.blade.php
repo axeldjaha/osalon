@@ -14,7 +14,7 @@
                 <select class="form-control" name="user">
                     <option value="">{{ trans('LaravelLogger::laravel-logger.dashboard.search.all') }}</option>
                     @foreach($users as $user)
-                        <option value="{{ $user->$userIdField }}"{{ request()->get('user') && request()->get('user') == $user->$userIdField ? ' selected':'' }}>{{ $user->name }}</option>
+                        <option value="{{ $user->$userIdField }}"{{ request()->get('user') && request()->get('user') == $user->$userIdField ? ' selected':'' }}>{{ $user->telephone }}</option>
                     @endforeach
                 </select>
             </div>

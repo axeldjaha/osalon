@@ -25,7 +25,7 @@ Route::get("/privacy", "WelcomeController@privacy");
 
 Route::get("/test", "TestController@test");
 
-Route::middleware(["auth", "activity"])->group(function ()
+Route::middleware(["auth"])->group(function ()
 {
     /**
      * SALON
