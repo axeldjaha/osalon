@@ -27,12 +27,12 @@
             @include("layouts.alert")
 
             <div class="main-card mb-3 card">
-                <div class="card-header-tab card-header bg-heavy-rain" >
+                <div class="card-header-tab card-header bg-heavy-rain text-transform-initial" >
                     <div class="card-header-title font-size-lg font-weight-normal">
                         <a href="{{ \Illuminate\Support\Facades\URL::previous() }}" class="btn btn-link btn-sm mr-sm-3" style="text-transform: initial">
                             <i class="fa fa-chevron-left"></i> Retour
                         </a>
-                        <span class="d-inline-block mr-sm-3">Détails</span>
+                        <span class="d-inline-block mr-sm-3 text-uppercase">Détails</span>
                     </div>
                     <div class="btn-actions-pane-left d-flex align-items-center ">
                         <a class="btn btn-primary mr-sm-3" href="{{route("abonnement.create", $compte)}}">Réabonner</a>
@@ -128,6 +128,7 @@
                                 <th>Date</th>
                                 <th>Montant</th>
                                 <th>Validité</th>
+                                <th>Échéance</th>
                                 <th>Action</th>
                                 </thead>
                                 <tbody>
@@ -136,8 +137,9 @@
                                         <td><span hidden>{{ $abonnement->created_at }}</span> {{ date("d/m/Y", strtotime($abonnement->created_at)) }}</td>
                                         <td>{{ number_format($abonnement->montant, 0, ",", " ") }}</td>
                                         <td>{{ $abonnement->type->validity }}</td>
+                                        <td><span hidden>{{ $abonnement->echeance }}</span> {{ date("d/m/Y", strtotime($abonnement->echeance)) }}</td>
                                         <td>
-                                            <button form-action="{{route("abonnement.destroy", [$compte, $abonnement])}}"
+                                            <button form-action="{{route("abonnement.destroy", [$abonnement])}}"
                                                form-method="delete"
                                                confirm-message="Supprimer l'abonnement ?"
                                                onclick="submitLinkForm(this)"

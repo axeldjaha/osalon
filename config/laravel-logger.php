@@ -82,7 +82,7 @@ return [
     |--------------------------------------------------------------------------
     */
 
-    'disableRoutes' => env('LARAVEL_LOGGER_DISABLE_ROUTES', false),
+    'disableRoutes' => env('LARAVEL_LOGGER_DISABLE_ROUTES', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -90,7 +90,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'loggerPaginationEnabled' => env('LARAVEL_LOGGER_PAGINATION_ENABLED', true),
-    'loggerPaginationPerPage' => env('LARAVEL_LOGGER_PAGINATION_PER_PAGE', 25),
+    'loggerPaginationPerPage' => env('LARAVEL_LOGGER_PAGINATION_PER_PAGE', 50),
 
     /*
     |--------------------------------------------------------------------------
@@ -135,7 +135,7 @@ return [
     */
 
     // The parent Blade file
-    'loggerBladeExtended'       => env('LARAVEL_LOGGER_LAYOUT', 'layouts.app'),
+    'loggerBladeExtended'       => env('LARAVEL_LOGGER_LAYOUT', 'layouts.logger'),
 
     // Switch Between bootstrap 3 `panel` and bootstrap 4 `card` classes
     'bootstapVersion'           => env('LARAVEL_LOGGER_BOOTSTRAP_VERSION', '4'),

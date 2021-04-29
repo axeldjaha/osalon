@@ -90,7 +90,7 @@ Route::middleware(["auth:api", "activity"])->group(function ()
     Route::get('sms','Api\SmsController@index');
     Route::get('sms/salon/{salon}','Api\SmsController@show');
 
-    Route::get('rdv','Api\RdvController@index');
+    Route::get('rdv','Api\RdvController@index')->name("rdv.index");
     Route::get('rdv/salon/{salon}','Api\RdvController@show');
 
     Route::get('abonnement/index','Api\AbonnementController@index');

@@ -1,3 +1,4 @@
+@if(!isset($active)) @php($active = null) @endif
 <div class="app-sidebar sidebar-shadow" style="background: #fafafa">
     <div class="app-header__logo">
         <div class="logo-src"></div>
