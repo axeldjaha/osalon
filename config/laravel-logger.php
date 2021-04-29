@@ -38,9 +38,9 @@ return [
     'logAuthAttempts'       => false,   // Successful and Failed -  May cause a lot of duplication.
     'logFailedAuthAttempts' => true,    // Failed Logins
     'logLockOut'            => true,    // Account Lockout
-    'logPasswordReset'      => true,    // Password Resets
-    'logSuccessfulLogin'    => true,    // Successful Login
-    'logSuccessfulLogout'   => true,    // Successful Logout
+    'logPasswordReset'      => false,    // Password Resets
+    'logSuccessfulLogin'    => false,    // Successful Login
+    'logSuccessfulLogout'   => false,    // Successful Logout
 
     /*
     |--------------------------------------------------------------------------
