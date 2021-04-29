@@ -48,6 +48,13 @@
                         </a>
                     @endif
                 </li>
+                <li class="btn-group nav-item">
+                    <a href="{{ route("activity") }}" class="nav-link mr-2">
+                        <i class="nav-link-icon fa fa-tasks font-size-xlg"></i>
+                        Activity
+                    </a>
+                </li>
+
             </ul>
         </div>
 
