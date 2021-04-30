@@ -84,7 +84,10 @@ class SendSMS implements ShouldQueue
 
     public function callOrangeAPI()
     {
-        SMSClientRequest::verify(false);
+        if(config("app.env") != "production")
+        {
+            SMSClientRequest::verify(false);
+        }
 
         $token = Token::first();
         if ($token == null || Carbon::parse($token->valid_until)->lessThan(Carbon::now()))
