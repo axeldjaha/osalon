@@ -77,33 +77,19 @@ class SalonController extends ApiController
                     $sms->message = $message;
                     Queue::push(new SendSMS($sms));
                 }
-                else //si le user existe
+                // si user n'appartient pas au compte
+                elseif ($user->compte->id != $this->compte->id)
                 {
-                    if($user->compte->id != $this->compte->id)
-                    {
-                        $salon->delete();
-
-                        $statusMessage = "Le numéro de telephone saisi est déjà associé à un autre compte.";
-                        $status = 422;
-                        return;
-                    }
-                    elseif ($user->telephone == $this->user->telephone)
-                    {
-                        $salon->delete();
-
-                        $statusMessage = "$salon->nom a été ajouté à votre compte";
-                        $status = 201;
-                        return;
-                    }
-                    else
-                    {
-                        //Envoi d'une notification par SMS
-                        $message = "$salon->nom a été ajouté à votre compte " . config('app.name');
-                        $sms = new \stdClass();
-                        $sms->to = [$user->telephone];
-                        $sms->message = $message;
-                        Queue::push(new SendSMS($sms));
-                    }
+                    $salon->delete();
+                    $statusMessage = "Le numéro de telephone saisi est déjà associé à un autre compte";
+                    $status = 422;
+                    return;
+                }
+                else
+                {
+                    $statusMessage = "Votre salon a été créé avec succès!";
+                    $status = 201;
+                    return;
                 }
 
                 $user->salons()->sync([$salon->id], false);

@@ -89,30 +89,23 @@ class UserController extends ApiController
                 $sms->message = $message;
                 Queue::push(new SendSMS($sms));
             }
+            // si user n'appartient pas au compte
+            elseif ($user->compte->id != $this->compte->id)
+            {
+                $statusMessage = "Le numéro de telephone saisi est déjà associé à un autre compte";
+                $status = 422;
+                return;
+            }
+            // si user déjà associé au salon
+            elseif ($this->salon->users()->where("id", $user->id)->exists())
+            {
+                $statusMessage = "Le numéro de telephone saisi est déjà utilisé dans ce salon";
+                $status = 422;
+                return;
+            }
             else
             {
-                if($user->compte->id != $this->compte->id)
-                {
-                    $statusMessage = "Le numéro de telephone saisi est déjà associé à un autre compte.";
-                    $status = 422;
-                    return;
-                }
-                elseif ($user->telephone == $this->user->telephone)
-                {
-                    $statusMessage = "Le numéro de telephone saisi est déjà associé à ce compte.";
-                    $status = 422;
-                    return;
-                }
-                else
-                {
-                    //Envoi d'une notification par SMS
-                    $salon = $this->salon;
-                    $message = "$salon->nom a été ajouté à votre compte " . config('app.name');
-                    $sms = new \stdClass();
-                    $sms->to = [$user->telephone];
-                    $sms->message = $message;
-                    Queue::push(new SendSMS($sms));
-                }
+                $statusMessage = "L'utilisateur a été ajouté à votre salon";
             }
 
             $user->salons()->sync([$this->salon->id], false);

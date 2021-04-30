@@ -6,6 +6,7 @@ use App\Abonnement;
 use App\Compte;
 use App\Jobs\SendSMS;
 use App\Salon;
+use App\SmsGroupe;
 use App\Type;
 use App\User;
 use Illuminate\Http\Request;
@@ -139,6 +140,15 @@ class CompteController extends Controller
      */
     public function destroy(Compte $compte)
     {
+        $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
+        foreach ($compte->users as $user)
+        {
+            if($smsGroup != null)
+            {
+                $smsGroup->contacts()->where("telephone", $user->telephone)->delete();
+            }
+        }
+
         $compte->delete();
 
         session()->flash('type', 'alert-success');
