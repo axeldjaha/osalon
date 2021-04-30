@@ -36,7 +36,7 @@ class TestController extends Controller
         $compte = Compte::find(6);
         $panier = Panier::first();
 
-
+        dd(json_decode('["0758572785","0758572001","0758572001","0758572001"]'));
 
 
         /*$sms = new \stdClass();

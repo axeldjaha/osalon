@@ -97,7 +97,7 @@ class SmsController extends ApiController
             $this->compte->decrement("sms_balance", $volume);
 
             $sms = Sms::create([
-                "to" => count($request->to),
+                "to" => count($request->to) . " client(s)",
                 "message" => $message,
                 "date" => Carbon::now(),
                 "user" => $this->user->name,

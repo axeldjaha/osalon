@@ -46,7 +46,6 @@
                             <th>Téléphone</th>
                             <th>Email</th>
                             <th>Créé le</th>
-                            <th>Activity</th>
                             <th>Compte</th>
                             <th>Actions</th>
                         </tr>
@@ -58,7 +57,6 @@
                                 <td>{{$user->telephone}}</td>
                                 <td>{{$user->email}}</td>
                                 <td><span hidden>{{ $user->created_at }}</span>{{ date("d/m/Y", strtotime($user->created_at)) }}</td>
-                                <td><span hidden>{{ $user->last_activity_at ?? null }}</span>@if($user->last_activity_at != null) {{ date("Y-m-d à H:i", strtotime($user->last_activity_at)) }} @endif</td>
                                 <td>
                                     <a href="{{ route("compte.show", $user->compte_id) }}" class="btn btn-link">Aller au compte</a>
                                 </td>

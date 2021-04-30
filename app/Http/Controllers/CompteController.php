@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Abonnement;
+use App\BackSms;
 use App\Compte;
 use App\Contact;
+use App\Jobs\BulkSMS;
 use App\Jobs\SendSMS;
 use App\Salon;
 use App\SmsGroupe;
@@ -30,7 +32,7 @@ class CompteController extends Controller
         $query = "
         SELECT DISTINCT(compte_id)
         FROM abonnements
-        WHERE DATE (echeance) > ?";
+        WHERE DATE (echeance) >= ?";
         $data["actifs"] = DB::select($query, [Carbon::now()]);
 
         return view("compte.index", $data);
@@ -139,6 +141,36 @@ class CompteController extends Controller
         $data["compte"] = $compte;
 
         return view("compte.show", $data);
+    }
+
+    /**
+     * Envoyer SMS aux utilisateurs du compte
+     *
+     * @param Request $request
+     * @param Compte $compte
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function sendSMS(Request $request, Compte $compte)
+    {
+        $this->validate($request, [
+            "to" => "required",
+            "message" => "required",
+        ]);
+        $to = $request->to == "tous" ? $compte->users()->pluck("telephone")->toArray() : [$request->to];
+        $message = trim($request->message);
+        Queue::push(new BulkSMS($message, $to));
+
+        BackSms::create([
+            "to" => json_encode($to),
+            "message" => $message,
+            "user" => auth()->user()->email,
+        ]);
+
+        session()->flash('type', 'alert-success');
+        session()->flash('message', 'SMS envoyé avec succès!');
+
+        return back();
     }
 
     /**

@@ -52,9 +52,6 @@
                         <thead class="bg-heavy-rain">
                         <tr>
                             <th>#ID</th>
-                            <th>Salons</th>
-                            <th>Users</th>
-                            <th>SMS</th>
                             <th>Créé le</th>
                             <th>Abonnement</th>
                             <th>Echéance</th>
@@ -65,9 +62,6 @@
                         @foreach($comptes as $compte)
                             <tr>
                                 <td>{{ $compte->id }}</td>
-                                <td>{{ $compte->salons()->count() }}</td>
-                                <td>{{ $compte->users()->count() }}</td>
-                                <td>{{number_format($compte->sms_balance, 0, ",", " ")}}</td>
                                 <td><span hidden>{{$compte->created_at}}</span> {{ date("d/m/Y", strtotime($compte->created_at)) }}</td>
                                 @php($abonnement = $compte->abonnements()->orderBy("id", "desc")->first())
                                 <td class="">
@@ -81,7 +75,7 @@
                                 <td>
                                     <a href="{{ route("compte.show", $compte) }}" class="btn btn-link mr-sm-2">Détails</a>
                                     <a href="{{ route("abonnement.create", $compte) }}" class="btn btn-primary mr-2">Réabonner</a>
-                                    <a href="{{ route("recharge.create", $compte) }}" class="btn btn-warning">Recharger SMS</a>
+                                    <a href="{{ route("recharge.create", $compte) }}" class="btn btn-alternate">Recharger SMS</a>
                                 </td>
                             </tr>
                         @endforeach

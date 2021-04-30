@@ -40,6 +40,7 @@ Route::middleware(["auth"])->group(function ()
      * COMPTES
      */
     Route::resource("compte", "CompteController");
+    Route::post("compte/{compte}/sms", "CompteController@sendSMS")->name("compte.sms");
 
     /**
      * ABONNEMENT

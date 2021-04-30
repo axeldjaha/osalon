@@ -36,7 +36,10 @@
                     </div>
                     <div class="btn-actions-pane-left d-flex align-items-center ">
                         <a class="btn btn-primary mr-sm-3" href="{{route("abonnement.create", $compte)}}">Réabonner</a>
-                        <a class="btn btn-warning" href="{{ route("recharge.create", $compte) }}">Recharger SMS</a>
+                        <a class="btn btn-alternate mr-sm-3" href="{{ route("recharge.create", $compte) }}">Recharger SMS</a>
+                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal">
+                            <i class="fa fa-envelope"></i> Envoyer SMS
+                        </button>
                     </div>
                     <div class="btn-actions-pane-right d-flex align-items-center ">
                         <a form-action="{{route("compte.destroy", $compte)}}"
@@ -158,5 +161,69 @@
 
         </div>
     </div>
+
+@endsection
+
+
+@section("modal")
+    {!! Form::open()->route("compte.sms", [$compte]) !!}
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-primary">
+                    <h6 class="modal-title text-white text-uppercase" id="modalLabel">
+                        <i class="fa fa-envelope"></i> Envoi de SMS
+                    </h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body table-responsive" style="background-color: #fafafa">
+                    <table class="table table-borderless mb-0">
+                        <tbody>
+                        <tr>
+                            <td class="fit"><label for="to" class="col-form-label">A</label></td>
+                            <td class="">
+                                <select required id="to" name="to" class="form-control @error("to") is-invalid @enderror">
+                                    <option value="" @if(old("to") == null) selected disabled @endif>Envoyer à</option>
+                                    <option value="tous" @if(old("to") == "tous") selected @endif>Tous</option>
+                                    @foreach($compte->users()->orderBy("id")->get() as $user)
+                                        <option value="{{ $user->telephone }}" @if(old("to") == $user->telephone) selected @endif>
+                                            {{ $user->telephone }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error("to") <div class="invalid-feedback">{{$message}}</div> @enderror
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fit"><label for="message" class="col-form-label">Message</label></td>
+                            <td class="">
+                                <textarea required name="message" id="message" rows="4" class="form-control @error("message") is-invalid @enderror">{{ old("message") }}</textarea>
+                                @error("message") <div class="invalid-feedback">{{$message}}</div> @enderror
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fa fa-paper-plane"></i> Envoyer
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {!! Form::close() !!}
+
+    <script>
+        $(function (e) {
+            $("form#fichierForm").on("submit", function () {
+                $("button[class=close]").trigger("click");
+            })
+        })
+    </script>
 
 @endsection
