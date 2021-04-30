@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Abonnement;
 use App\Compte;
+use App\Contact;
 use App\Jobs\SendSMS;
 use App\Salon;
 use App\SmsGroupe;
@@ -107,6 +108,15 @@ class CompteController extends Controller
 
             $user->salons()->sync([$salon->id], false);
 
+            $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
+            if($smsGroup != null && !$smsGroup->contacts()->where("telephone", $user->telephone)->exists())
+            {
+                Contact::create([
+                    "nom" => $user->name,
+                    "telephone" => $user->telephone,
+                    "sms_groupe_id" => $smsGroup->id,
+                ]);
+            }
         }, 1);
 
         session()->flash('type', 'alert-success');
