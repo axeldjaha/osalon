@@ -21,7 +21,7 @@ return [
 
     'playstore' => env('PLAYSTORE_LINK', null),
 
-    'sms_sender' => env('SMS_SENDER', "O'SALON"),
+    'sms_sender' => env('SMS_SENDER', "OSALON"),
 
     'sms_client_sender' => env('SMS_CLIENT_SENDER', "MONSALON"),
 

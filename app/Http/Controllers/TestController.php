@@ -3,34 +3,22 @@
 namespace App\Http\Controllers;
 
 
-use App\Client;
 use App\Compte;
 use App\Contact;
-use App\Http\Resources\OffreSMSResource;
-use App\Http\Resources\PanierResource;
-use App\Http\Resources\RdvResource;
 use App\Jobs\SendSMS;
-use App\OffreSms;
 use App\Panier;
 use App\Salon;
 use App\SKien\VCard\VCard;
 use App\Token;
-use App\Type;
-use App\User;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Str;
 use Mediumart\Orange\SMS\Http\SMSClient;
+use Mediumart\Orange\SMS\Http\SMSClientRequest;
 use Mediumart\Orange\SMS\SMS;
 use Osms\Osms;
-use App\SKien\VCard\VCardAddress;
 use App\SKien\VCard\VCardContact;
-use stdClass;
 
 class TestController extends Controller
 {
@@ -48,6 +36,13 @@ class TestController extends Controller
         $compte = Compte::find(6);
         $panier = Panier::first();
 
+
+
+
+        /*$sms = new \stdClass();
+        $sms->message = date("Y-m-d H:i:s");
+        $sms->to = ["0153791279"];
+        Queue::push(new SendSMS($sms));*/
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);
 

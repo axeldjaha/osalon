@@ -2,8 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Fakedata;
-use App\SMSCounter;
 use App\Token;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -14,8 +12,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Mediumart\Orange\SMS\Http\SMSClient;
+use Mediumart\Orange\SMS\Http\SMSClientRequest;
 use Mediumart\Orange\SMS\SMS;
 
 class SendSMS implements ShouldQueue
@@ -86,6 +84,8 @@ class SendSMS implements ShouldQueue
 
     public function callOrangeAPI()
     {
+        SMSClientRequest::verify(false);
+
         $token = Token::first();
         if ($token == null || Carbon::parse($token->valid_until)->lessThan(Carbon::now()))
         {
@@ -98,12 +98,11 @@ class SendSMS implements ShouldQueue
             ]);
         }
 
-        \Mediumart\Orange\SMS\Http\SMSClientRequest::verify(false);
-
         $client = SMSClient::getInstance($token->access_token);
         $sms = new SMS($client);
         $sms->message($this->sms->message)
-            ->from('+2250758572785', $this->sender ?? config("app.sms_sender"))
+            //->from('+2250758572785', $this->sender ?? config("app.sms_sender"))
+            ->from('+2250758572785', null)
             ->to($this->sms->to)
             ->send();
     }
