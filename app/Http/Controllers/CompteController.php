@@ -161,11 +161,14 @@ class CompteController extends Controller
         $message = trim($request->message);
         Queue::push(new BulkSMS($message, $to));
 
-        BackSms::create([
-            "to" => json_encode($to),
-            "message" => $message,
-            "user" => auth()->user()->email,
-        ]);
+        foreach ($to as $telephone)
+        {
+            BackSms::create([
+                "to" => $telephone,
+                "message" => $message,
+                "user" => auth()->user()->email,
+            ]);
+        }
 
         session()->flash('type', 'alert-success');
         session()->flash('message', 'SMS envoyé avec succès!');

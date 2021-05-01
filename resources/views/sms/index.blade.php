@@ -60,7 +60,7 @@
                                     <button type="button"
                                             class="btn btn-link text-danger"
                                             onclick="deleteSMS('{{ $sms->id }}')">
-                                        <i class="fa fa-trash-alt"></i>
+                                        Supprimer
                                     </button>
                                 </td>
                             </tr>
@@ -79,7 +79,7 @@
 
                         <span class="mr-sm-2">Pour la sélection:</span>
                         @if(count($smses))
-                            <button class="btn btn-link text-danger mr-sm-3" >
+                            <button type="submit" class="btn btn-link text-danger mr-sm-3">
                                 <i class="fa fa-trash-alt mr-sm-1"></i>
                                 Supprimer
                             </button>
@@ -107,37 +107,16 @@
             window.deleteSMS = function(smsId){
                 event.stopPropagation();
 
-                $.confirm({
-                    title: "Information",
-                    content: "Supprimer ce message ?",
-                    //icon: 'fa fa-info-circle',
-                    //type: 'red',
-                    backgroundDismiss: true,
-                    buttons: {
-                        Oui: {
-                            text: "Oui",
-                            btnClass: "btn btn-danger",
-                            keys: ['enter', 'shift'],
-                            action: function(){
-                                $(form).unbind();
-                                $(form).append(
-                                    $('<input>')
-                                        .attr('type', 'hidden')
-                                        .attr('name', 'smses[]')
-                                        .val(smsId)
-                                ).submit();
-                            }
-                        },
-                        Annuler: {
-                            text: "Annuler",
-                            //btnClass: negativeBtnClass,
-                            keys: ['enter', 'shift'],
-                            action: function(){
-
-                            }
-                        },
-                    }
-                });
+                if(confirm("Supprimer le SMS ?"))
+                {
+                    $(form).unbind();
+                    $(form).append(
+                        $('<input>')
+                            .attr('type', 'hidden')
+                            .attr('name', 'smses[]')
+                            .val(smsId)
+                    ).submit();
+                }
             };
 
         });
@@ -157,49 +136,20 @@
 
                 if(rows_selected.length === 0)
                 {
-                    $.alert({
-                        backgroundDismiss: true,
-                        title: 'Information',
-                        //icon: 'fa fa-info-circle',
-                        content: "Aucune ligne n'a été cochée.",
-                    });
+                    alert("Aucune ligne n'a été cochée.")
                 }
-                else
+                else if(confirm("Supprimer la sélection ?"))
                 {
-                    $.confirm({
-                        title: "Information",
-                        content: "Supprimer la sélection ?",
-                        //icon: 'fa fa-info-circle',
-                        //type: 'red',
-                        backgroundDismiss: true,
-                        buttons: {
-                            Oui: {
-                                text: "Oui",
-                                btnClass: "btn btn-danger",
-                                keys: ['enter', 'shift'],
-                                action: function(){
-                                    $.each(rows_selected, function(index, rowId){
-                                        $(form).append(
-                                            $('<input>')
-                                                .attr('type', 'hidden')
-                                                .attr('name', 'smses[]')
-                                                .val(rowId)
-                                        );
-                                    });
-                                    $(form).unbind();
-                                    $(form).submit();
-                                }
-                            },
-                            Annuler: {
-                                text: "Annuler",
-                                //btnClass: negativeBtnClass,
-                                keys: ['enter', 'shift'],
-                                action: function(){
-
-                                }
-                            },
-                        }
+                    $.each(rows_selected, function(index, rowId){
+                        $(form).append(
+                            $('<input>')
+                                .attr('type', 'hidden')
+                                .attr('name', 'smses[]')
+                                .val(rowId)
+                        );
                     });
+                    $(form).unbind();
+                    $(form).submit();
                 }
             });
 
