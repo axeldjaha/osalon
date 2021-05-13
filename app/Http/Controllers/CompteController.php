@@ -106,7 +106,7 @@ class CompteController extends Controller
             $sms = new \stdClass();
             $sms->to = [$request->telephone];
             $sms->message = $message;
-            Queue::push(new SendSMS($sms));
+            Queue::push(new SendSMS($sms, null, $salon->pays->code ?? null));
 
             $user->salons()->sync([$salon->id], false);
 
