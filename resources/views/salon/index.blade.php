@@ -48,6 +48,7 @@
                             <th>Créé le</th>
                             <th>Abonnement</th>
                             <th>Compte</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -67,6 +68,11 @@
                                 </td>
                                 <td>
                                     <a href="{{ route("compte.show", $salon->compte) }}" class="btn btn-link">Aller au compte</a>
+                                </td>
+                                <td>
+                                    <a href="{{ route("salon.edit", $salon) }}" class="btn btn-link">
+                                        <i class="fa fa-edit"></i> Editer
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach

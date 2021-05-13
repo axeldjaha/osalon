@@ -48,19 +48,29 @@ class SendSMS implements ShouldQueue
 
     private $sender;
 
+    protected $country_code;
+
     private $token;
 
     /**
      * Create a new job instance.
      *
      * @param \stdClass $sms
-     * @param null $api
      * @param null $sender
+     * @param null $country_code
      */
-    public function __construct(\stdClass $sms, $sender = null)
+    public function __construct(\stdClass $sms, $sender = null, $country_code = null)
     {
         $this->sms = $sms;
         $this->sender = $sender;
+        if($country_code != null)
+        {
+            $this->country_code = "+" . $country_code;
+        }
+        else
+        {
+            $this->country_code = $this->prefix;
+        }
     }
 
     /**
@@ -74,7 +84,7 @@ class SendSMS implements ShouldQueue
         $to = '';
         for($count = 0, $size = count($this->sms->to); $count < $size; $count++)
         {
-            $to .= ($count != ($size - 1)) ? $this->prefix . $this->sms->to[$count] . ',' : $this->prefix . $this->sms->to[$count];
+            $to .= ($count != ($size - 1)) ? $this->country_code . $this->sms->to[$count] . ',' : $this->country_code . $this->sms->to[$count];
         }
 
         $this->sms->to = $to;
@@ -104,8 +114,8 @@ class SendSMS implements ShouldQueue
         $client = SMSClient::getInstance($token->access_token);
         $sms = new SMS($client);
         $sms->message($this->sms->message)
-            //->from('+2250758572785', $this->sender ?? config("app.sms_sender"))
-            ->from('+2250758572785', null)
+            ->from('+2250758572785', $this->sender ?? config("app.sms_sender"))
+            //->from('+2250758572785', null)
             ->to($this->sms->to)
             ->send();
     }

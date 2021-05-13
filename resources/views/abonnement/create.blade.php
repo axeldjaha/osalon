@@ -50,7 +50,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><label for="type_abonnement" class="col-form-label @if(isset($required["type_abonnement"])) required @endif">Type abonnement</label></td>
+                            <td><label for="type_abonnement" class="col-form-label required">Type abonnement</label></td>
                             <td>
                                 <select required class="form-control @error("type_abonnement") is-invalid @enderror" id="type_abonnement" name="type_abonnement">
                                     @foreach($types as $type)

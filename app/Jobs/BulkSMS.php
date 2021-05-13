@@ -41,19 +41,23 @@ class BulkSMS implements ShouldQueue
 
     protected $sender;
 
+    protected $country_code;
+
     /**
      * Create a new job instance.
      *
      * @param $message
      * @param array $to
      * @param null $sender
+     * @param null $country_code
      */
-    public function __construct($message, $to = [], $sender = null)
+    public function __construct($message, $to = [], $sender = null, $country_code = null)
     {
         $this->sms = new stdClass();
         $this->sms->message = $message;
         $this->sms->to = $to;
         $this->sender = $sender;
+        $this->country_code = $country_code;
     }
 
     /**
@@ -69,7 +73,7 @@ class BulkSMS implements ShouldQueue
             foreach($smsBatchs as $batch)
             {
                 $this->sms->to = $batch;
-                Queue::push(new SendSMS($this->sms, $this->sender));
+                Queue::push(new SendSMS($this->sms, $this->sender, $this->country_code));
             }
         }
     }

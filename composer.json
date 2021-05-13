@@ -30,6 +30,7 @@
         "netojose/laravel-bootstrap-4-forms": "^3.0",
         "predis/predis": "^1.1",
         "rap2hpoutre/laravel-log-viewer": "^1.6",
+        "sameer-shelavale/php-countries-array": "^1.0",
         "spatie/laravel-permission": "^2.38",
         "tymon/jwt-auth": "^1.0"
     },

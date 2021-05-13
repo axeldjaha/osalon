@@ -41,16 +41,19 @@ class MultiSMS implements ShouldQueue
 
     protected $sender;
 
+    protected $country_code;
+
     /**
      * Create a new job instance.
      *
      * @param array $smsArray
      * @param null $sender
      */
-    public function __construct($smsArray = [], $sender = null)
+    public function __construct($smsArray = [], $sender = null, $country_code = null)
     {
         $this->smsArray = $smsArray;
         $this->sender = $sender;
+        $this->country_code = $country_code;
     }
 
     /**
@@ -62,7 +65,7 @@ class MultiSMS implements ShouldQueue
     {
         foreach($this->smsArray as $sms)
         {
-            Queue::push(new SendSMS($sms, $this->sender));
+            Queue::push(new SendSMS($sms, $this->sender, $this->country_code));
         }
     }
 

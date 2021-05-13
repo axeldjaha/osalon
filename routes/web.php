@@ -31,10 +31,7 @@ Route::middleware(["auth"])->group(function ()
     /**
      * SALON
      */
-    Route::get("salon", "SalonController@index")->name("salon.index");
-    Route::get("salon/{salon}", "SalonController@show")
-        ->where("salon", "[0-9]+")->name("salon.show");
-    Route::delete("salon/{salon}", "SalonController@destroy")->name("salon.destroy");
+    Route::resource("salon", "SalonController")->except(["create", "store"]);
 
     /**
      * COMPTES

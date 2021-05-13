@@ -87,7 +87,7 @@ class UserController extends ApiController
                 $sms = new \stdClass();
                 $sms->to = [$request->telephone];
                 $sms->message = $message;
-                Queue::push(new SendSMS($sms));
+                Queue::push(new SendSMS($sms, null, $this->salon->pays->code ?? null));
             }
             // si user n'appartient pas au compte
             elseif ($user->compte->id != $this->compte->id)

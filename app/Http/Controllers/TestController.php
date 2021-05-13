@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Queue;
 use Mediumart\Orange\SMS\Http\SMSClient;
 use Mediumart\Orange\SMS\Http\SMSClientRequest;
 use Mediumart\Orange\SMS\SMS;
+use SameerShelavale\PhpCountriesArray\CountriesArray;
 
 class TestController extends Controller
 {
@@ -33,6 +34,8 @@ class TestController extends Controller
         $salon = Salon::first();
         $compte = Compte::find(6);
         $panier = Panier::first();
+
+
 
 
 

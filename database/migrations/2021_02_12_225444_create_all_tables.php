@@ -68,6 +68,13 @@ class CreateAllTables extends Migration
             $table->unsignedBigInteger('panier_id');
         });
 
+        Schema::create('pays', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('nom');
+            $table->integer('code');
+            $table->timestamps();
+        });
+
         Schema::create('rdvs', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->date("date");
@@ -84,6 +91,7 @@ class CreateAllTables extends Migration
             $table->string('adresse')->nullable();
             $table->string('telephone');
             $table->unsignedBigInteger('compte_id');
+            $table->unsignedBigInteger('pays_id')->nullable();
             $table->timestamps();
         });
 

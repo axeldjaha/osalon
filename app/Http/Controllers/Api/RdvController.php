@@ -185,7 +185,7 @@ class RdvController extends ApiController
         {
             $this->compte->decrement("sms_balance", $volume);
 
-            Queue::push(new MultiSMS($smsArray, config("app.sms_client_sender")));
+            Queue::push(new MultiSMS($smsArray, config("app.sms_client_sender"), $this->salon->pays->code ?? null));
 
             $columns = [
                 "to",

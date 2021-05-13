@@ -1,17 +1,17 @@
 @php
 
-$drilldownStatus = config('LaravelLogger.enableDrillDown');
-$prependUrl = '/activity/log/';
+    $drilldownStatus = config('LaravelLogger.enableDrillDown');
+    $prependUrl = '/activity/log/';
 
-if (isset($hoverable) && $hoverable === true) {
-    $hoverable = true;
-} else {
-    $hoverable = false;
-}
+    if (isset($hoverable) && $hoverable === true) {
+        $hoverable = true;
+    } else {
+        $hoverable = false;
+    }
 
-if (Request::is('activity/cleared')) {
-    $prependUrl = '/activity/cleared/log/';
-}
+    if (Request::is('activity/cleared')) {
+        $prependUrl = '/activity/cleared/log/';
+    }
 
 @endphp
 
@@ -53,72 +53,72 @@ if (Request::is('activity/cleared')) {
         @endif
         </thead>
         <tbody>
-            @foreach($activities as $activity)
-                <tr @if($drilldownStatus && $hoverable) class="clickable-row" data-href="{{ url($prependUrl . $activity->id) }}" data-toggle="tooltip" title="{{trans('LaravelLogger::laravel-logger.tooltips.viewRecord')}}" @endif >
-                    <td>
-                        @if($hoverable)
+        @foreach($activities as $activity)
+            <tr @if($drilldownStatus && $hoverable) class="clickable-row" data-href="{{ url($prependUrl . $activity->id) }}" data-toggle="tooltip" title="{{trans('LaravelLogger::laravel-logger.tooltips.viewRecord')}}" @endif >
+                <td>
+                    @if($hoverable)
+                        {{ $activity->id }}
+                    @else
+                        <a href="{{ url($prependUrl . $activity->id) }}">
                             {{ $activity->id }}
-                        @else
-                            <a href="{{ url($prependUrl . $activity->id) }}">
-                                {{ $activity->id }}
-                            </a>
-                        @endif
-                    </td>
-                    <td title="{{ $activity->created_at }}">
-                        {{ $activity->timePassed }}
-                    </td>
-                    <td>
+                        </a>
+                    @endif
+                </td>
+                <td title="{{ $activity->created_at }}">
+                    {{ $activity->timePassed }}
+                </td>
+                <td>
                         <span class="fsize-1">
                             {{ $activity->userDetails['telephone'] }}
                         </span>
-                    </td>
-                    <td>
-                        @php
-                            switch (strtolower($activity->methodType)) {
-                                case 'get':
-                                    $methodClass = 'info';
-                                    break;
+                </td>
+                <td>
+                    @php
+                        switch (strtolower($activity->methodType)) {
+                            case 'get':
+                                $methodClass = 'info';
+                                break;
 
-                                case 'post':
-                                    $methodClass = 'success';
-                                    break;
+                            case 'post':
+                                $methodClass = 'warning';
+                                break;
 
-                                case 'put':
-                                    $methodClass = 'warning';
-                                    break;
+                            case 'put':
+                                $methodClass = 'alternate';
+                                break;
 
-                                case 'delete':
-                                    $methodClass = 'danger';
-                                    break;
+                            case 'delete':
+                                $methodClass = 'danger';
+                                break;
 
-                                default:
-                                    $methodClass = 'info';
-                                    break;
-                            }
-                        @endphp
-                        <span class="badge badge-{{ $methodClass }}">
+                            default:
+                                $methodClass = 'info';
+                                break;
+                        }
+                    @endphp
+                    <span class="badge badge-{{ $methodClass }}">
                             {{ $activity->methodType }}
                         </span>
-                    </td>
-                    <td>
-                        @if($hoverable)
-                            {{ substr($activity->route, 0, strpos($activity->route, "?")) }}
-                        @else
-                            <a href="{{ $activity->route }}">
-                                {{$activity->route}}
-                            </a>
-                        @endif
-                    </td>
-                    <td>
-                        {{ $activity->ipAddress }}
-                    </td>
-                    @if(Request::is('activity/cleared'))
-                        <td>
-                            {{ $activity->deleted_at }}
-                        </td>
+                </td>
+                <td>
+                    @if($hoverable)
+                        {{ substr($activity->route, 0, strpos($activity->route, "?")) }}
+                    @else
+                        <a href="{{ $activity->route }}">
+                            {{$activity->route}}
+                        </a>
                     @endif
-                </tr>
-            @endforeach
+                </td>
+                <td>
+                    {{ $activity->ipAddress }}
+                </td>
+                @if(Request::is('activity/cleared'))
+                    <td>
+                        {{ $activity->deleted_at }}
+                    </td>
+                @endif
+            </tr>
+        @endforeach
         </tbody>
     </table>
 </div>

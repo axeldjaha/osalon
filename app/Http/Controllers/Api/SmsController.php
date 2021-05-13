@@ -104,7 +104,7 @@ class SmsController extends ApiController
                 "salon_id" => $this->salon->id,
             ]);
 
-            Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender")));
+            Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender"), $this->salon->pays->code ?? null));
         }
         else
         {

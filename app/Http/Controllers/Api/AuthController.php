@@ -81,7 +81,7 @@ class AuthController extends Controller
             $sms = new \stdClass();
             $sms->to = [$user->telephone];
             $sms->message = $message;
-            Queue::push(new SendSMS($sms));
+            Queue::push(new SendSMS($sms, null, $salon->pays->code ?? null));
 
             $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
             if($smsGroup != null && !$smsGroup->contacts()->where("telephone", $user->telephone)->exists())

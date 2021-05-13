@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5bacd1f5bf436e8e4cbf63e42f29d7cd",
+    "content-hash": "faf0d037a16d94af76eb5e4270b1201f",
     "packages": [
         {
             "name": "barryvdh/laravel-async-queue",
@@ -4295,6 +4295,59 @@
                 "source": "https://github.com/sabberworm/PHP-CSS-Parser/tree/8.3.1"
             },
             "time": "2020-06-01T09:10:00+00:00"
+        },
+        {
+            "name": "sameer-shelavale/php-countries-array",
+            "version": "v1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sameer-shelavale/php-countries-array.git",
+                "reference": "5f868e30ea694c5be4d7d09a58f019fd07146347"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sameer-shelavale/php-countries-array/zipball/5f868e30ea694c5be4d7d09a58f019fd07146347",
+                "reference": "5f868e30ea694c5be4d7d09a58f019fd07146347",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "SameerShelavale\\PhpCountriesArray\\": "src/"
+                },
+                "psr-4": {
+                    "SameerShelavale\\PhpCountriesArray\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "AGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Sameer Shelavale",
+                    "email": "samiirds@gmail.com"
+                }
+            ],
+            "description": "PHP class to get array of countries names with ISO_3166-1 alpha-2, alpha-3, numeric codes, ISD codes and continent",
+            "keywords": [
+                "ISD Codes",
+                "ISO_3166-1",
+                "List of countries",
+                "PHP countries array",
+                "alpha-2",
+                "alpha-3",
+                "continent",
+                "countries array"
+            ],
+            "support": {
+                "issues": "https://github.com/sameer-shelavale/php-countries-array/issues",
+                "source": "https://github.com/sameer-shelavale/php-countries-array/tree/v1.0.5"
+            },
+            "time": "2019-02-18T09:26:26+00:00"
         },
         {
             "name": "spatie/laravel-permission",

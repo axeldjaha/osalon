@@ -26,7 +26,7 @@
     charge you for the app or its services without making it very
     clear to you exactly what you’re paying for.
 </p> <p>
-    The O'pressing app stores and processes personal data that
+    The O'salon app stores and processes personal data that
     you have provided to us, in order to provide our
     Service. It’s your responsibility to keep your phone and
     access to the app secure. We therefore recommend that you do
@@ -35,7 +35,7 @@
     official operating system of your device. It could make your
     phone vulnerable to malware/viruses/malicious programs,
     compromise your phone’s security features and it could mean
-    that the O'pressing app won’t work properly or at all.
+    that the O'salon app won’t work properly or at all.
 </p> <div><p>
         The app does use third party services that declare their own
         Terms and Conditions.
@@ -107,7 +107,7 @@
 </p> <p><strong>Contact Us</strong></p> <p>
     If you have any questions or suggestions about our
     Terms and Conditions, do not hesitate to contact us
-    at opressing.dev@gmail.com.
+    at osalon.dev@gmail.com.
 </p>
 </body>
 </html>
