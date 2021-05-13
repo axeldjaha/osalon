@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Client;
+use App\Contact;
 use App\Fakedata;
 use App\Http\Requests\ClientImport;
 use App\Http\Requests\ClientRequest;
@@ -96,12 +97,23 @@ class ClientController extends ApiController
         $clients = [];
         $date = Carbon::now();
 
+        $prefix = $this->salon->pays != null ? "+" . $this->salon->pays->code : "";
+
         foreach ($request->all() as $client)
         {
             if(isset($client["telephone"]))
             {
-                $telephone = str_replace("+225", "", $client["telephone"]);
-                $telephone = str_replace(" ", "", "$telephone");
+                $telephone = str_replace($prefix, "", $client["telephone"]);
+
+                if($this->salon->pays != null && $this->salon->pays->code == 225)
+                {
+                    $telephone = Contact::formatPhoneNumber($telephone);
+                }
+                else
+                {
+                    $telephone = preg_replace('/[\-.\s]/s','', $client["telephone"]);
+                }
+
                 if(is_numeric($telephone))
                 {
                     $clients[] = [
