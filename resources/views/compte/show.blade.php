@@ -80,7 +80,7 @@
                                 <tr>
                                     <td class=""><strong>Abonnement</strong></td>
                                     <td>
-                                        @if(\Illuminate\Support\Carbon::parse($abonnement->echeance)->lessThan(\Illuminate\Support\Carbon::now()))
+                                        @if(\Illuminate\Support\Carbon::parse($abonnement->echeance)->lessThan(\Illuminate\Support\Carbon::today()))
                                             <span class="badge badge-danger badge-pill">Expiré<span>
                                         @else
                                                         <span class="badge badge-success badge-pill">Actif</span>
