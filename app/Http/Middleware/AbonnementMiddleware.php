@@ -22,7 +22,7 @@ class AbonnementMiddleware
         $compte = auth("api")->user()->compte;
 
         $abonnement = $compte->abonnements()->orderBy("id", "desc")->first();
-        if($abonnement == null || Carbon::parse($abonnement->echeance)->lessThan(Carbon::now()))
+        if($abonnement == null || Carbon::parse($abonnement->echeance)->lessThan(Carbon::today()))
         {
             return response()->json([
                 "message" => "Votre abonnement a expiré, veuillez vous réabonner."

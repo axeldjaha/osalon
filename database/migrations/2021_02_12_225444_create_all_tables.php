@@ -16,7 +16,7 @@ class CreateAllTables extends Migration
         Schema::create('abonnements', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('montant');
-            $table->dateTime('echeance');
+            $table->date('echeance');
             $table->unsignedBigInteger('type_id');
             $table->unsignedBigInteger('compte_id');
             $table->timestamps();
