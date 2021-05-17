@@ -18,6 +18,7 @@
         "guzzlehttp/guzzle": "^6.5",
         "intervention/image": "^2.5.1",
         "ismaeltoe/osms": "^2.0",
+        "ixudra/curl": "^6.21",
         "jeremykenedy/laravel-logger": "^4.2",
         "jeroendesloovere/vcard": "^1.7",
         "laravel-lang/lang": "~4.0",
@@ -32,7 +33,8 @@
         "rap2hpoutre/laravel-log-viewer": "^1.6",
         "sameer-shelavale/php-countries-array": "^1.0",
         "spatie/laravel-permission": "^2.38",
-        "tymon/jwt-auth": "^1.0"
+        "tymon/jwt-auth": "^1.0",
+      "ext-json": "*"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

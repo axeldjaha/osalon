@@ -12,6 +12,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Ixudra\Curl\Facades\Curl;
 use Mediumart\Orange\SMS\Http\SMSClient;
 use Mediumart\Orange\SMS\Http\SMSClientRequest;
 use Mediumart\Orange\SMS\SMS;
@@ -81,6 +82,56 @@ class SendSMS implements ShouldQueue
      */
     public function handle()
     {
+        $this->callOrangeAPI();
+    }
+
+    public function letexto()
+    {
+        $recipients = [];
+        foreach ($this->sms->to as $to)
+        {
+            $recipients[] = [
+                "phone" => $this->prefix . $to,
+            ];
+        }
+
+        $data = [
+            'step' => NULL,
+            'sender' => $this->sender ?? config("app.sms_sender"),
+            'name' => 'Campagne',
+            'campaignType' => 'SIMPLE',
+            'recipientSource' => 'CUSTOM',
+            'groupId' => NULL,
+            'filename' => NULL,
+            'saveAsModel' => false,
+            'destination' => 'NAT',
+            'message' => $this->sms->message,
+            'emailText' => NULL,
+            'recipients' => $recipients,
+            'sendAt' => [],
+        ];
+
+        $response = Curl::to('https://api.letexto.com/v1/campaigns')
+            ->withData(json_encode($data))
+            ->withHeaders([
+                'Authorization: Bearer a6db19270e853ad23483ba31973659',
+                'Content-Type: application/json'
+            ])
+            ->post();
+
+        $id = json_decode($response)->id;
+
+        $response = Curl::to("https://api.letexto.com/v1/campaigns/$id/schedules")
+            ->withData(json_encode($data))
+            ->withHeaders([
+                'Authorization: Bearer a6db19270e853ad23483ba31973659',
+                'Content-Type: application/json'
+            ])
+            ->post();
+    }
+
+    public function callOrangeAPI()
+    {
         $to = '';
         for($count = 0, $size = count($this->sms->to); $count < $size; $count++)
         {
@@ -89,11 +140,6 @@ class SendSMS implements ShouldQueue
 
         $this->sms->to = $to;
 
-        $this->callOrangeAPI();
-    }
-
-    public function callOrangeAPI()
-    {
         if(config("app.env") != "production")
         {
             SMSClientRequest::verify(false);
@@ -118,40 +164,6 @@ class SendSMS implements ShouldQueue
             //->from('+2250758572785', null)
             ->to($this->sms->to)
             ->send();
-    }
-
-    /**
-     * API: 1s2u.com
-     */
-    public function letexto()
-    {
-        $baseUrl = 'http://www.letexto.com/send_message';
-
-        /**
-         * Compte développeur (principal)
-         * 23 Fr/SMS
-         * $user = '/user/paxeldp@gmail.com';
-         * $secret = '/secret/aayxEoIfSNMykVKsvJ9UG7tyXoiJpUfsUFPnTmvB';
-         */
-        $baseUrl = 'http://www.letexto.com/sendCampaign';
-        $email = 'paxeldp@gmail.com';
-        $secret = 'aayxEoIfSNMykVKsvJ9UG7tyXoiJpUfsUFPnTmvB';
-        $message = $this->sms->message;
-        $receiver = $this->sms->to;
-        $sender = $this->sender ?? config("app.sms_sender");
-        $cltmsgid = 1;
-
-        $client = new Client();
-        $client->request('POST', $baseUrl, [
-            'query' => [
-                'email' => $email,
-                'secret' => $secret,
-                'message' => $message,
-                'receiver' => $receiver,
-                'sender' => $sender,
-                'cltmsgid' => $cltmsgid,
-            ]
-        ]);
     }
 
 }

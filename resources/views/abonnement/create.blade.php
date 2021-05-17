@@ -50,7 +50,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><label for="type_abonnement" class="col-form-label required">Type abonnement</label></td>
+                            <td class="fit"><label for="type_abonnement" class="col-form-label required">Type abonnement</label></td>
                             <td>
                                 <select required class="form-control @error("type_abonnement") is-invalid @enderror" id="type_abonnement" name="type_abonnement">
                                     @foreach($types as $type)
@@ -63,7 +63,7 @@
                             </td>
                         </tr>
                         <tr>
-                            <td><label for="montant" class="col-form-label">Montant</label></td>
+                            <td class="fit"><label for="montant" class="col-form-label">Montant</label></td>
                             <td>
                                 <input required type="text" id="montant" name="montant" class="form-control @error("montant") is-invalid @enderror" value="{{ old("montant") ?? $currentAbonnement->montant }}">
                                 @error("montant") <div class="invalid-feedback">{{$message}}</div> @enderror

@@ -31,7 +31,7 @@
             <div class="main-card mb-3 card">
                 <div class="card-header-tab card-header bg-heavy-rain">
                     <div class="card-header-title font-size-lg font-weight-normal">
-                        <span class="d-inline-block mr-sm-3">Édition du nom</span>
+                        <span class="d-inline-block mr-sm-3">Édition du salon</span>
                     </div>
                 </div>
 
@@ -39,21 +39,21 @@
                     <table class="table table-striped" style="margin-bottom: 0 !important; margin-top: 0 !important;">
                         <tbody>
                         <tr>
-                            <td class="fit"><label for="nom" class="col-form-label">Nom</label></td>
+                            <td class="fit"><label for="nom" class="col-form-label required">Nom</label></td>
                             <td>
                                 <input required type="text" id="nom" name="nom" class="form-control @error("nom") is-invalid @enderror" value="{{ old("nom") ?? $salon->nom }}">
                                 @error("nom") <div class="invalid-feedback">{{$message}}</div> @enderror
                             </td>
                         </tr>
                         <tr>
-                            <td class="fit"><label for="adresse" class="col-form-label">Adresse</label></td>
+                            <td class="fit"><label for="adresse" class="col-form-label required">Adresse</label></td>
                             <td>
                                 <input required type="text" id="adresse" name="adresse" class="form-control @error("adresse") is-invalid @enderror" value="{{ old("adresse") ?? $salon->adresse }}">
                                 @error("adresse") <div class="invalid-feedback">{{$message}}</div> @enderror
                             </td>
                         </tr>
                         <tr>
-                            <td class="fit"><label for="telephone" class="col-form-label">Téléphone</label></td>
+                            <td class="fit"><label for="telephone" class="col-form-label required">Téléphone</label></td>
                             <td>
                                 <input required type="text" id="telephone" name="telephone" class="form-control @error("telephone") is-invalid @enderror" value="{{ old("telephone") ?? $salon->telephone }}">
                                 @error("telephone") <div class="invalid-feedback">{{$message}}</div> @enderror

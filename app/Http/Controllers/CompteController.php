@@ -8,6 +8,7 @@ use App\Compte;
 use App\Contact;
 use App\Jobs\BulkSMS;
 use App\Jobs\SendSMS;
+use App\Pays;
 use App\Salon;
 use App\SmsGroupe;
 use App\Type;
@@ -47,6 +48,7 @@ class CompteController extends Controller
         $data["active"] = "compte";
 
         $data["types"] = Type::orderBy("montant")->get();
+        $data["countries"] = Pays::orderBy("nom")->get();
 
         return view("compte.create", $data);
     }
@@ -65,8 +67,9 @@ class CompteController extends Controller
             "adresse" => "required",
             "telephone" => "required|unique:users",
             "email" => "nullable|unique:users",
-            "montant" => "required|numeric",
+            "pays" => "required|exists:pays,id",
             "type_abonnement" => "required|exists:types,id",
+            "montant" => "required|numeric",
         ]);
 
         DB::transaction(function () use($request)
@@ -86,6 +89,7 @@ class CompteController extends Controller
                 "adresse" => $request->adresse,
                 "telephone" => $request->telephone,
                 "compte_id" => $compte->id,
+                "pays_id" => $request->pays,
             ]);
 
             $password = User::generatePassword($request->telephone);
