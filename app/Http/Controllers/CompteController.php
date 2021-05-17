@@ -34,7 +34,7 @@ class CompteController extends Controller
         SELECT DISTINCT(compte_id)
         FROM abonnements
         WHERE DATE (echeance) >= ?";
-        $data["actifs"] = DB::select($query, [Carbon::now()]);
+        $data["actifs"] = DB::select($query, [Carbon::today()]);
 
         return view("compte.index", $data);
     }
