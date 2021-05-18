@@ -64,13 +64,14 @@ class AbonnementController extends Controller
             "compte_id" => $compte->id,
         ]);
 
+        $salon = $compte->salons()->first();
         //$message = "Votre réabonnement a été effectué avec succès!";
         $message = "Votre réabonnement a été effectué avec succès!" .
             "\nLéquipe de " . config("app.name");
         $sms = new stdClass();
         $sms->to = [$compte->users()->first()->telephone];
         $sms->message = $message;
-        Queue::push(new SendSMS($sms));
+        Queue::push(new SendSMS($sms, null, $salon->pays->code ?? null));
 
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Réabonnement effectué avec succès!');
