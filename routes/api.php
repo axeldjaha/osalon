@@ -48,7 +48,6 @@ Route::middleware(["auth:api", "salon", "abonnement", "activity"])->group(functi
     Route::delete('panier/{panier}/article/{article}','Api\PanierController@deleteArticle');
 
     Route::apiResource('rdv','Api\RdvController')->except(["index", "show"]);
-    Route::post('rdv/rappeler','Api\RdvController@rappelerRDV');
 
     Route::delete('sms/{sms}','Api\SmsController@destroy');
     Route::delete('sms/all/destroy','Api\SmsController@destroyAll');
