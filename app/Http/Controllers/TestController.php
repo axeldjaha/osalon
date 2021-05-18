@@ -39,10 +39,44 @@ class TestController extends Controller
 
 
 
-        /*$sms = new \stdClass();
-        $sms->message = date("Y-m-d H:i:s");
-        $sms->to = ["0153791279"];
-        Queue::push(new SendSMS($sms));*/
+        $sms = new \stdClass();
+        $message = "Votre réabonnement a été effectué avec succès!" .
+            "\nLéquipe de " . config("app.name");
+        $sms->message = $message;
+        $to = "+22674118090";
+        //Queue::push(new SendSMS($sms, null, "225"));
+
+        if(config("app.env") != "production")
+        {
+            SMSClientRequest::verify(false);
+        }
+
+        $token = Token::first();
+        if ($token == null || Carbon::parse($token->valid_until)->lessThan(Carbon::now()))
+        {
+            $response = SMSClient::authorize(config("app.sms_client_id"), config("app.sms_client_secret"));
+            DB::table("tokens")->truncate();
+            $token = Token::create([
+                "access_token" => $response["access_token"],
+                "expires_in" => $response["expires_in"],
+                "valid_until" => Carbon::now()->addSeconds($response["expires_in"]),
+            ]);
+        }
+
+        $message = "Votre réabonnement a été effectué avec succès!" .
+            "\nLéquipe de " . config("app.name");
+        $sms->message = $message;
+        $to = "+22674118090";
+
+        $client = SMSClient::getInstance($token->access_token);
+        $sms = new SMS($client);
+        $sms->message($message)
+            //->from('+2250758572785', $this->sender ?? config("app.sms_sender"))
+            ->from('+2250758572785', null)
+            ->to($to)
+            ->send();
+
+
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);
 

@@ -82,7 +82,9 @@ class SendSMS implements ShouldQueue
      */
     public function handle()
     {
-        $this->callOrangeAPI();
+        //$this->callOrangeAPI();
+
+        $this->letexto();
     }
 
     public function letexto()
@@ -114,7 +116,7 @@ class SendSMS implements ShouldQueue
         $response = Curl::to('https://api.letexto.com/v1/campaigns')
             ->withData(json_encode($data))
             ->withHeaders([
-                'Authorization: Bearer a6db19270e853ad23483ba31973659',
+                'Authorization: Bearer xMwDAIGwM9cc9P6x0fxvz7zrgqL8ZI',
                 'Content-Type: application/json'
             ])
             ->post();
@@ -124,7 +126,7 @@ class SendSMS implements ShouldQueue
         $response = Curl::to("https://api.letexto.com/v1/campaigns/$id/schedules")
             ->withData(json_encode($data))
             ->withHeaders([
-                'Authorization: Bearer a6db19270e853ad23483ba31973659',
+                'Authorization: Bearer xMwDAIGwM9cc9P6x0fxvz7zrgqL8ZI',
                 'Content-Type: application/json'
             ])
             ->post();

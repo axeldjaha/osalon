@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Operateur;
-use App\Parametre;
+use App\Compte;
+use App\Contact;
+use App\Jobs\SendSMS;
+use App\Salon;
+use App\SmsGroupe;
 use App\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 
 class UserController extends Controller
 {
@@ -39,6 +44,94 @@ class UserController extends Controller
         $data["users"] = $users;
 
         return view("user.index", $data);
+    }
+
+    public function create(Compte $compte)
+    {
+        $data["title"] = "Comptes";
+        $data["active"] = "compte";
+
+        $data["compte"] = $compte;
+
+        return view("user.create", $data);
+    }
+
+    /**
+     * Store user
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function store(Request $request)
+    {
+        $this->validate($request, [
+            "name" => "nullable",
+            "telephone" => "required",
+            "email" => "nullable|unique:users",
+            "salon" => "required|exists:salons,id",
+        ]);
+
+        $salon = Salon::find($request->salon);
+        $user = User::where("telephone", $request->telephone)->first();
+
+        // si user n'existe pas
+        if($user == null)
+        {
+            $password = User::generatePassword($request->telephone);
+
+            $user = User::create([
+                "name" => $request->name,
+                "telephone" => $request->telephone,
+                "email" => $request->email,
+                "compte_id" => $request->compte,
+                "password" => bcrypt($password),
+            ]);
+
+            //Envoi du mot de passe par SMS
+            $message = "Votre mot de passe est: $password" .
+                "\nTéléchargez l'application " . config("app.name") . " sur playstore\n" . config("app.playstore");
+            $sms = new \stdClass();
+            $sms->to = [$user->telephone];
+            $sms->message = $message;
+            //todo Queue::push(new SendSMS($sms));
+
+            session()->flash('type', 'alert-success');
+            session()->flash('message', "L'utilisateur a été créé avec succès! Son mot de passe lui a été envoyé par SMS.");
+        }
+        // si user n'appartient pas au compte
+        elseif ($user->compte->id != $salon->compte->id)
+        {
+            session()->flash('type', 'alert-danger');
+            session()->flash('message', 'Le numéro de téléphone est déjà associé à un autre compte');
+            return back();
+        }
+        // si user déjà associé au salon
+        elseif ($salon->users()->where("id", $user->id)->exists())
+        {
+            session()->flash('type', 'alert-danger');
+            session()->flash('message', 'Le numéro de téléphone est déjà utilisé dans ce salon');
+            return back();
+        }
+        else
+        {
+            session()->flash('type', 'alert-success');
+            session()->flash('message', "L'utilisateur a été ajouté au salon avec succès!");
+        }
+
+        $user->salons()->sync([$salon->id], false);
+
+        $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
+        if($smsGroup != null && !$smsGroup->contacts()->where("telephone", $user->telephone)->exists())
+        {
+            Contact::create([
+                "nom" => $user->name,
+                "telephone" => $user->telephone,
+                "sms_groupe_id" => $smsGroup->id,
+            ]);
+        }
+
+        return redirect()->route("compte.show", $salon->compte->id);
     }
 
     public function show(User $user)

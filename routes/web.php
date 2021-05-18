@@ -56,6 +56,8 @@ Route::middleware(["auth"])->group(function ()
      * USERS
      */
     Route::get("user", "UserController@index")->name("user.index");
+    Route::get("user/{compte}/create", "UserController@create")->name("user.create");
+    Route::post("user/{compte}/create", "UserController@store")->name("user.store");
     Route::put("user/password/reset/{user}/", "UserController@resetPassword")->name("user.password.reset");
 
     /**

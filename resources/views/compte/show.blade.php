@@ -37,6 +37,7 @@
                     <div class="btn-actions-pane-left d-flex align-items-center ">
                         <a class="btn btn-primary mr-sm-3" href="{{route("abonnement.create", $compte)}}">Réabonner</a>
                         <a class="btn btn-alternate mr-sm-3" href="{{ route("recharge.create", $compte) }}">Recharger SMS</a>
+                        <a class="btn btn-success mr-sm-3" href="{{ route("user.create", $compte) }}">Ajouter utilisateur</a>
                         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modal">
                             <i class="fa fa-envelope"></i> Envoyer SMS
                         </button>
