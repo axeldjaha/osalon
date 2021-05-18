@@ -50,8 +50,6 @@ Route::middleware(["auth:api", "salon", "abonnement", "activity"])->group(functi
     Route::apiResource('rdv','Api\RdvController')->except(["index", "show"]);
     Route::post('rdv/rappeler','Api\RdvController@rappelerRDV');
 
-    Route::post('sms','Api\SmsController@store');
-    Route::post('v2/sms/','Api\v2\SmsController@store');
     Route::delete('sms/{sms}','Api\SmsController@destroy');
     Route::delete('sms/all/destroy','Api\SmsController@destroyAll');
 });
@@ -59,6 +57,12 @@ Route::middleware(["auth:api", "salon", "abonnement", "activity"])->group(functi
 Route::middleware(["auth:api", "abonnement", "activity"])->group(function ()
 {
     Route::apiResource('salon','Api\SalonController')->except(["index"]);
+
+    Route::get('bilan','Api\BilanController@bilan');
+    Route::get('bilan/point','Api\BilanController@point');
+    Route::get('bilan/detail','Api\BilanController@detail');
+
+    Route::post('sms','Api\SmsController@store');
 });
 
 /**
@@ -80,9 +84,6 @@ Route::middleware(["auth:api", "activity"])->group(function ()
 
     Route::get('depense','Api\DepenseController@index');
     Route::get('depense/salon/{salon}','Api\DepenseController@show');
-
-    Route::get('recette','Api\RecetteController@index');
-    Route::get('recette/salon/{salon}','Api\RecetteController@show');
 
     Route::get('panier','Api\PanierController@index');
     Route::get('panier/salon/{salon}','Api\PanierController@show');

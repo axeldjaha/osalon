@@ -9,7 +9,6 @@ class Sms extends Model
     protected $fillable = [
         "to",
         "message",
-        "date",
         "user",
         "salon_id",
     ];

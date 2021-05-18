@@ -73,16 +73,29 @@ class SmsController extends ApiController
      */
     public function store(Request $request)
     {
-        $to = $this->salon->clients()
-            ->whereIn("telephone", $request->to)
-            ->pluck("telephone")
-            ->toArray();
+        $salonId = null;
+        $to = [];
+        foreach ($request->to as $client)
+        {
+            $to[] = $client["telephone"];
+            if($salonId == null)
+            {
+                $salonId = $client["salon_id"];
+            }
+        }
         $to = array_unique($to);
+
+        if($salonId == null || !$this->compte->salons()->where("id", $salonId)->exists())
+        {
+            return response()->json([
+                "message" => "Le salon n'existe pas ou a été supprimé"
+            ], 404);
+        }
 
         if(count($to) == 0)
         {
             return response()->json([
-                "message" => "Aucun client n'a été sélectionné."
+                "message" => "Aucun client n'a été sélectionné"
             ], 422);
         }
 
@@ -99,9 +112,8 @@ class SmsController extends ApiController
             $sms = Sms::create([
                 "to" => count($request->to) . " client(s)",
                 "message" => $message,
-                "date" => Carbon::now(),
-                "user" => $this->user->name,
-                "salon_id" => $this->salon->id,
+                "user" => $this->user->name ?? $this->telephone,
+                "salon_id" => $salonId,
             ]);
 
             Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender"), $this->salon->pays->code ?? null));

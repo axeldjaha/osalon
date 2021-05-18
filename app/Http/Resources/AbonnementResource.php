@@ -19,7 +19,7 @@ class AbonnementResource extends JsonResource
     {
         return [
             "montant" => $this->montant,
-            "echeance" => date("d/m/Y", strtotime($this->echeance)),
+            "echeance" => Carbon::parse($this->echeance)->isoFormat("Do MMMM Y"),
             "type" => new TypeResource($this->type),
             "expired" => Carbon::parse($this->echeance)->lessThan(Carbon::now()),
         ];

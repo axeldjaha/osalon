@@ -16,9 +16,8 @@ class SmsResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "recipient_count" => $this->to,
             "message" => $this->message,
-            "date" => date("d/m/Y à H:i", strtotime($this->date)),
+            "date" => date("d/m/Y à H:i", strtotime($this->created_at)),
             "user" => $this->user,
             "salon_id" => $this->salon_id,
         ];
