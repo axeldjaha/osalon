@@ -59,6 +59,14 @@ class CreateForeignKeys extends Migration
             $table->foreign('compte_id')->references('id')->on('comptes')->onDelete('cascade');
         });
 
+        Schema::table('comptes', function (Blueprint $table) {
+            $table->unsignedBigInteger('pays_id')->nullable()->after("sms_balance");
+        });
+
+        Schema::table('comptes', function (Blueprint $table) {
+            $table->foreign('pays_id')->references('id')->on('pays')->onDelete('set null');
+        });
+
     }
 
     /**

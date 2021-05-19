@@ -71,7 +71,7 @@ class CreateAllTables extends Migration
         Schema::create('pays', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nom');
-            $table->integer('code');
+            $table->integer('indicatif');
             $table->timestamps();
         });
 
@@ -91,7 +91,6 @@ class CreateAllTables extends Migration
             $table->string('adresse')->nullable();
             $table->string('telephone');
             $table->unsignedBigInteger('compte_id');
-            $table->unsignedBigInteger('pays_id')->nullable();
             $table->timestamps();
         });
 
