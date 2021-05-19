@@ -4,21 +4,12 @@ namespace App\Http\Controllers\Api;
 
 
 use App\Client;
-use App\Fakedata;
 use App\Http\Requests\RdvRequest;
 use App\Http\Resources\RdvResource;
-use App\Http\Resources\SalonResource;
-use App\Http\Resources\SmsResource;
-use App\Jobs\MultiSMS;
-use App\Jobs\BulkSMS;
 use App\Rdv;
 use App\Salon;
-use App\Sms;
-use App\SMSCounter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Queue;
 
 class RdvController extends ApiController
 {

@@ -7,7 +7,9 @@ use App\Http\Requests\SmsRequest;
 use App\Http\Resources\SalonResource;
 use App\Http\Resources\SmsResource;
 use App\Jobs\BulkSMS;
+use App\Jobs\SendSMS;
 use App\Lien;
+use App\Message;
 use App\Salon;
 use App\Sms;
 use App\SMSCounter;
@@ -73,19 +75,19 @@ class SmsController extends ApiController
      */
     public function store(Request $request)
     {
-        $salonId = null;
+        $salon = null;
         $to = [];
         foreach ($request->to as $client)
         {
             $to[] = $client["telephone"];
-            if($salonId == null)
+            if($salon == null)
             {
-                $salonId = $client["salon_id"];
+                $salon = Salon::find($client["salon_id"]);
             }
         }
         $to = array_unique($to);
 
-        if($salonId == null || !$this->compte->salons()->where("id", $salonId)->exists())
+        if($salon == null || $this->compte->id != $salon->compte_id)
         {
             return response()->json([
                 "message" => "Le salon n'existe pas ou a été supprimé"
@@ -99,10 +101,10 @@ class SmsController extends ApiController
             ], 422);
         }
 
-        $message = trim($request->message);
+        $messageBody = trim($request->message);
 
         $smsCounter = new SMSCounter();
-        $smsInfo = $smsCounter->count($message);
+        $smsInfo = $smsCounter->count($messageBody);
         $volume = $smsInfo->messages * count($to);
 
         if($volume <= $this->compte->sms_balance)
@@ -111,12 +113,17 @@ class SmsController extends ApiController
 
             $sms = Sms::create([
                 "to" => count($request->to) . " client(s)",
-                "message" => $message,
+                "message" => $messageBody,
                 "user" => $this->user->name ?? $this->telephone,
-                "salon_id" => $salonId,
+                "salon_id" => $salon->id,
             ]);
 
-            Queue::push(new BulkSMS($message, $to, config("app.sms_client_sender"), $this->salon->pays->code ?? null));
+            $message = new Message();
+            $message->setBody($messageBody);
+            $message->setTo($to);
+            $message->setIndicatif($this->compte->pays->code);
+            $message->setSender(config("app.sms_sender_monsalon"));
+            Queue::push(new BulkSMS($message));
         }
         else
         {

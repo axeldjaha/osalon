@@ -8,6 +8,7 @@ use App\Compte;
 use App\Contact;
 use App\Jobs\BulkSMS;
 use App\Jobs\SendSMS;
+use App\Message;
 use App\Pays;
 use App\Salon;
 use App\SmsGroupe;
@@ -74,7 +75,9 @@ class CompteController extends Controller
 
         DB::transaction(function () use($request)
         {
-            $compte = Compte::create([]);
+            $compte = Compte::create([
+                "pays_id" => $request->pays,
+            ]);
 
             $type = Type::find($request->type_abonnement);
             Abonnement::create([
@@ -89,7 +92,6 @@ class CompteController extends Controller
                 "adresse" => $request->adresse,
                 "telephone" => $request->telephone,
                 "compte_id" => $compte->id,
-                "pays_id" => $request->pays,
             ]);
 
             $password = User::generatePassword($request->telephone);
@@ -103,14 +105,18 @@ class CompteController extends Controller
             ]);
 
             //Envoi du mot de passe par SMS
-            $message =
+            $messageBody =
                 "Votre mot de passe est: $password" .
                 "\nTéléchargez l'application " . config("app.name") . " sur playstore" .
                 "\n" . config("app.playstore");
-            $sms = new \stdClass();
-            $sms->to = [$request->telephone];
-            $sms->message = $message;
-            Queue::push(new SendSMS($sms, null, $salon->pays->code ?? null));
+            $to = [$request->telephone];
+
+            $message = new Message();
+            $message->setBody($messageBody);
+            $message->setTo($to);
+            $message->setIndicatif($compte->pays->code);
+            $message->setSender(config("app.sms_sender_osalon"));
+            Queue::push(new SendSMS($message));
 
             $user->salons()->sync([$salon->id], false);
 
@@ -162,14 +168,20 @@ class CompteController extends Controller
             "message" => "required",
         ]);
         $to = $request->to == "tous" ? $compte->users()->pluck("telephone")->toArray() : [$request->to];
-        $message = trim($request->message);
-        Queue::push(new BulkSMS($message, $to));
+        $messageBody = trim($request->message);
+
+        $message = new Message();
+        $message->setBody($messageBody);
+        $message->setTo($to);
+        $message->setIndicatif($compte->pays->code);
+        $message->setSender(config("app.sms_sender_osalon"));
+        Queue::push(new BulkSMS($message));
 
         foreach ($to as $telephone)
         {
             BackSms::create([
                 "to" => $telephone,
-                "message" => $message,
+                "message" => $messageBody,
                 "user" => auth()->user()->email,
             ]);
         }

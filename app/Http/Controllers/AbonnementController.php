@@ -5,15 +5,11 @@ namespace App\Http\Controllers;
 use App\Abonnement;
 use App\Compte;
 use App\Jobs\SendSMS;
-use App\Paiement;
-use App\Salon;
-use App\Transaction;
+use App\Message;
 use App\Type;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
-use stdClass;
 
 class AbonnementController extends Controller
 {
@@ -64,14 +60,15 @@ class AbonnementController extends Controller
             "compte_id" => $compte->id,
         ]);
 
-        $salon = $compte->salons()->first();
-        //$message = "Votre réabonnement a été effectué avec succès!";
-        $message = "Votre réabonnement a été effectué avec succès!" .
-            "\nLéquipe de " . config("app.name");
-        $sms = new stdClass();
-        $sms->to = [$compte->users()->first()->telephone];
-        $sms->message = $message;
-        Queue::push(new SendSMS($sms, null, $salon->pays->code ?? null));
+        $messageBody = "Votre réabonnement a été effectué avec succès!";
+        $to = [$compte->users()->first()->telephone];
+
+        $message = new Message();
+        $message->setBody($messageBody);
+        $message->setTo($to);
+        $message->setIndicatif($compte->pays->code);
+        $message->setSender(config("app.sms_sender_osalon"));
+        Queue::push(new SendSMS($message));
 
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Réabonnement effectué avec succès!');

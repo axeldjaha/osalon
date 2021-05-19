@@ -28,8 +28,8 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
+            "pays" => "required|exists:pays,id",
             "telephone" => Rule::unique('users','telephone'),
-            //"telephone" => "required",
             "salon" => "required",
             "adresse" => "required",
         ];
@@ -57,6 +57,13 @@ class RegisterRequest extends FormRequest
         {
             $response = [
                 "message" => $exception->validator->errors()->get("salon")[0],
+            ];
+            throw new HttpResponseException(response()->json($response, 422));
+        }
+        elseif($exception->validator->errors()->has("pays"))
+        {
+            $response = [
+                "message" => $exception->validator->errors()->get("pays")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }

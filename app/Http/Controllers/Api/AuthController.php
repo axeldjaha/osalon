@@ -14,6 +14,7 @@ use App\Http\Requests\UpdateProfilRequest;
 use App\Http\Resources\AuthUserResource;
 use App\Jobs\MailJob;
 use App\Jobs\SendSMS;
+use App\Message;
 use App\Offre;
 use App\Salon;
 use App\Mail\RequestCodeEmail;
@@ -47,7 +48,9 @@ class AuthController extends Controller
 
         DB::transaction(function () use (&$status, &$statusMessage, $request)
         {
-            $compte = Compte::create([]);
+            $compte = Compte::create([
+                "pays_id" => $request->pays,
+            ]);
 
             $salon = Salon::create([
                 "nom" => $request->salon,
@@ -77,11 +80,16 @@ class AuthController extends Controller
             $user->salons()->sync([$salon->id], false);
 
             //Envoi du mot de passe par SMS
-            $message = "Votre mot de passe est: $password";
-            $sms = new \stdClass();
-            $sms->to = [$user->telephone];
-            $sms->message = $message;
-            Queue::push(new SendSMS($sms, null, $salon->pays->code ?? null));
+            $messageBody = "Votre mot de passe est: $password";
+            $to = [$user->telephone];
+
+            $message = new Message();
+            $message->setBody($messageBody);
+            $message->setTo($to);
+            $message->setIndicatif($compte->pays->code);
+            $message->setSender(config("app.sms_sender_osalon"));
+            Queue::push(new SendSMS($message));
+
 
             $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
             if($smsGroup != null && !$smsGroup->contacts()->where("telephone", $user->telephone)->exists())
@@ -92,15 +100,6 @@ class AuthController extends Controller
                     "sms_groupe_id" => $smsGroup->id,
                 ]);
             }
-
-            $message = "Nouvelle inscription" .
-                "\n$salon->nom" .
-                "\nAdresse: $salon->adresse" .
-                "\nTime: " . date("d/m/Y à H:i", strtotime($salon->created_at));
-            $sms = new stdClass();
-            $sms->to = [config("app.telephone")];
-            $sms->message = $message;
-            Queue::push(new SendSMS($sms));
         }, 1);
 
         return response()->json([

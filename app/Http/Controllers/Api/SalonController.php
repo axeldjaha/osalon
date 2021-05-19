@@ -6,6 +6,7 @@ use App\Contact;
 use App\Http\Requests\SalonRequest;
 use App\Http\Resources\SalonResource;
 use App\Jobs\SendSMS;
+use App\Message;
 use App\Salon;
 use App\SmsGroupe;
 use App\User;
@@ -68,14 +69,18 @@ class SalonController extends ApiController
                     ]);
 
                     //Envoi du mot de passe par SMS
-                    $message =
+                    $messageBody =
                         "Votre mot de passe est: $password" .
                         "\nTéléchargez l'application " . config("app.name") . " sur playstore\n" .
                         config("app.playstore");
-                    $sms = new \stdClass();
-                    $sms->to = [$user->telephone];
-                    $sms->message = $message;
-                    Queue::push(new SendSMS($sms, null, $salon->pays->code ?? null));
+                    $to = [$user->telephone];
+
+                    $message = new Message();
+                    $message->setBody($messageBody);
+                    $message->setTo($to);
+                    $message->setIndicatif($this->compte->pays->code);
+                    $message->setSender(config("app.sms_sender_osalon"));
+                    Queue::push(new SendSMS($message));
                 }
                 // si user n'appartient pas au compte
                 elseif ($user->compte->id != $this->compte->id)

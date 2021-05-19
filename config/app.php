@@ -21,12 +21,14 @@ return [
 
     'playstore' => env('PLAYSTORE_LINK', null),
 
-    'sms_sender' => env('SMS_SENDER', "OSALON"),
+    'sms_sender_osalon' => env('SMS_SENDER_OSALON', "OSALON"),
 
-    'sms_client_sender' => env('SMS_CLIENT_SENDER', "MONSALON"),
+    'sms_sender_monsalon' => env('SMS_SENDER_MONSALON', "MONSALON"),
 
     'sms_client_id' => env('SMS_CLIENT_ID', "C0gqKzmECouAf1VMFeg3fkfPruxi5wnV"),
     'sms_client_secret' => env('SMS_CLIENT_SECRET', "fZJtzYAMZTDs9vLm"),
+
+    'letexto_token' => env('LETEXTO_TOKEN', "xMwDAIGwM9cc9P6x0fxvz7zrgqL8ZI"),
 
 
     /*

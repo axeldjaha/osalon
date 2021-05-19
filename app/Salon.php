@@ -13,7 +13,6 @@ class Salon extends Model
         "adresse",
         "telephone",
         "compte_id",
-        "pays_id",
     ];
 
     public function compte()
@@ -29,11 +28,6 @@ class Salon extends Model
     public function users()
     {
         return $this->belongsToMany(User::class);
-    }
-
-    public function pays()
-    {
-        return $this->belongsTo(Pays::class, "pays_id");
     }
 
     public function paniers()

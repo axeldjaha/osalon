@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BackSms;
 use App\Jobs\BulkSMS;
+use App\Message;
 use App\SMSCounter;
 use App\SmsGroupe;
 use Illuminate\Http\Request;
@@ -63,9 +64,9 @@ class SMSController extends Controller
                 return back()->withInput();
             }
 
-            $message = str_replace("\r\n", "\n", trim($request->message));
+            $messageBody = str_replace("\r\n", "\n", trim($request->message));
             $smsCounter = new SMSCounter();
-            $smsInfo = $smsCounter->count($message);
+            $smsInfo = $smsCounter->count($messageBody);
             $volume = $smsInfo->messages * count($to);
 
             $groupes = SmsGroupe::whereIn("sms_groupes.id", $request->groupes)->get();
@@ -73,12 +74,18 @@ class SMSController extends Controller
             {
                 BackSms::create([
                     "to" => $groupe->intitule,
-                    "message" => $message,
+                    "message" => $messageBody,
                     "user" => Auth::user()->name,
                 ]);
             }
 
-            Queue::push(new BulkSMS($message, $to));
+            Queue::push(new BulkSMS($messageBody, $to));
+            $message = new Message();
+            $message->setBody($messageBody);
+            $message->setTo($to);
+            $message->setIndicatif("225");
+            $message->setSender(config("app.sms_sender_monsalon"));
+            //todo Queue::push(new BulkSMS($message));
 
         }, 1);
 

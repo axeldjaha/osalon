@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Compte;
 use App\Jobs\SendSMS;
+use App\Message;
 use App\Paiement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Queue;
@@ -45,12 +46,15 @@ class RechareSMSController extends Controller
         $compte->increment("sms_balance", $request->sms_balance);
 
         //$message = "Votre compte SMS a été rechargé avec succès!";
-        $message = "Votre compte SMS a été rechargé avec succès!" .
-            "\nLéquipe de " . config("app.name");
-        $sms = new stdClass();
-        $sms->to = [$compte->users()->first()->telephone];
-        $sms->message = $message;
-        Queue::push(new SendSMS($sms));
+        $messageBody = "Votre compte SMS a été rechargé avec succès!";
+        $to = [$compte->users()->first()->telephone];
+
+        $message = new Message();
+        $message->setBody($messageBody);
+        $message->setTo($to);
+        $message->setIndicatif($compte->pays->code);
+        $message->setSender(config("app.sms_sender_osalon"));
+        Queue::push(new SendSMS($message));
 
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Rechargement effectué avec succès!');

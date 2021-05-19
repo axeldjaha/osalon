@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Message;
 use App\SMSCounter;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -37,27 +38,16 @@ class BulkSMS implements ShouldQueue
     /**
      * @var array Destinataires
      */
-    protected $sms;
-
-    protected $sender;
-
-    protected $country_code;
+    protected $message;
 
     /**
      * Create a new job instance.
      *
-     * @param $message
-     * @param array $to
-     * @param null $sender
-     * @param null $country_code
+     * @param Message $message
      */
-    public function __construct($message, $to = [], $sender = null, $country_code = null)
+    public function __construct(Message $message)
     {
-        $this->sms = new stdClass();
-        $this->sms->message = $message;
-        $this->sms->to = $to;
-        $this->sender = $sender;
-        $this->country_code = $country_code;
+        $this->message = $message;
     }
 
     /**
@@ -67,13 +57,13 @@ class BulkSMS implements ShouldQueue
      */
     public function handle()
     {
-        $smsBatchs = array_chunk($this->sms->to, self::$BATCH);
+        $smsBatchs = array_chunk($this->message->getTo(), self::$BATCH);
         if(count($smsBatchs) > 0)
         {
             foreach($smsBatchs as $batch)
             {
-                $this->sms->to = $batch;
-                Queue::push(new SendSMS($this->sms, $this->sender, $this->country_code));
+                $this->message->setTo($batch);
+                Queue::push(new SendSMS($this->message));
             }
         }
     }
