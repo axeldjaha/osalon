@@ -4,7 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Admin;
 use App\Jobs\MailJob;
+use App\Jobs\SendSMS;
 use App\Mail\NewAccount;
+use App\Message;
+use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -43,92 +46,39 @@ class AdminController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
         $this->validate($request, [
             'name' => 'required',
+            "telephone" => "required|unique:admins",
             'email' => 'required|email|unique:admins',
         ]);
 
-        $string = '1234567890ABCDEFGHJKLMNPQRSTUVWXYZabcefghjklmnpqrstuvwxyz';
-        $password = Str::upper(substr(str_shuffle($string), 0, 6));
+        $password = User::generatePassword($request->telephone);
 
         $user = Admin::create([
-            'name' => htmlspecialchars($request->name),
-            'email' => htmlspecialchars($request->email),
+            'name' => $request->name,
+            'telephone' => $request->telephone,
+            'email' => $request->email,
             'password' => bcrypt($password),
         ]);
 
-        if($request->has('permissions'))
-        {
-            $user->syncPermissions($request->permissions);
-        }
+        //Envoi du mot de passe par SMS
+        $messageBody = "Votre mot de passe est: $password";
+        $to = [$request->telephone];
 
-        $data['email'] = $user->email;
-        $data['password'] = $password;
-        $data['espace'] = "Administration";
-
-        Queue::push(new MailJob($user->email, new NewAccount($data)));
-
-        session()->flash('type', 'alert-success');
-        session()->flash('message', 'Compte créé avec succès!');
-
-        return redirect()->route('admin.index');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        $data["title"] = "Compte utilisateur";
-        $data["active"] = "user";
-
-        if(Auth::id() == $id)
-        {
-            session()->flash('type', 'alert-danger');
-            session()->flash('message', "Vous n'êtes pas autorisé à effectuer cette action.");
-            return back();
-        }
-
-        $data["user"] = Admin::findOrFail(htmlspecialchars($id));
-        $data["permissions"] = Permission::all();
-
-        return view("admin.edit", $data);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param $id
-     * @return \Illuminate\Http\RedirectResponse
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    public function update(Request $request, $id)
-    {
-        if(Auth::id() == $id)
-        {
-            session()->flash('type', 'alert-danger');
-            session()->flash('message', "Vous n'êtes pas autorisé à effectuer cette action.");
-            return back();
-        }
-
-        $user = Admin::findOrFail(htmlspecialchars($id));
-
-        if($request->has('permissions'))
-        {
-            $user->syncPermissions($request->permissions);
-        }
+        $message = new Message();
+        $message->setBody($messageBody);
+        $message->setTo($to);
+        $message->setIndicatif("225");
+        $message->setSender(config("app.sms_sender_osalon"));
+        Queue::push(new SendSMS($message));
 
         session()->flash('type', 'alert-success');
-        session()->flash('message', 'Mise à jour effectuée avec succès!');
+        session()->flash('message', 'Compte administrateur créé avec succès!');
 
         return redirect()->route('admin.index');
     }
@@ -139,20 +89,19 @@ class AdminController extends Controller
      * @param $id
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy($id)
+    public function destroy(Admin $admin)
     {
-        $user = Admin::findOrFail(htmlspecialchars($id));
-        if(Auth::id() == $id || $user->hasRole("super-admin"))
+        if(Auth::user()->id == $admin->id || $admin->email == "paxeldp@gmail.com")
         {
             session()->flash('type', 'alert-danger');
-            session()->flash('message', "Vous n'êtes pas autorisé à effectuer cette action.");
+            session()->flash('message', "Vous ne pouvez pas supprimer ce compte.");
             return back();
         }
-        if(Admin::destroy(htmlspecialchars($id)))
-        {
-            session()->flash('type', 'alert-success');
-            session()->flash('message', 'Suppression effectuée avec succès!');
-        }
+
+        $admin->delete();
+
+        session()->flash('type', 'alert-success');
+        session()->flash('message', 'Suppression effectuée avec succès!');
 
         return redirect()->route('admin.index');
     }

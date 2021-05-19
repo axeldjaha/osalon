@@ -36,29 +36,23 @@
         <div class="app-header-left">
             <ul class="header-megamenu nav">
                 <li class="btn-group nav-item">
-                    @if($user->can("Comptes utilisateurs"))
-                        <a href="{{ route("user.index") }}" class="nav-link mr-2">
-                            <i class="nav-link-icon fa fa-users font-size-xlg"></i>
-                            &nbsp;Comptes utilisateurs
-                        </a>
-                    @else
-                        <a class="nav-link mr-2 disabled opacity-3">
-                            <i class="nav-link-icon fa fa-users font-size-xlg"></i>
-                            &nbsp;Comptes utilisateurs
-                        </a>
-                    @endif
-                </li>
-                <li class="btn-group nav-item">
-                    <a href="{{ route("activity") }}" class="nav-link mr-2">
-                        <i class="nav-link-icon fa fa-tasks font-size-xlg"></i>
-                        Activity
+                    <a href="{{ route("admin.index") }}" class="nav-link mr-2">
+                        <i class="nav-link-icon fa fa-user-friends font-size-xlg"></i>
+                        &nbsp;Comptes admins
                     </a>
                 </li>
-
             </ul>
         </div>
 
         <div class="app-header-right">
+            <div class="header-dots">
+                <a href="{{ route("activity") }}" class="nav-link mr-2">
+                        <span class="icon-wrapper icon-wrapper-alt rounded-circle">
+                            <span class="icon-wrapper-bg bg-success"></span>
+                            <i class="icon text-success ion-ios-analytics"></i>
+                        </span>
+                </a>
+            </div>
             <div class="header-btn-lg pr-0">
                 <div class="widget-content p-0">
                     <div class="widget-content-wrapper">

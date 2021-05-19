@@ -98,9 +98,7 @@ Route::middleware(["auth"])->group(function ()
     /**
      * ADMIN
      */
-    Route::group(['middleware' => ['permission:Admins']], function () {
-        Route::resource("/admin", "Admin\AdminController")->except("show");
-    });
+    Route::resource("/admin", "Admin\AdminController")->except("show");
 
     /**
      * USER ACCOUNT

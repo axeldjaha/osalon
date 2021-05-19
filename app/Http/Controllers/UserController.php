@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Compte;
 use App\Contact;
 use App\Jobs\SendSMS;
+use App\Message;
 use App\Salon;
 use App\SmsGroupe;
 use App\User;
@@ -60,10 +61,11 @@ class UserController extends Controller
      * Store user
      *
      * @param Request $request
+     * @param Compte $compte
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request)
+    public function store(Request $request, Compte $compte)
     {
         $this->validate($request, [
             "name" => "nullable",
@@ -84,17 +86,23 @@ class UserController extends Controller
                 "name" => $request->name,
                 "telephone" => $request->telephone,
                 "email" => $request->email,
-                "compte_id" => $request->compte,
+                "compte_id" => $compte->id,
                 "password" => bcrypt($password),
             ]);
 
             //Envoi du mot de passe par SMS
-            $message = "Votre mot de passe est: $password" .
-                "\nTéléchargez l'application " . config("app.name") . " sur playstore\n" . config("app.playstore");
-            $sms = new \stdClass();
-            $sms->to = [$user->telephone];
-            $sms->message = $message;
-            //todo Queue::push(new SendSMS($sms));
+            $messageBody =
+                "Votre mot de passe est: $password" .
+                "\nTéléchargez l'application " . config("app.name") . " sur playstore" .
+                "\n" . config("app.playstore");
+            $to = [$request->telephone];
+
+            $message = new Message();
+            $message->setBody($messageBody);
+            $message->setTo($to);
+            $message->setIndicatif($compte->pays->indicatif);
+            $message->setSender(config("app.sms_sender_osalon"));
+            Queue::push(new SendSMS($message));
 
             session()->flash('type', 'alert-success');
             session()->flash('message', "L'utilisateur a été créé avec succès! Son mot de passe lui a été envoyé par SMS.");

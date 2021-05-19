@@ -78,7 +78,7 @@ class SalonController extends ApiController
                     $message = new Message();
                     $message->setBody($messageBody);
                     $message->setTo($to);
-                    $message->setIndicatif($this->compte->pays->code);
+                    $message->setIndicatif($this->compte->pays->indicatif);
                     $message->setSender(config("app.sms_sender_osalon"));
                     Queue::push(new SendSMS($message));
                 }

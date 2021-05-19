@@ -97,7 +97,7 @@ class ClientController extends ApiController
         $clients = [];
         $date = Carbon::now();
 
-        $prefix = $this->salon->pays != null ? "+" . $this->salon->pays->code : "";
+        $prefix = $this->salon->pays != null ? "+" . $this->salon->pays->indicatif : "";
 
         foreach ($request->all() as $client)
         {
@@ -105,7 +105,7 @@ class ClientController extends ApiController
             {
                 $telephone = str_replace($prefix, "", $client["telephone"]);
 
-                if($this->salon->pays != null && $this->salon->pays->code == 225)
+                if($this->salon->pays != null && $this->salon->pays->indicatif == 225)
                 {
                     $telephone = Contact::formatPhoneNumber($telephone);
                 }

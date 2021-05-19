@@ -39,7 +39,7 @@ class TestController extends Controller
         $message = new Message();
         $message->setBody("Envoyé à " . date("Y-m-d H:i:s"));
         $message->setTo(["0153791279"]);
-        $message->setIndicatif($salon->pays->code);
+        $message->setIndicatif($salon->pays->indicatif);
         $message->setSender(config("app.sms_sender_osalon"));
         Queue::push(new SendSMS($message));
 

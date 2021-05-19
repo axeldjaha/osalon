@@ -8,6 +8,6 @@ class Pays extends Model
 {
     protected $fillable = [
         "nom",
-        "code",
+        "indicatif",
     ];
 }

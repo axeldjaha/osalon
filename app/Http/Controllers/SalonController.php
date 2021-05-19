@@ -50,14 +50,12 @@ class SalonController extends Controller
             "nom" => "required",
             "adresse" => "required",
             "telephone" => "required",
-            "pays" => "required|exists:pays,id",
         ]);
 
         $salon->update([
             "nom" => $request->nom,
             "adresse" => $request->adresse,
             "telephone" => $request->telephone,
-            "pays_id" => $request->pays,
         ]);
 
         session()->flash('type', 'alert-success');

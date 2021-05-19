@@ -60,20 +60,6 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="fit"><label for="pays" class="col-form-label required">Pays</label></td>
-                            <td>
-                                <select required class="form-control @error("pays") is-invalid @enderror" id="pays" name="pays">
-                                    <option value="" @if(old("pays") == null) selected @endif disabled>----</option>
-                                    @foreach($countries as $country)
-                                        <option value="{{$country->id}}" @if($country->id == $salon->pays_id) selected @endif>
-                                            {{ $country->nom }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error("pays") <div class="invalid-feedback">{{$message}}</div> @enderror
-                            </td>
-                        </tr>
-                        <tr>
                             <td class="fit"></td>
                             <td style="width: 20% !important;">
                                 <button class="btn btn-primary btn-lg">

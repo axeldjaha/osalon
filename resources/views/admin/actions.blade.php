@@ -1,8 +1,10 @@
 <div class="page-title-actions d-flex align-items-center">
-    <a href="{{route("admin.create")}}" class="btn btn-primary">
-        <span class="btn-icon-wrapper pr-2 opacity-7">
-            <i class="fa fa-user-plus fa-w-20"></i>
-        </span>
-        Nouveau
+    <a href="{{ route("admin.index") }}" class="btn-icon-vertical btn bg-heavy-rain mr-2">
+        <i class="fa fa-file-alt btn-icon-wrapper text-primary" style="font-size: 1.5rem;"></i> Parcourir
+    </a>
+
+    <a href="{{ route("admin.create") }}" class="btn-icon-vertical btn bg-heavy-rain">
+        <i class="fa fa-plus btn-icon-wrapper text-primary" style="font-size: 1.5rem;"></i> Créer
     </a>
 </div>
+
