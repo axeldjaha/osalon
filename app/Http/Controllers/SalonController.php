@@ -109,6 +109,6 @@ class SalonController extends Controller
         session()->flash('type', 'alert-success');
         session()->flash('message', 'Suppression effectuée avec succès!');
 
-        return redirect()->route("salon.index");
+        return back();
     }
 }

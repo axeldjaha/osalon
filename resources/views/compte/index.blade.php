@@ -53,8 +53,9 @@
                         <tr>
                             <th>#ID</th>
                             <th>Créé le</th>
-                            <th>Abonnement</th>
+                            <th>Pays</th>
                             <th>Echéance</th>
+                            <th>Abonnement</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -63,15 +64,16 @@
                             <tr>
                                 <td>{{ $compte->id }}</td>
                                 <td><span hidden>{{$compte->created_at}}</span> {{ date("d/m/Y", strtotime($compte->created_at)) }}</td>
+                                <td>{{ $compte->pays->nom ?? null }}</td>
                                 @php($abonnement = $compte->abonnements()->orderBy("id", "desc")->first())
+                                <td>{{ date("d/m/Y", strtotime($abonnement->echeance)) }}</td>
                                 <td class="">
                                     @if(\Illuminate\Support\Carbon::parse($abonnement->echeance)->lessThan(\Illuminate\Support\Carbon::today()))
                                         <span class="badge badge-danger badge-pill">Expiré<span>
                                     @else
-                                          <span class="badge badge-success badge-pill">Actif</span>
+                                                    <span class="badge badge-success badge-pill">Actif</span>
                                     @endif
                                 </td>
-                                <td>{{ date("d/m/Y", strtotime($abonnement->echeance)) }}</td>
                                 <td>
                                     <a href="{{ route("compte.show", $compte) }}" class="btn btn-link mr-sm-2">Détails</a>
                                     <a href="{{ route("abonnement.create", $compte) }}" class="btn btn-primary mr-2">Réabonner</a>

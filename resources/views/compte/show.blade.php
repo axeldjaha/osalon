@@ -92,6 +92,10 @@
                                     <td class=""><strong>Echéance</strong></td>
                                     <td>{{ date("d/m/Y", strtotime($abonnement->echeance)) }}</td>
                                 </tr>
+                                <tr>
+                                    <td class=""><strong>Pays</strong></td>
+                                    <td>{{ $compte->pays->nom ?? null }}</td>
+                                </tr>
                                 </tbody>
                             </table>
                         </div>
