@@ -90,7 +90,7 @@
                                     <div class="widget-chart-flex align-items-center">
                                         <div>
                                             <span class="opacity-10 pr-2">
-                                                <i class="fa fa-check"></i>
+                                                <i class="fa fa-tachometer-alt"></i>
                                             </span>
                                             {{ number_format($total_salon, 0, ",", " ") }}
                                         </div>
