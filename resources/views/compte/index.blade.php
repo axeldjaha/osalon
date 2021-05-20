@@ -54,6 +54,7 @@
                             <th>#ID</th>
                             <th>Créé le</th>
                             <th>Pays</th>
+                            <th>SMS</th>
                             <th>Abonnement</th>
                             <th>Echéance</th>
                             <th>Actions</th>
@@ -65,6 +66,7 @@
                                 <th scope="row">{{ $compte->id }}</th>
                                 <td><span hidden>{{$compte->created_at}}</span> {{ date("d/m/Y", strtotime($compte->created_at)) }}</td>
                                 <td>{{ $compte->pays->nom ?? null }}</td>
+                                <td>{{ number_format($compte->sms_balance, 0, ",", " ") }}</td>
                                 @php($abonnement = $compte->abonnements()->orderBy("id", "desc")->first())
                                 <td class="">
                                     @if(\Illuminate\Support\Carbon::parse($abonnement->echeance)->lessThan(\Illuminate\Support\Carbon::today()))
