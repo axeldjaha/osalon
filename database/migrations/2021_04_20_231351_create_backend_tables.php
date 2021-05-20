@@ -48,6 +48,14 @@ class CreateBackendTables extends Migration
             $table->timestamps();
         });
 
+        Schema::create('tokens', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('access_token');
+            $table->bigInteger('expires_in');
+            $table->dateTime('valid_until');
+            $table->timestamps();
+        });
+
         /**
          * **************************************************************
          * FOREIGN KEYS

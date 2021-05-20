@@ -6,8 +6,6 @@ namespace App;
 
 class Message
 {
-    private $INDICATIF_PAR_DEFAUT = "225";
-
     /**
      * @var string Message à envoyer
      */

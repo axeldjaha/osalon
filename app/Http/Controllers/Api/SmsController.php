@@ -2,26 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Fakedata;
 use App\Http\Requests\SmsRequest;
 use App\Http\Resources\SalonResource;
 use App\Http\Resources\SmsResource;
 use App\Jobs\BulkSMS;
-use App\Jobs\SendSMS;
-use App\Lien;
 use App\Message;
 use App\Salon;
 use App\Sms;
 use App\SMSCounter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
 
 class SmsController extends ApiController
 {
@@ -114,7 +105,7 @@ class SmsController extends ApiController
             $sms = Sms::create([
                 "to" => count($request->to) . " client(s)",
                 "message" => $messageBody,
-                "user" => $this->user->name ?? $this->telephone,
+                "user" => $this->user->name ?? $this->user->telephone,
                 "salon_id" => $salon->id,
             ]);
 

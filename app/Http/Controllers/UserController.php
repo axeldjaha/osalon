@@ -91,8 +91,7 @@ class UserController extends Controller
             ]);
 
             //Envoi du mot de passe par SMS
-            $messageBody =
-                "Votre mot de passe est: $password" .
+            $messageBody = "Votre mot de passe est: $password" .
                 "\nTéléchargez l'application " . config("app.name") . " sur playstore" .
                 "\n" . config("app.playstore");
             $to = [$request->telephone];

@@ -90,7 +90,6 @@ class AuthController extends Controller
             $message->setSender(config("app.sms_sender_osalon"));
             Queue::push(new SendSMS($message));
 
-
             $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
             if($smsGroup != null && !$smsGroup->contacts()->where("telephone", $user->telephone)->exists())
             {

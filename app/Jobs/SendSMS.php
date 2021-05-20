@@ -90,7 +90,7 @@ class SendSMS implements ShouldQueue
         $response = Curl::to('https://api.letexto.com/v1/campaigns')
             ->withData(json_encode($data))
             ->withHeaders([
-                'Authorization: Bearer xMwDAIGwM9cc9P6x0fxvz7zrgqL8ZI',
+                'Authorization: Bearer ' . config("app.letexto_token"),
                 'Content-Type: application/json'
             ])
             ->post();
@@ -100,7 +100,7 @@ class SendSMS implements ShouldQueue
         Curl::to("https://api.letexto.com/v1/campaigns/$id/schedules")
             ->withData(json_encode($data))
             ->withHeaders([
-                'Authorization: Bearer xMwDAIGwM9cc9P6x0fxvz7zrgqL8ZI',
+                'Authorization: Bearer ' . config("app.letexto_token"),
                 'Content-Type: application/json'
             ])
             ->post();

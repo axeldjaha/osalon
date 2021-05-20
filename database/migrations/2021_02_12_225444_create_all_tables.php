@@ -42,6 +42,7 @@ class CreateAllTables extends Migration
         Schema::create('comptes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('sms_balance')->default(0);
+            $table->unsignedBigInteger('pays_id')->nullable();
             $table->timestamps();
         });
 

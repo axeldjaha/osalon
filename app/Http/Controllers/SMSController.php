@@ -79,7 +79,6 @@ class SMSController extends Controller
                 ]);
             }
 
-            Queue::push(new BulkSMS($messageBody, $to));
             $message = new Message();
             $message->setBody($messageBody);
             $message->setTo($to);
