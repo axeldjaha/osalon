@@ -2,6 +2,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta http-equiv="Content-Language" content="fr">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="shortcut icon" type="image/jpg" href="{{ asset("images/logo.png") }}"/>
 <title>{{ $title ?? config("app.name") . " | Administration" }}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no"/>
 <meta name="description" content="{{ config("app.name") }} - administration">
