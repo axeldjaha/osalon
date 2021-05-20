@@ -62,7 +62,7 @@
                         <tbody>
                         @foreach($comptes as $compte)
                             <tr>
-                                <td>{{ $compte->id }}</td>
+                                <th scope="row">{{ $compte->id }}</th>
                                 <td><span hidden>{{$compte->created_at}}</span> {{ date("d/m/Y", strtotime($compte->created_at)) }}</td>
                                 <td>{{ $compte->pays->nom ?? null }}</td>
                                 @php($abonnement = $compte->abonnements()->orderBy("id", "desc")->first())
@@ -76,8 +76,6 @@
                                 <td>{{ date("d/m/Y", strtotime($abonnement->echeance)) }}</td>
                                 <td>
                                     <a href="{{ route("compte.show", $compte) }}" class="btn btn-link mr-sm-2">Détails</a>
-                                    <a href="{{ route("abonnement.create", $compte) }}" class="btn btn-primary mr-2">Réabonner</a>
-                                    <a href="{{ route("recharge.create", $compte) }}" class="btn btn-alternate">Recharger SMS</a>
                                 </td>
                             </tr>
                         @endforeach

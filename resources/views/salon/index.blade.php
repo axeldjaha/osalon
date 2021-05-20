@@ -60,7 +60,7 @@
                                 <td><span hidden>{{$salon->created_at}}</span> {{date("d/m/Y", strtotime($salon->created_at))}}</td>
                                 @php($abonnement = $salon->compte->abonnements()->orderBy("id", "desc")->first())
                                 <td class="">
-                                    @if(\Illuminate\Support\Carbon::parse($abonnement->echeance)->lessThan(\Illuminate\Support\Carbon::now()))
+                                    @if(\Illuminate\Support\Carbon::parse($abonnement->echeance)->lessThan(\Illuminate\Support\Carbon::today()))
                                         <span class="badge badge-danger badge-pill">Expiré<span>
                                     @else
                                         <span class="badge badge-success badge-pill">Actif</span>
