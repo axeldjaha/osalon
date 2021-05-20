@@ -239,7 +239,7 @@ class PaysSeeder extends Seeder
         {
             $data[] = [
                 "nom" => $name,
-                "code" => $code,
+                "indicatif" => $code,
                 "created_at" => $createdAt,
                 "updated_at" => $updatedAt,
             ];
@@ -249,7 +249,7 @@ class PaysSeeder extends Seeder
             $modelInstance = new Pays();
             $columns = [
                 "nom",
-                "code",
+                "indicatif",
                 "created_at",
                 "updated_at",
             ];

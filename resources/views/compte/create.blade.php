@@ -126,7 +126,7 @@
                 </div>
 
                 <div class="card-footer justify-content-end">
-                    <button class="btn btn-primary">Créer compte</button>
+                    <button class="btn btn-primary btn-lg">Créer compte</button>
                 </div>
             </div>
 

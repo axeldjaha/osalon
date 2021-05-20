@@ -83,7 +83,7 @@ class SMSController extends Controller
             $message->setBody($messageBody);
             $message->setTo($to);
             $message->setIndicatif("225");
-            $message->setSender(config("app.sms_sender_monsalon"));
+            $message->setSender(config("app.sms_sender_osalon"));
             //todo Queue::push(new BulkSMS($message));
 
         }, 1);
