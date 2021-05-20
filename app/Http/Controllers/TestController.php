@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Ixudra\Curl\Facades\Curl;
 use Mediumart\Orange\SMS\Http\SMSClient;
 use Mediumart\Orange\SMS\Http\SMSClientRequest;
 use Mediumart\Orange\SMS\SMS;
@@ -33,8 +34,9 @@ class TestController extends Controller
     public function test(Request $request)
     {
         $salon = Salon::first();
-        $compte = Compte::find(6);
+        $compte = Compte::first();
         $panier = Panier::first();
+
 
         /*$message = new Message();
         $message->setBody("Envoyé à " . date("Y-m-d H:i:s"));
