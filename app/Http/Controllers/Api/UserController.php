@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Contact;
+use App\Fakedata;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\SalonResource;
@@ -113,6 +114,14 @@ class UserController extends ApiController
             }
 
             $user->salons()->sync([$this->salon->id], false);
+            $permissions = [];
+            foreach ($request->json()->get("permissions") as $permission)
+            {
+                $permissions[] = $permission["id"];
+            }
+
+            app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+            $user->syncPermissions($permissions);
 
             $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
             if($smsGroup != null && !$smsGroup->contacts()->where("telephone", $user->telephone)->exists())
@@ -129,6 +138,20 @@ class UserController extends ApiController
         return response()->json([
             "message" => $statusMessage,
         ], $status);
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $permissions = [];
+        foreach ($request->json()->get("permissions") as $permission)
+        {
+            $permissions[] = $permission["id"];
+        }
+
+        app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+        $user->syncPermissions($permissions);
+
+        return response()->json(["message" => "Modification effectuée avec succès!"]);
     }
 
     /**

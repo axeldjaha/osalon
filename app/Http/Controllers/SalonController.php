@@ -96,13 +96,12 @@ class SalonController extends Controller
             return back();
         }
 
-        $salon->users()->each(function ($user)
-        {
-            if($user->salons()->count() == 1)
-            {
-                $user->delete();
-            }
-        });
+        $query = "
+        DELETE FROM users
+        WHERE id NOT IN (
+            SELECT DISTINCT user_id FROM salon_user
+        )";
+        DB::delete($query);
 
         $salon->delete();
 

@@ -10,7 +10,6 @@ class Client extends Model
     protected $fillable = [
         "nom",
         "telephone",
-        "anniversaire",
         "salon_id",
     ];
 

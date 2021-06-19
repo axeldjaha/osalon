@@ -11,6 +11,7 @@ use App\Message;
 use App\Panier;
 use App\Salon;
 use App\Token;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -20,6 +21,7 @@ use Mediumart\Orange\SMS\Http\SMSClient;
 use Mediumart\Orange\SMS\Http\SMSClientRequest;
 use Mediumart\Orange\SMS\SMS;
 use SameerShelavale\PhpCountriesArray\CountriesArray;
+use Spatie\Permission\Models\Permission;
 
 class TestController extends Controller
 {
@@ -36,7 +38,10 @@ class TestController extends Controller
         $salon = Salon::first();
         $compte = Compte::first();
         $panier = Panier::first();
+        $user = User::find(27);
 
+
+        //DB::table("users")->update(["password" => bcrypt("2909")]);
 
         /*$message = new Message();
         $message->setBody("Envoyé à " . date("Y-m-d H:i:s"));

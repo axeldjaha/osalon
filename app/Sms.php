@@ -18,8 +18,4 @@ class Sms extends Model
         return $this->belongsTo(Salon::class);
     }
 
-    public function lien()
-    {
-        return $this->hasOne(Lien::class);
-    }
 }

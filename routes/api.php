@@ -40,7 +40,7 @@ Route::middleware(["auth:api", "salon", "abonnement", "activity"])->group(functi
     Route::apiResource('client','Api\ClientController')->except(["index", "show"]);
     Route::post('client/import','Api\ClientController@import');
 
-    Route::apiResource('user','Api\UserController')->except(["index", "show", "update"]);
+    Route::apiResource('user','Api\UserController')->except(["index", "show"]);
 
     Route::apiResource('depense','Api\DepenseController')->except(["index", "show"]);
 
@@ -62,6 +62,8 @@ Route::middleware(["auth:api", "abonnement", "activity"])->group(function ()
     Route::get('bilan/detail','Api\BilanController@detail');
 
     Route::post('sms','Api\SmsController@store');
+
+    Route::get('permission','Api\PermissionController@index');
 });
 
 /**

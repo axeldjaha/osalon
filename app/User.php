@@ -5,13 +5,17 @@ namespace App;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use jeremykenedy\LaravelLogger\App\Models\Activity;
+use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use Notifiable;
+    use Notifiable, HasRoles;
+
+    public static $ROLE_PROPREITAIRE = "proprietaire";
+    public static $ROLE_GERANT = "gerant";
 
     /**
      * The attributes that are mass assignable.
@@ -22,7 +26,6 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'telephone',
         'email',
-        "activated",
         "compte_id",
         "password",
     ];
