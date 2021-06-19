@@ -77,7 +77,6 @@ class PanierController extends ApiController
     public function store(PanierRequest $request)
     {
         $panier = Panier::create([
-            "total" => $request->total,
             "date" => $request->date != null ? $request->date . " " . date("H:i")  : Carbon::today(),
             "salon_id" => $this->salon->id,
         ]);
@@ -118,25 +117,17 @@ class PanierController extends ApiController
             "panier_id" => $panier->id,
         ])->update(["canceled" => true]);
 
-        $query = "
-        SELECT SUM(articles.prix * article_panier.quantite) AS total
-        FROM paniers
-        INNER JOIN article_panier ON article_panier.panier_id = paniers.id
-        INNER JOIN articles ON articles.id = article_panier.article_id
-        WHERE paniers.id = ? AND article_panier.canceled = ?";
-        $result = DB::select($query, [$panier->id, false]);
-
-        $panier->update(["total" => $result[0]->total]);
-
         return response()->json(null, 204);
     }
 
     /**
      * Delete article from panier
      *
+     * @param Request $request
      * @param Panier $panier
      * @param Article $article
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function deleteArticle(Request $request, Panier $panier, Article $article)
     {
@@ -153,16 +144,6 @@ class PanierController extends ApiController
                 "message" => "La ressource n'existe pas ou a été supprimée"
             ], 404);
         }
-
-        $query = "
-        SELECT SUM(articles.prix * article_panier.quantite) AS total
-        FROM paniers
-        INNER JOIN article_panier ON article_panier.panier_id = paniers.id
-        INNER JOIN articles ON articles.id = article_panier.article_id
-        WHERE paniers.id = ? AND article_panier.canceled = ?";
-        $result = DB::select($query, [$panier->id, false]);
-
-        $panier->update(["total" => $result[0]->total]);
 
         if($panier->articles()->count() == 0)
         {

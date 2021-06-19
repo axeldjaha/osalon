@@ -11,7 +11,6 @@ class Panier extends Model
     public static $PERMISSION_DELETE = "panier.delete";
 
     protected $fillable = [
-        "total",
         "date",
         "salon_id",
     ];

@@ -57,7 +57,6 @@ class CreateAllTables extends Migration
 
         Schema::create('paniers', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('total');
             $table->dateTime('date');
             $table->unsignedBigInteger('salon_id');
             $table->timestamps();
