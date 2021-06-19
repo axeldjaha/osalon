@@ -18,7 +18,7 @@ class UserResource extends JsonResource
     {
         $permissions = new Collection();
         Permission::orderBy("id")->each(function ($permission) use (&$permissions){
-            $permission->granted = $this->hasPermissionTo($permission->id);
+            $permission->granted = $this->can($permission->name);
             $permissions->add($permission);
         });
 
