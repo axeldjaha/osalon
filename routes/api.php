@@ -38,6 +38,8 @@ Route::middleware(["auth:api", "salon", "abonnement", "activity"])->group(functi
 {
     Route::apiResource('article','Api\ArticleController')->except(["index", "show"]);
 
+    Route::apiResource('service','Api\ServiceController')->except(["index", "show"]);
+
     Route::apiResource('client','Api\ClientController')->except(["index", "show"]);
     Route::post('client/import','Api\ClientController@import');
 
@@ -51,6 +53,8 @@ Route::middleware(["auth:api", "salon", "abonnement", "activity"])->group(functi
     Route::post('panier','Api\PanierController@store')->middleware("panier:store");
     Route::put('panier/{panier}/article/{article}','Api\PanierController@cancelArticle')->middleware("panier:cancel");
     Route::delete('panier/{panier}/article/{article}','Api\PanierController@deleteArticle')->middleware("panier:delete");
+    Route::put('panier/{panier}/service/{service}','Api\PanierController@cancelService')->middleware("panier:cancel");
+    Route::delete('panier/{panier}/service/{service}','Api\PanierController@deleteService')->middleware("panier:delete");
 
     Route::apiResource('rdv','Api\RdvController')->except(["index", "show"]);
 
@@ -86,6 +90,9 @@ Route::middleware(["auth:api", "activity"])->group(function ()
 
     Route::get('article','Api\ArticleController@index');
     Route::get('article/salon/{salon}','Api\ArticleController@show');
+
+    Route::get('service','Api\ServiceController@index');
+    Route::get('service/salon/{salon}','Api\ServiceController@show');
 
     Route::get('depense','Api\DepenseController@index');
     Route::get('depense/salon/{salon}','Api\DepenseController@show');

@@ -25,4 +25,9 @@ class Panier extends Model
         return $this->belongsToMany(Article::class)->withPivot(["canceled", "quantite"]);
     }
 
+    public function services()
+    {
+        return $this->belongsToMany(Service::class)->withPivot(["canceled", "prix"]);
+    }
+
 }

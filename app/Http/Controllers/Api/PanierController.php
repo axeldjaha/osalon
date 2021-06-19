@@ -10,6 +10,7 @@ use App\Http\Resources\PanierResource;
 use App\Http\Resources\SalonResource;
 use App\Panier;
 use App\Salon;
+use App\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -81,11 +82,17 @@ class PanierController extends ApiController
             "salon_id" => $this->salon->id,
         ]);
 
-        foreach ($request->article_paniers as $article_panier)
+        foreach ($request->article_paniers ?? [] as $article_panier)
         {
             $article_id = $article_panier["article"]["id"];
             $quantite = $article_panier["quantite"];
             $panier->articles()->sync([$article_id => ["quantite" => $quantite]], false);
+        }
+
+        foreach ($request->panier_services ?? [] as $panierService)
+        {
+            $service_id = $panierService["service"]["id"];
+            $panier->services()->sync([$service_id => ["prix" => $panierService["prix"]]], false);
         }
 
         return response()->json(new PanierResource(new Panier()));
@@ -145,7 +152,69 @@ class PanierController extends ApiController
             ], 404);
         }
 
-        if($panier->articles()->count() == 0)
+        if($panier->services()->count() == 0 && $panier->articles()->count() == 0)
+        {
+            $panier->delete();
+        }
+
+        return response()->json(null, 204);
+    }
+
+    /**
+     * Cancel service
+     *
+     * @param Request $request
+     * @param Panier $panier
+     * @param Service $service
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function cancelService(Request $request, Panier $panier, Service $service)
+    {
+        /**
+         * Check if the resource exists and prevent access to another user's resource
+         */
+        if($this->salon->id != $panier->salon->id || $this->salon->id != $service->salon->id)
+        {
+            return response()->json([
+                "message" => "La ressource n'existe pas ou a été supprimée"
+            ], 404);
+        }
+
+        DB::table("panier_service")->where([
+            "panier_id" => $panier->id,
+            "service_id" => $service->id,
+        ])->update(["canceled" => true]);
+
+        return response()->json(null, 204);
+    }
+
+    /**
+     * Delete service from panier
+     *
+     * @param Request $request
+     * @param Panier $panier
+     * @param Service $service
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function deleteService(Request $request, Panier $panier, Service $service)
+    {
+        /**
+         * Check if the resource exists and prevent access to another user's resource
+         */
+        $row = [
+            "panier_id" => $panier->id,
+            "service_id" => $service->id,
+        ];
+        if($this->salon->id != $panier->salon->id || !DB::table("panier_service")->where($row)->delete())
+        {
+            return response()->json([
+                "message" => "La ressource n'existe pas ou a été supprimée"
+            ], 404);
+        }
+
+        if($panier->services()->count() == 0 && $panier->articles()->count() == 0)
         {
             $panier->delete();
         }
