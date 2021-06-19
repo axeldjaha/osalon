@@ -80,7 +80,7 @@ class SendSMS implements ShouldQueue
             'groupId' => NULL,
             'filename' => NULL,
             'saveAsModel' => false,
-            'destination' => 'NAT',
+            'destination' => 'NAT_INTER',
             'message' => $this->message->getBody(),
             'emailText' => NULL,
             'recipients' => $recipients,

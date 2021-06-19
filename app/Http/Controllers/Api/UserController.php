@@ -115,7 +115,7 @@ class UserController extends ApiController
 
             $user->salons()->sync([$this->salon->id], false);
             $permissions = [];
-            foreach ($request->json()->get("permissions") as $permission)
+            foreach ($request->json()->get("permissions") ?? [] as $permission)
             {
                 $permissions[] = $permission["id"];
             }
