@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Contact;
+use App\Depense;
 use App\Http\Requests\SalonRequest;
 use App\Http\Resources\SalonResource;
 use App\Jobs\SendSMS;
 use App\Message;
+use App\Panier;
 use App\Salon;
+use App\Sms;
 use App\SmsGroupe;
 use App\User;
 use Illuminate\Http\Response;
@@ -37,6 +40,13 @@ class SalonController extends ApiController
      */
     public function store(SalonRequest $request)
     {
+        if(!$this->user->hasRole(User::$ROLE_PROPRIETAIRE))
+        {
+            return response()->json([
+                "message" => "Action non autorisée"
+            ], 403);
+        }
+
         $statusMessage = "Votre salon a été créé. Le mot de passe de la gérante lui a été envoyé par SMS";
         $status = 201;
 
@@ -67,6 +77,19 @@ class SalonController extends ApiController
                         "compte_id" => $this->compte->id,
                         "password" => bcrypt($password),
                     ]);
+                    $permissions = [
+                        Panier::$PERMISSION_STORE,
+                        Panier::$PERMISSION_CANCEL,
+                        Panier::$PERMISSION_DELETE,
+                        "caisse",
+                        Depense::$PERMISSION_STORE,
+                        Depense::$PERMISSION_CANCEL,
+                        Depense::$PERMISSION_DELETE,
+                        Sms::$PERMISSION_STORE,
+                        Sms::$PERMISSION_DELETE,
+                    ];
+                    app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+                    $user->syncPermissions($permissions);
 
                     //Envoi du mot de passe par SMS
                     $messageBody = "Votre mot de passe est: $password" .
@@ -149,6 +172,13 @@ class SalonController extends ApiController
      */
     public function destroy(Salon $salon)
     {
+        if(!$this->user->hasRole(User::$ROLE_PROPRIETAIRE))
+        {
+            return response()->json([
+                "message" => "Action non autorisée"
+            ], 403);
+        }
+
         if($this->user->salons()->count() == 1)
         {
             return response()->json([

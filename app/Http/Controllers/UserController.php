@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Compte;
 use App\Contact;
+use App\Depense;
 use App\Jobs\SendSMS;
 use App\Message;
+use App\Panier;
 use App\Salon;
+use App\Sms;
 use App\SmsGroupe;
 use App\User;
 use Illuminate\Http\Request;
@@ -89,6 +92,19 @@ class UserController extends Controller
                 "compte_id" => $compte->id,
                 "password" => bcrypt($password),
             ]);
+            $permissions = [
+                Panier::$PERMISSION_STORE,
+                Panier::$PERMISSION_CANCEL,
+                Panier::$PERMISSION_DELETE,
+                "caisse",
+                Depense::$PERMISSION_STORE,
+                Depense::$PERMISSION_CANCEL,
+                Depense::$PERMISSION_DELETE,
+                Sms::$PERMISSION_STORE,
+                Sms::$PERMISSION_DELETE,
+            ];
+            app()->make(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+            $user->syncPermissions($permissions);
 
             //Envoi du mot de passe par SMS
             $messageBody = "Votre mot de passe est: $password" .

@@ -41,8 +41,7 @@ Route::middleware(["auth:api", "salon", "abonnement", "activity"])->group(functi
     Route::apiResource('client','Api\ClientController')->except(["index", "show"]);
     Route::post('client/import','Api\ClientController@import');
 
-    Route::apiResource('user','Api\UserController')
-        ->middleware("user.manage")
+    Route::apiResource('user','Api\UserController')->middleware("user.manage")
         ->except(["index", "show"]);
 
     Route::post('depense','Api\DepenseController@store')->middleware("depense:store");
@@ -79,8 +78,8 @@ Route::middleware(["auth:api", "activity"])->group(function ()
 {
     Route::get('salon','Api\SalonController@index');
 
-    Route::get('user','Api\UserController@index');
-    Route::get('user/salon/{salon}','Api\UserController@show');
+    Route::get('user','Api\UserController@index')->middleware("user.manage");
+    Route::get('user/salon/{salon}','Api\UserController@show')->middleware("user.manage");
 
     Route::get('client','Api\ClientController@index');
     Route::get('client/salon/{salon}','Api\ClientController@show');

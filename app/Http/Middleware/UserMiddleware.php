@@ -23,7 +23,7 @@ class UserMiddleware
         if(!$user->can("user.manage"))
         {
             return response()->json([
-                "message" => "Action non autorisée"
+                "message" => "Accès non autorisé"
             ], 403);
         }
         return $next($request);
