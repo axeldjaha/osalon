@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Depense extends Model
 {
     public static $PERMISSION_STORE = "depense.store";
-    public static $PERMISSION_CANCEL = "depense.cancel";
     public static $PERMISSION_DELETE = "depense.delete";
 
     protected $fillable = [

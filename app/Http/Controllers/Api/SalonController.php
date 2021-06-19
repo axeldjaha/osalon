@@ -83,7 +83,6 @@ class SalonController extends ApiController
                         Panier::$PERMISSION_DELETE,
                         "caisse",
                         Depense::$PERMISSION_STORE,
-                        Depense::$PERMISSION_CANCEL,
                         Depense::$PERMISSION_DELETE,
                         Sms::$PERMISSION_STORE,
                         Sms::$PERMISSION_DELETE,

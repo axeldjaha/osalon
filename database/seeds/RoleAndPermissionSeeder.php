@@ -30,7 +30,6 @@ class RoleAndPermissionSeeder extends Seeder
             "caisse" => "Voir la caisse",
 
             Depense::$PERMISSION_STORE => "Enregistrer dépense",
-            Depense::$PERMISSION_CANCEL => "Annuler dépense",
             Depense::$PERMISSION_DELETE => "Supprimer dépense",
 
             Sms::$PERMISSION_STORE => "Envoyer SMS",
