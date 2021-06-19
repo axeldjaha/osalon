@@ -49,8 +49,8 @@ Route::middleware(["auth:api", "salon", "abonnement", "activity"])->group(functi
     Route::delete('depense/{depense}','Api\DepenseController@destroy')->middleware("depense:delete");
 
     Route::post('panier','Api\PanierController@store')->middleware("panier:store");
-    Route::delete('panier/{panier}/article/{article}','Api\PanierController@deleteArticle')
-        ->middleware("panier:delete");
+    Route::put('panier/{panier}/article/{article}','Api\PanierController@cancelArticle')->middleware("panier:cancel");
+    Route::delete('panier/{panier}/article/{article}','Api\PanierController@deleteArticle')->middleware("panier:delete");
 
     Route::apiResource('rdv','Api\RdvController')->except(["index", "show"]);
 

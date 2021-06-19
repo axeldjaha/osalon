@@ -93,6 +93,45 @@ class PanierController extends ApiController
     }
 
     /**
+     * Cancel
+     *
+     * @param Request $request
+     * @param Panier $panier
+     * @param Article $article
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function cancelArticle(Request $request, Panier $panier, Article $article)
+    {
+        /**
+         * Check if the resource exists and prevent access to another user's resource
+         */
+        if($this->salon->id != $panier->salon->id || $this->salon->id != $article->salon->id)
+        {
+            return response()->json([
+                "message" => "La ressource n'existe pas ou a été supprimée"
+            ], 404);
+        }
+
+        DB::table("article_panier")->where([
+            "article_id" => $article->id,
+            "panier_id" => $panier->id,
+        ])->update(["statut" => 0]);
+
+        $query = "
+        SELECT SUM(articles.prix * article_panier.quantite) AS total
+        FROM paniers
+        INNER JOIN article_panier ON article_panier.panier_id = paniers.id
+        INNER JOIN articles ON articles.id = article_panier.article_id
+        WHERE paniers.id = ? AND article_panier.statut = ?";
+        $result = DB::select($query, [$panier->id, 1]);
+
+        $panier->update(["total" => $result[0]->total]);
+
+        return response()->json(null, 204);
+    }
+
+    /**
      * Delete article from panier
      *
      * @param Panier $panier

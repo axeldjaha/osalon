@@ -12,10 +12,12 @@ use App\Panier;
 use App\Salon;
 use App\Token;
 use App\User;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Schema;
 use Ixudra\Curl\Facades\Curl;
 use Mediumart\Orange\SMS\Http\SMSClient;
 use Mediumart\Orange\SMS\Http\SMSClientRequest;
@@ -39,6 +41,7 @@ class TestController extends Controller
         $compte = Compte::first();
         $panier = Panier::first();
         $user = User::first();
+
 
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);
