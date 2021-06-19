@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddStatutOnArticlePanierTable extends Migration
+class AddCanceledOnArticlePanierTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddStatutOnArticlePanierTable extends Migration
     public function up()
     {
         Schema::table('article_panier', function (Blueprint $table) {
-            $table->boolean('statut')->default(true)->after("quantite");
+            $table->boolean('canceled')->default(false)->after("quantite");
         });
     }
 
@@ -26,7 +26,7 @@ class AddStatutOnArticlePanierTable extends Migration
     public function down()
     {
         Schema::table('article_panier', function (Blueprint $table) {
-            $table->dropColumn("statut");
+            $table->dropColumn("canceled");
         });
     }
 }

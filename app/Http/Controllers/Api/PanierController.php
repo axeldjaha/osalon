@@ -116,15 +116,15 @@ class PanierController extends ApiController
         DB::table("article_panier")->where([
             "article_id" => $article->id,
             "panier_id" => $panier->id,
-        ])->update(["statut" => 0]);
+        ])->update(["canceled" => true]);
 
         $query = "
         SELECT SUM(articles.prix * article_panier.quantite) AS total
         FROM paniers
         INNER JOIN article_panier ON article_panier.panier_id = paniers.id
         INNER JOIN articles ON articles.id = article_panier.article_id
-        WHERE paniers.id = ? AND article_panier.statut = ?";
-        $result = DB::select($query, [$panier->id, 1]);
+        WHERE paniers.id = ? AND article_panier.canceled = ?";
+        $result = DB::select($query, [$panier->id, false]);
 
         $panier->update(["total" => $result[0]->total]);
 
@@ -154,12 +154,16 @@ class PanierController extends ApiController
             ], 404);
         }
 
-        $total = 0;
-        foreach ($panier->articles as $articleRow)
-        {
-            $total += $articleRow->prix * $articleRow->pivot->quantite;
-        }
-        $panier->update(["total" => $total]);
+        $query = "
+        SELECT SUM(articles.prix * article_panier.quantite) AS total
+        FROM paniers
+        INNER JOIN article_panier ON article_panier.panier_id = paniers.id
+        INNER JOIN articles ON articles.id = article_panier.article_id
+        WHERE paniers.id = ? AND article_panier.canceled = ?";
+        $result = DB::select($query, [$panier->id, false]);
+
+        $panier->update(["total" => $result[0]->total]);
+
         if($panier->articles()->count() == 0)
         {
             $panier->delete();

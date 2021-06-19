@@ -65,7 +65,7 @@ class CreateAllTables extends Migration
 
         Schema::create('article_panier', function (Blueprint $table) {
             $table->integer('quantite');
-            $table->boolean('statut')->default(true);
+            $table->boolean('canceled')->default(false);
             $table->unsignedBigInteger('article_id');
             $table->unsignedBigInteger('panier_id');
         });

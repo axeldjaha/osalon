@@ -10,8 +10,6 @@ class Panier extends Model
     public static $PERMISSION_CANCEL = "panier.cancel";
     public static $PERMISSION_DELETE = "panier.delete";
 
-    public static $STATUT_CANCELED = 0;
-
     protected $fillable = [
         "total",
         "date",
@@ -25,7 +23,7 @@ class Panier extends Model
 
     public function articles()
     {
-        return $this->belongsToMany(Article::class)->withPivot("quantite");
+        return $this->belongsToMany(Article::class)->withPivot(["canceled", "quantite"]);
     }
 
 }

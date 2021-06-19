@@ -20,15 +20,25 @@ class BilanController extends ApiController
     public function point(Request $request)
     {
         $recetteQuery = "
-                SELECT IFNULL(SUM(paniers.total), 0) AS recette
+                SELECT IFNULL(SUM(paniers.total), 0) AS total
                 FROM paniers
                 WHERE paniers.salon_id = ? AND DATE (paniers.date) = ?";
 
         $articleVenduQuery = "
-                SELECT IFNULL(SUM(article_panier.quantite), 0) AS total_vente
+                SELECT IFNULL(SUM(article_panier.quantite), 0) AS total
                 FROM paniers
                 INNER JOIN article_panier ON article_panier.panier_id = paniers.id
-                WHERE paniers.salon_id = ? AND DATE (paniers.date) = ?";
+                WHERE paniers.salon_id = ? AND
+                  DATE (paniers.date) = ? AND
+                  article_panier.canceled = ?";
+
+        $clientQuery = "
+                SELECT COUNT(DISTINCT panier_id) AS total
+                FROM paniers
+                INNER JOIN article_panier ON article_panier.panier_id = paniers.id
+                WHERE paniers.salon_id = ? AND
+                  DATE (paniers.date) = ? AND
+                  article_panier.canceled = ?";
 
         $salons = [];
         foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
@@ -38,21 +48,21 @@ class BilanController extends ApiController
             ]);
 
             $articleVenduResult = DB::select($articleVenduQuery, [
-                $salon->id, $request->date ?? Carbon::today(),
+                $salon->id, $request->date ?? Carbon::today(), false
             ]);
 
-            $totalClient = $salon->paniers()
-                ->whereDate('date', $request->date ?? Carbon::today())
-                ->count();
+            $clientResult = DB::select($clientQuery, [
+                $salon->id, $request->date ?? Carbon::today(), false
+            ]);
 
             $salons[] = [
                 "id" => $salon->id,
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
                 "point" => [
-                    "recette" => $recetteResult[0]->recette,
-                    "total_article_vendu" => $articleVenduResult[0]->total_vente,
-                    "total_client" => $totalClient,
+                    "recette" => $recetteResult[0]->total,
+                    "total_article_vendu" => $articleVenduResult[0]->total,
+                    "total_client" => $clientResult[0]->total,
                 ],
             ];
         }
@@ -69,7 +79,7 @@ class BilanController extends ApiController
     public function bilan(Request $request)
     {
         $recetteQuery = "
-                SELECT IFNULL(SUM(paniers.total), 0) AS recette
+                SELECT IFNULL(SUM(paniers.total), 0) AS total
                 FROM paniers
                 WHERE paniers.salon_id = ? AND
                   MONTH (paniers.date) = ? AND
@@ -83,12 +93,22 @@ class BilanController extends ApiController
               YEAR(depenses.date_depense) = ?";
 
         $articleVenduQuery = "
-                SELECT IFNULL(SUM(article_panier.quantite), 0) AS total_vente
+                SELECT IFNULL(SUM(article_panier.quantite), 0) AS total
                 FROM paniers
                 INNER JOIN article_panier ON article_panier.panier_id = paniers.id
                 WHERE paniers.salon_id = ? AND
                   MONTH (paniers.date) = ? AND
-                  YEAR (paniers.date) = ?";
+                  YEAR (paniers.date) = ? AND
+                  article_panier.canceled = ?";
+
+        $clientQuery = "
+                SELECT COUNT(DISTINCT panier_id) AS total
+                FROM paniers
+                INNER JOIN article_panier ON article_panier.panier_id = paniers.id
+                WHERE paniers.salon_id = ? AND
+                  MONTH (paniers.date) = ? AND
+                  YEAR (paniers.date) = ? AND
+                  article_panier.canceled = ?";
 
         $salons = [];
         foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
@@ -102,24 +122,23 @@ class BilanController extends ApiController
             ]);
 
             $articleVenduResult = DB::select($articleVenduQuery, [
-                $salon->id, $request->mois ?? Carbon::today()->month, Carbon::today()->year,
+                $salon->id, $request->mois ?? Carbon::today()->month, Carbon::today()->year, false
             ]);
 
-            $totalClient = $salon->paniers()
-                ->whereMonth('date', $request->mois ?? Carbon::today()->month)
-                ->whereYear('date', Carbon::today()->year)
-                ->count();
+            $clientResult = DB::select($clientQuery, [
+                $salon->id, $request->mois ?? Carbon::today()->month, Carbon::today()->year, false
+            ]);
 
             $salons[] = [
                 "id" => $salon->id,
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
                 "bilan" => [
-                    "recette" => $recetteResult[0]->recette,
+                    "recette" => $recetteResult[0]->total,
                     "depense" => $depenseResult[0]->depense,
-                    "solde" => $recetteResult[0]->recette - $depenseResult[0]->depense,
-                    "total_article_vendu" => $articleVenduResult[0]->total_vente,
-                    "total_client" => $totalClient,
+                    "solde" => $recetteResult[0]->total - $depenseResult[0]->depense,
+                    "total_article_vendu" => $articleVenduResult[0]->total,
+                    "total_client" => $clientResult[0]->total,
                 ],
             ];
         }

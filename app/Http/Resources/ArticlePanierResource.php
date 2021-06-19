@@ -16,6 +16,7 @@ class ArticlePanierResource extends JsonResource
     public function toArray($request)
     {
         return [
+            "canceled" => $this->pivot->canceled == 1,
             "quantite" => $this->pivot->quantite,
             "article" => new ArticleResource(Article::find($this->id)),
         ];
