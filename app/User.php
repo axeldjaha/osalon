@@ -14,8 +14,8 @@ class User extends Authenticatable implements JWTSubject
 {
     use Notifiable, HasRoles;
 
-    public static $ROLE_PROPREITAIRE = "proprietaire";
-    public static $ROLE_GERANT = "gerant";
+    public static $ROLE_PROPRIETAIRE = "proprietaire";
+    public static $PERMISSION_MANAGE = "user.manage";
 
     /**
      * The attributes that are mass assignable.

@@ -76,7 +76,7 @@ class AuthController extends Controller
                 "compte_id" => $compte->id,
                 "password" => bcrypt($password),
             ]);
-
+            $user->assignRole(User::$ROLE_PROPRIETAIRE);
             $user->salons()->sync([$salon->id], false);
 
             //Envoi du mot de passe par SMS

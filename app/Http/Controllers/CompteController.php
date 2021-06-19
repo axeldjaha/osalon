@@ -103,6 +103,8 @@ class CompteController extends Controller
                 "compte_id" => $compte->id,
                 "password" => bcrypt($password),
             ]);
+            $user->assignRole(User::$ROLE_PROPRIETAIRE);
+            $user->salons()->sync([$salon->id], false);
 
             //Envoi du mot de passe par SMS
             $messageBody =
@@ -117,8 +119,6 @@ class CompteController extends Controller
             $message->setIndicatif($compte->pays->indicatif);
             $message->setSender(config("app.sms_sender_osalon"));
             Queue::push(new SendSMS($message));
-
-            $user->salons()->sync([$salon->id], false);
 
             $smsGroup = SmsGroupe::where("intitule", SmsGroupe::$USERS)->first();
             if($smsGroup != null && !$smsGroup->contacts()->where("telephone", $user->telephone)->exists())

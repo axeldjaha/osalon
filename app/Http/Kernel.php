@@ -4,8 +4,13 @@ namespace App\Http;
 
 use App\Http\Middleware\AbonnementMiddleware;
 use App\Http\Middleware\AuthJWT;
+use App\Http\Middleware\CaisseMiddleware;
+use App\Http\Middleware\DepenseMiddleware;
 use App\Http\Middleware\LogMiddleware;
+use App\Http\Middleware\PanierMiddleware;
 use App\Http\Middleware\SalonMiddleware;
+use App\Http\Middleware\SmsMiddleware;
+use App\Http\Middleware\UserMiddleware;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -71,6 +76,12 @@ class Kernel extends HttpKernel
 
         'abonnement' => AbonnementMiddleware::class,
         'salon' => SalonMiddleware::class,
+
+        'user.manage' => UserMiddleware::class,
+        'depense' => DepenseMiddleware::class,
+        'panier' => PanierMiddleware::class,
+        'sms' => SmsMiddleware::class,
+        'caisse' => CaisseMiddleware::class,
 
     ];
 

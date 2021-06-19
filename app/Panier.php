@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Panier extends Model
 {
+    public static $PERMISSION_STORE = "panier.store";
+    public static $PERMISSION_CANCEL = "panier.cancel";
+    public static $PERMISSION_DELETE = "panier.delete";
+
     protected $fillable = [
         "total",
         "date",

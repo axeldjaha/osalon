@@ -38,7 +38,7 @@ class TestController extends Controller
         $salon = Salon::first();
         $compte = Compte::first();
         $panier = Panier::first();
-        $user = User::find(27);
+        $user = User::first();
 
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);

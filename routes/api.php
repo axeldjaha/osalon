@@ -1,5 +1,6 @@
 <?php
 
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,28 +41,32 @@ Route::middleware(["auth:api", "salon", "abonnement", "activity"])->group(functi
     Route::apiResource('client','Api\ClientController')->except(["index", "show"]);
     Route::post('client/import','Api\ClientController@import');
 
-    Route::apiResource('user','Api\UserController')->except(["index", "show"]);
+    Route::apiResource('user','Api\UserController')
+        ->middleware("user.manage")
+        ->except(["index", "show"]);
 
-    Route::apiResource('depense','Api\DepenseController')->except(["index", "show"]);
+    Route::post('depense','Api\DepenseController@store')->middleware("depense:store");
+    Route::put('depense/{depense}','Api\DepenseController@update')->middleware("depense:store");
+    Route::delete('depense/{depense}','Api\DepenseController@destroy')->middleware("depense:delete");
 
-    Route::apiResource('panier','Api\PanierController')->except(["index", "show"]);
-    Route::delete('panier/{panier}/article/{article}','Api\PanierController@deleteArticle');
+    Route::post('panier','Api\PanierController@store')->middleware("panier:store");
+    Route::delete('panier/{panier}/article/{article}','Api\PanierController@deleteArticle')
+        ->middleware("panier:delete");
 
     Route::apiResource('rdv','Api\RdvController')->except(["index", "show"]);
 
-    Route::delete('sms/{sms}','Api\SmsController@destroy');
-    Route::delete('sms/all/destroy','Api\SmsController@destroyAll');
+    Route::delete('sms/{sms}','Api\SmsController@destroy')->middleware("sms:delete");
+    Route::delete('sms/all/destroy','Api\SmsController@destroyAll')->middleware("sms:delete");
 });
 
 Route::middleware(["auth:api", "abonnement", "activity"])->group(function ()
 {
     Route::apiResource('salon','Api\SalonController')->except(["index"]);
 
-    Route::get('bilan','Api\BilanController@bilan');
-    Route::get('bilan/point','Api\BilanController@point');
-    Route::get('bilan/detail','Api\BilanController@detail');
+    Route::get('bilan','Api\BilanController@bilan')->middleware("caisse");
+    Route::get('bilan/point','Api\BilanController@point')->middleware("caisse");
 
-    Route::post('sms','Api\SmsController@store');
+    Route::post('sms','Api\SmsController@store')->middleware("sms:store");
 
     Route::get('permission','Api\PermissionController@index');
 });
