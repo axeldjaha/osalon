@@ -10,6 +10,7 @@ class Article extends Model
     protected $fillable = [
         "libelle",
         "prix",
+        "stock",
         "salon_id",
     ];
 

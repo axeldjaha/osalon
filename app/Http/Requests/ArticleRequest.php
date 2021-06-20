@@ -29,6 +29,7 @@ class ArticleRequest extends FormRequest
         return [
             "libelle" => "required",
             "prix" => "required",
+            "stock" => "required",
         ];
     }
 
@@ -46,6 +47,13 @@ class ArticleRequest extends FormRequest
         {
             $response = [
                 "message" => $exception->validator->errors()->get("prix")[0],
+            ];
+            throw new HttpResponseException(response()->json($response, 422));
+        }
+        elseif($exception->validator->errors()->has("stock"))
+        {
+            $response = [
+                "message" => $exception->validator->errors()->get("stock")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }

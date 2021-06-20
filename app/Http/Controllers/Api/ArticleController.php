@@ -65,6 +65,7 @@ class ArticleController extends ApiController
         $service = Article::create([
             "libelle" => $request->libelle,
             "prix" => $request->prix,
+            "stock" => $request->stock,
             "salon_id" => $this->salon->id,
         ]);
 
@@ -85,7 +86,8 @@ class ArticleController extends ApiController
          */
         if(!$this->salon->articles()->where("id", $article->id)->update([
             "libelle" => $request->libelle,
-            "prix" => $request->prix
+            "prix" => $request->prix,
+            "stock" => $request->stock
         ]))
         {
             return response()->json([

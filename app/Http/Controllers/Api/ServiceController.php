@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Article;
 use App\Http\Requests\ServiceRequest;
-use App\Http\Resources\ArticleResource;
 use App\Http\Resources\ServiceResource;
 use App\Salon;
 use App\Service;
@@ -63,13 +61,13 @@ class ServiceController extends ApiController
      */
     public function store(ServiceRequest $request)
     {
-        $service = Article::create([
+        $service = Service::create([
             "nom" => $request->nom,
             "prix" => $request->prix,
             "salon_id" => $this->salon->id,
         ]);
 
-        return response()->json(new ArticleResource($service));
+        return response()->json(new ServiceResource($service));
     }
 
     /**

@@ -23,6 +23,7 @@ class AuthUserResource extends JsonResource
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
                 "articles" => ArticleResource::collection($salon->articles()->orderBy("libelle")->get()),
+                "services" => ServiceResource::collection($salon->services()->orderBy("nom")->get()),
             ];
         }
 
