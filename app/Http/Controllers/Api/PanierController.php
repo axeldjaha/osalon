@@ -99,6 +99,12 @@ class PanierController extends ApiController
                 "created_at" => $createdAt,
                 "updated_at" => $updatedAt,
             ];
+
+            if($item["article_id"] > 0)
+            {
+                $article = Article::find($item["article_id"]);
+                $article->decrement("stock", $item["quantite"]);
+            }
         }
 
         if(count($items) > 0)
