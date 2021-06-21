@@ -62,13 +62,6 @@ class CreateAllTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create('article_panier', function (Blueprint $table) {
-            $table->integer('quantite');
-            $table->boolean('canceled')->default(false);
-            $table->unsignedBigInteger('article_id');
-            $table->unsignedBigInteger('panier_id');
-        });
-
         Schema::create('pays', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nom');

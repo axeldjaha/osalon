@@ -2,10 +2,9 @@
 
 namespace App\Http\Resources;
 
-use App\Article;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ArticlePanierResource extends JsonResource
+class ItemResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +15,12 @@ class ArticlePanierResource extends JsonResource
     public function toArray($request)
     {
         return [
-            "canceled" => $this->pivot->canceled == 1,
-            "quantite" => $this->pivot->quantite,
-            "article" => new ArticleResource(Article::find($this->id)),
+            "id" => $this->id,
+            "nom" => $this->nom,
+            "prix" => $this->prix,
+            "quantite" => $this->quantite,
+            "panier_id" => $this->panier_id,
+            "salon_id" => $this->salon_id,
         ];
     }
 }

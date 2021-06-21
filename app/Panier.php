@@ -22,7 +22,12 @@ class Panier extends Model
 
     public function articles()
     {
-        return $this->belongsToMany(Article::class)->withPivot(["canceled", "quantite"]);
+        return $this->belongsToMany(Article::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(Item::class);
     }
 
     public function services()

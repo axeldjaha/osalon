@@ -27,9 +27,8 @@ class PanierRequest extends FormRequest
     public function rules()
     {
         return [
-            "total" => "required",
             "date" => "nullable|date",
-            "article_paniers" => "required",
+            "items" => "required",
         ];
     }
 
@@ -37,24 +36,17 @@ class PanierRequest extends FormRequest
     {
         $exception = new ValidationException($validator);
 
-        if($exception->validator->errors()->has("total"))
-        {
-            $response = [
-                "message" => $exception->validator->errors()->get("total")[0],
-            ];
-            throw new HttpResponseException(response()->json($response, 422));
-        }
-        elseif($exception->validator->errors()->has("date"))
+        if($exception->validator->errors()->has("date"))
         {
             $response = [
                 "message" => $exception->validator->errors()->get("date")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }
-        elseif($exception->validator->errors()->has("articles"))
+        elseif($exception->validator->errors()->has("items"))
         {
             $response = [
-                "message" => $exception->validator->errors()->get("articles")[0],
+                "message" => $exception->validator->errors()->get("items")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }
