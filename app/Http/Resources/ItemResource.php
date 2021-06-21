@@ -19,6 +19,7 @@ class ItemResource extends JsonResource
             "nom" => $this->nom,
             "prix_unitaire" => $this->prix_unitaire,
             "quantite" => $this->quantite,
+            "canceled" => $this->canceled == 1,
             "date" => date("H:i", strtotime($this->date)),
             "panier_id" => $this->panier_id,
             "salon_id" => $this->salon_id,

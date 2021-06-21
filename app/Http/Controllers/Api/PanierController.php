@@ -153,7 +153,7 @@ class PanierController extends ApiController
      */
     public function deleteItem(Request $request, Item $item)
     {
-        $panier = $item->paniers;
+        $panier = $item->panier;
 
         /**
          * Check if the resource exists and prevent access to another user's resource

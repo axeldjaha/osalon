@@ -20,23 +20,22 @@ class BilanController extends ApiController
     public function point(Request $request)
     {
         $recetteQuery = "
-        SELECT SUM(articles.prix * article_panier.quantite) AS total
+        SELECT SUM(items.prix_unitaire * items.quantite) AS total
         FROM paniers
-        INNER JOIN article_panier ON article_panier.panier_id = paniers.id
-        INNER JOIN articles ON articles.id = article_panier.article_id
-        WHERE paniers.salon_id = ? AND DATE (paniers.date) = ? AND article_panier.canceled = ?";
+        INNER JOIN items ON items.panier_id = paniers.id
+        WHERE paniers.salon_id = ? AND DATE (paniers.date) = ? AND items.canceled = ?";
 
         $articleVenduQuery = "
-                SELECT IFNULL(SUM(article_panier.quantite), 0) AS total
+                SELECT IFNULL(SUM(items.quantite), 0) AS total
                 FROM paniers
-                INNER JOIN article_panier ON article_panier.panier_id = paniers.id
-                WHERE paniers.salon_id = ? AND DATE (paniers.date) = ? AND article_panier.canceled = ?";
+                INNER JOIN items ON items.panier_id = paniers.id
+                WHERE paniers.salon_id = ? AND DATE (paniers.date) = ? AND items.canceled = ?";
 
         $clientQuery = "
                 SELECT COUNT(DISTINCT panier_id) AS total
                 FROM paniers
-                INNER JOIN article_panier ON article_panier.panier_id = paniers.id
-                WHERE paniers.salon_id = ? AND DATE (paniers.date) = ? AND article_panier.canceled = ?";
+                INNER JOIN items ON items.panier_id = paniers.id
+                WHERE paniers.salon_id = ? AND DATE (paniers.date) = ? AND items.canceled = ?";
 
         $salons = [];
         foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
@@ -77,11 +76,10 @@ class BilanController extends ApiController
     public function bilan(Request $request)
     {
         $recetteQuery = "
-        SELECT SUM(articles.prix * article_panier.quantite) AS total
+        SELECT SUM(items.prix_unitaire * items.quantite) AS total
         FROM paniers
-        INNER JOIN article_panier ON article_panier.panier_id = paniers.id
-        INNER JOIN articles ON articles.id = article_panier.article_id
-        WHERE paniers.salon_id = ? AND MONTH (paniers.date) = ? AND YEAR (paniers.date) = ? AND article_panier.canceled = ?";
+        INNER JOIN items ON items.panier_id = paniers.id
+        WHERE paniers.salon_id = ? AND MONTH (paniers.date) = ? AND YEAR (paniers.date) = ? AND items.canceled = ?";
 
         $depenseQuery = "
         SELECT IFNULL(SUM(montant), 0) AS depense
@@ -91,16 +89,16 @@ class BilanController extends ApiController
               YEAR(depenses.date_depense) = ?";
 
         $articleVenduQuery = "
-                SELECT IFNULL(SUM(article_panier.quantite), 0) AS total
+                SELECT IFNULL(SUM(items.quantite), 0) AS total
                 FROM paniers
-                INNER JOIN article_panier ON article_panier.panier_id = paniers.id
-                WHERE paniers.salon_id = ? AND MONTH (paniers.date) = ? AND YEAR (paniers.date) = ? AND article_panier.canceled = ?";
+                INNER JOIN items ON items.panier_id = paniers.id
+                WHERE paniers.salon_id = ? AND MONTH (paniers.date) = ? AND YEAR (paniers.date) = ? AND items.canceled = ?";
 
         $clientQuery = "
                 SELECT COUNT(DISTINCT panier_id) AS total
                 FROM paniers
-                INNER JOIN article_panier ON article_panier.panier_id = paniers.id
-                WHERE paniers.salon_id = ? AND MONTH (paniers.date) = ? AND YEAR (paniers.date) = ? AND article_panier.canceled = ?";
+                INNER JOIN items ON items.panier_id = paniers.id
+                WHERE paniers.salon_id = ? AND MONTH (paniers.date) = ? AND YEAR (paniers.date) = ? AND items.canceled = ?";
 
         $salons = [];
         foreach ($this->user->salons()->orderBy("nom")->get() as $salon)
