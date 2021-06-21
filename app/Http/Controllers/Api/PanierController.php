@@ -87,15 +87,13 @@ class PanierController extends ApiController
         $createdAt = $date;
         $updatedAt = $date;
         $items = [];
-        foreach ($request->items ?? [] as $item)
+        foreach ($request->json()->get("items") ?? [] as $item)
         {
-            $article_id = $item["article"]["id"];
-            $quantite = $item["quantite"];
-            $panier->articles()->sync([$article_id => ["quantite" => $quantite]], false);
             $items[] = [
                 "nom" => $item["nom"],
-                "prix" => $item["prix"],
+                "prix_unitaire" => $item["prix_unitaire"],
                 "quantite" => $item["quantite"],
+                "date" => $panier->date,
                 "panier_id" => $panier->id,
                 "salon_id" => $this->salon->id,
                 "created_at" => $createdAt,
@@ -108,8 +106,9 @@ class PanierController extends ApiController
             $model = new Item();
             $columns = [
                 "nom",
-                "prix",
+                "prix_unitaire",
                 "quantite",
+                "date",
                 "panier_id",
                 "salon_id",
                 "created_at",

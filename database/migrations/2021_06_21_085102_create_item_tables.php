@@ -16,9 +16,10 @@ class CreateItemTables extends Migration
         Schema::create('items', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('nom');
-            $table->bigInteger('prix');
+            $table->bigInteger('prix_unitaire');
             $table->integer('quantite')->default(1);
             $table->boolean('canceled')->default(false);
+            $table->dateTime('date');
             $table->unsignedBigInteger('panier_id');
             $table->unsignedBigInteger('salon_id');
             $table->timestamps();

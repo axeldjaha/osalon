@@ -17,7 +17,7 @@ class PanierResource extends JsonResource
         return [
             "id" => $this->id,
             "date" => date("d/m/Y à H:i", strtotime($this->date)),
-            "items" => ItemResource::collection($this->items()->orderBy("id", "desc")),
+            "items" => ItemResource::collection($this->items()->orderBy("id", "desc")->get()),
             "salon_id" => $this->salon_id,
         ];
     }

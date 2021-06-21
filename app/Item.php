@@ -9,9 +9,10 @@ class Item extends Model
 
     protected $fillable = [
         "nom",
-        "prix",
+        "prix_unitaire",
         "quantite",
         "canceled",
+        "date",
         "panier_id",
         "salon_id",
     ];

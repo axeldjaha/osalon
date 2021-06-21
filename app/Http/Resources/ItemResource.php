@@ -17,8 +17,9 @@ class ItemResource extends JsonResource
         return [
             "id" => $this->id,
             "nom" => $this->nom,
-            "prix" => $this->prix,
+            "prix_unitaire" => $this->prix_unitaire,
             "quantite" => $this->quantite,
+            "date" => date("H:i", strtotime($this->date)),
             "panier_id" => $this->panier_id,
             "salon_id" => $this->salon_id,
         ];

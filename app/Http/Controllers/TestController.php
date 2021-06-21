@@ -43,6 +43,7 @@ class TestController extends Controller
         $user = User::first();
 
 
+
         //DB::table("users")->update(["password" => bcrypt("2909")]);
 
         /*$message = new Message();
