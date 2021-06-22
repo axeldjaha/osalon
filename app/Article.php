@@ -8,7 +8,7 @@ class Article extends Model
 {
 
     protected $fillable = [
-        "libelle",
+        "nom",
         "prix",
         "stock",
         "salon_id",

@@ -13,6 +13,7 @@ use App\Panier;
 use App\Salon;
 use App\Service;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -78,52 +79,72 @@ class PanierController extends ApiController
      */
     public function store(PanierRequest $request)
     {
-        $panier = Panier::create([
-            "date" => $request->date != null ? $request->date . " " . date("H:i")  : Carbon::today(),
-            "salon_id" => $this->salon->id,
-        ]);
+        $status = 201;
 
-        $date = Carbon::now();
-        $createdAt = $date;
-        $updatedAt = $date;
-        $items = [];
-        foreach ($request->json()->get("items") ?? [] as $item)
-        {
-            $items[] = [
-                "nom" => $item["nom"],
-                "prix_unitaire" => $item["prix_unitaire"],
-                "quantite" => $item["quantite"],
-                "date" => $panier->date,
-                "panier_id" => $panier->id,
+        DB::transaction(function () use ($request, &$status){
+            $panier = Panier::create([
+                "date" => $request->date != null ? $request->date . " " . date("H:i")  : Carbon::today(),
                 "salon_id" => $this->salon->id,
-                "created_at" => $createdAt,
-                "updated_at" => $updatedAt,
-            ];
+            ]);
 
-            if($item["article_id"] > 0)
+            $articleIds = $this->salon->articles()->pluck("nom", "id")->toArray();
+            $serviceIds = $this->salon->services()->pluck("nom", "id")->toArray();
+
+            $date = Carbon::now();
+            $createdAt = $date;
+            $updatedAt = $date;
+            $items = [];
+            foreach ($request->json()->get("items") ?? [] as $item)
             {
-                $article = Article::find($item["article_id"]);
-                $article->decrement("stock", $item["quantite"]);
+                if((!isset($articleIds[$item["article_id"]]) && !isset($serviceIds[$item["service_id"]])))
+                {
+                    $status = Response::HTTP_NOT_FOUND;
+                    return;
+                }
+
+                $items[] = [
+                    "nom" => $item["nom"],
+                    "prix_unitaire" => $item["prix_unitaire"],
+                    "quantite" => $item["quantite"],
+                    "date" => $panier->date,
+                    "panier_id" => $panier->id,
+                    "salon_id" => $this->salon->id,
+                    "created_at" => $createdAt,
+                    "updated_at" => $updatedAt,
+                ];
+
+                if(isset($articleIds[$item["article_id"]]))
+                {
+                    $article = Article::find($item["article_id"]);
+                    $article->decrement("stock", $item["quantite"]);
+                }
             }
-        }
 
-        if(count($items) > 0)
+            if(count($items) > 0)
+            {
+                $model = new Item();
+                $columns = [
+                    "nom",
+                    "prix_unitaire",
+                    "quantite",
+                    "date",
+                    "panier_id",
+                    "salon_id",
+                    "created_at",
+                    "updated_at",
+                ];
+                batch()->insert($model, $columns, $items);
+            }
+        }, 1);
+
+        if($status == Response::HTTP_NOT_FOUND)
         {
-            $model = new Item();
-            $columns = [
-                "nom",
-                "prix_unitaire",
-                "quantite",
-                "date",
-                "panier_id",
-                "salon_id",
-                "created_at",
-                "updated_at",
-            ];
-            batch()->insert($model, $columns, $items);
+            return response()->json([
+                "message" => "Article ou prestation non trouvé. Veuillez synchroniser les données.",
+            ], $status);
         }
 
-        return response()->json(new PanierResource(new Panier()));
+        return response()->json(new PanierResource(new Panier()), 201);
     }
 
     /**

@@ -10,6 +10,7 @@ use App\Jobs\SendSMS;
 use App\Message;
 use App\Panier;
 use App\Salon;
+use App\Service;
 use App\Token;
 use App\User;
 use Illuminate\Database\Schema\Blueprint;
@@ -42,6 +43,9 @@ class TestController extends Controller
         $panier = Panier::first();
         $user = User::first();
 
+        $articleIds = $salon->articles()->pluck("nom", "id")->toArray();
+        var_dump($articleIds);
+        dd(isset($articleIds[44]));
 
 
         //DB::table("users")->update(["password" => bcrypt("2909")]);

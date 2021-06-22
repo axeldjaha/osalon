@@ -26,7 +26,7 @@ class ArticleController extends ApiController
                 "id" => $salon->id,
                 "nom" => $salon->nom,
                 "adresse" => $salon->adresse,
-                "articles" => ArticleResource::collection($salon->articles()->orderBy("libelle")->get()),
+                "articles" => ArticleResource::collection($salon->articles()->orderBy("nom")->get()),
             ];
         }
 
@@ -51,7 +51,7 @@ class ArticleController extends ApiController
             return \response()->json(new Salon(), 204);
         }
 
-        return response()->json(ArticleResource::collection($salon->articles()->orderBy("libelle")->get()));
+        return response()->json(ArticleResource::collection($salon->articles()->orderBy("nom")->get()));
     }
 
     /**
@@ -63,7 +63,7 @@ class ArticleController extends ApiController
     public function store(ArticleRequest $request)
     {
         $service = Article::create([
-            "libelle" => $request->libelle,
+            "nom" => $request->nom,
             "prix" => $request->prix,
             "stock" => $request->stock,
             "salon_id" => $this->salon->id,
@@ -85,7 +85,7 @@ class ArticleController extends ApiController
          * Check if the resource exists and prevent access to another user's resource
          */
         if(!$this->salon->articles()->where("id", $article->id)->update([
-            "libelle" => $request->libelle,
+            "nom" => $request->nom,
             "prix" => $request->prix,
             "stock" => $request->stock
         ]))

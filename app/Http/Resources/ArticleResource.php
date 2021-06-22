@@ -16,7 +16,7 @@ class ArticleResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "libelle" => $this->libelle,
+            "nom" => $this->nom,
             "prix" => $this->prix,
             "stock" => $this->stock > 0 ? $this->stock : 0,
             "salon_id" => $this->salon_id,

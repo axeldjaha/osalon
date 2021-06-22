@@ -27,7 +27,7 @@ class ArticleRequest extends FormRequest
     public function rules()
     {
         return [
-            "libelle" => "required",
+            "nom" => "required",
             "prix" => "required",
             "stock" => "required",
         ];
@@ -36,10 +36,10 @@ class ArticleRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         $exception = new ValidationException($validator);
-        if($exception->validator->errors()->has("libelle"))
+        if($exception->validator->errors()->has("nom"))
         {
             $response = [
-                "message" => $exception->validator->errors()->get("libelle")[0],
+                "message" => $exception->validator->errors()->get("nom")[0],
             ];
             throw new HttpResponseException(response()->json($response, 422));
         }

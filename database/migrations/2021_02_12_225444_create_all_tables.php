@@ -24,7 +24,7 @@ class CreateAllTables extends Migration
 
         Schema::create('articles', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('libelle');
+            $table->string('nom');
             $table->bigInteger('prix');
             $table->unsignedBigInteger('salon_id');
             $table->timestamps();
